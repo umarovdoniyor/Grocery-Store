@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -15,6 +18,8 @@ import BoxLink from "../components/box-link";
 import usePasswordVisible from "../use-password-visible";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
+// AUTH CONTEXT
+import { useAuth } from "contexts/AuthContext";
 
 // REGISTER FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
@@ -36,7 +41,10 @@ const validationSchema = yup.object().shape({
 });
 
 export default function RegisterPageView() {
+  const router = useRouter();
+  const { register: registerUser } = useAuth();
   const { visiblePassword, togglePasswordVisible } = usePasswordVisible();
+  const [error, setError] = useState<string | null>(null);
 
   const inputProps = {
     endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />
@@ -60,12 +68,30 @@ export default function RegisterPageView() {
     formState: { isSubmitting }
   } = methods;
 
-  const handleSubmitForm = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2));
+  const handleSubmitForm = handleSubmit(async (values) => {
+    setError(null);
+    const result = await registerUser({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      role: "customer"
+    });
+
+    if (result.success) {
+      router.push("/");
+    } else {
+      setError(result.error || "Registration failed");
+    }
   });
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
       <div className="mb-1">
         <Label>Full Name</Label>
         <TextField fullWidth name="name" size="medium" placeholder="Ralph Awards" />

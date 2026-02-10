@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import useCart from "hooks/useCart";
 import Product from "models/Product.model";
@@ -33,17 +32,15 @@ export default function AddToCart({ product }: Props) {
   };
 
   return (
-    <Link href="/mini-cart" scroll={false}>
-      <StyledButton
-        fullWidth
-        disableElevation
-        color="primary"
-        loading={isLoading}
-        onClick={handleCart}
-        className="add-to-cart"
-      >
-        Add To Cart
-      </StyledButton>
-    </Link>
+    <StyledButton
+      fullWidth
+      disableElevation
+      color="primary"
+      loading={isLoading}
+      onClick={handleCart}
+      className="add-to-cart"
+    >
+      Add To Cart
+    </StyledButton>
   );
 }

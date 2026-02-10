@@ -32,17 +32,16 @@ export default function AddToCart({ product }: Props) {
   }, [dispatch, slug, id, price, title, thumbnail]);
 
   return (
-    <Link scroll={false} href="/mini-cart" className="add-to-cart-btn">
-      <Button
-        fullWidth
-        color="primary"
-        variant="contained"
-        loading={isLoading}
-        onClick={handleAddToCart}
-        aria-label="Add to cart"
-      >
-        Add to cart
-      </Button>
-    </Link>
+    <Button
+      fullWidth
+      color="primary"
+      variant="contained"
+      loading={isLoading}
+      onClick={handleAddToCart}
+      aria-label="Add to cart"
+      className="add-to-cart-btn"
+    >
+      Add to cart
+    </Button>
   );
 }

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 // MUI
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -68,7 +67,7 @@ export default function MiniCart() {
             color="primary"
             variant="contained"
             LinkComponent={Link}
-            href="/checkout-alternative"
+            href="/checkout"
             sx={{ height: 44, mb: 1 }}
           >
             Proceed to Checkout

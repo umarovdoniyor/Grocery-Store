@@ -19,7 +19,7 @@ import { SecondaryHeader } from "components/secondary-header";
 import { MobileNavigationBar } from "components/mobile-navigation";
 import { SearchInput1, SearchInput2 } from "components/search-box";
 import { Topbar, TopbarLanguageSelector, TopbarSocialLinks } from "components/topbar";
-import { Header, HeaderCart, HeaderLogin, MobileHeader, HeaderSearch } from "components/header";
+import { Header, HeaderCart, HeaderAccount, MobileHeader, HeaderSearch } from "components/header";
 // CUSTOM DATA MODEL
 import LayoutModel from "models/Layout.model";
 
@@ -45,7 +45,7 @@ export default function ShopLayout1({ children, data }: Props) {
           <SearchInput2 />
         </HeaderSearch>
 
-        <HeaderLogin />
+        <HeaderAccount />
         <HeaderCart />
       </MobileHeader.Right>
     </MobileHeader>
@@ -73,7 +73,7 @@ export default function ShopLayout1({ children, data }: Props) {
           </Header.Mid>
 
           <Header.Right>
-            <HeaderLogin />
+            <HeaderAccount />
             <HeaderCart />
           </Header.Right>
         </Header>

@@ -2,6 +2,7 @@ import { Fragment, PropsWithChildren } from "react";
 import Link from "next/link";
 import Image from "next/image";
 // MUI
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 // GLOBAL CUSTOM COMPONENTS
@@ -18,7 +19,7 @@ import { NavigationList } from "components/navbar";
 import { MobileMenu } from "components/mobile-navbar/mobile-menu";
 import { MobileNavigationBar } from "components/mobile-navigation";
 import { Topbar, TopbarLanguageSelector, TopbarSocialLinks } from "components/topbar";
-import { Header, HeaderCart, HeaderLogin, MobileHeader, HeaderSearch } from "components/header";
+import { Header, HeaderCart, HeaderAccount, MobileHeader, HeaderSearch } from "components/header";
 // CUSTOM DATA MODEL
 import LayoutModel from "models/Layout.model";
 
@@ -51,7 +52,7 @@ export default function ShopLayout3({
           <SearchInput2 />
         </HeaderSearch>
 
-        <HeaderLogin />
+        <HeaderAccount />
         <HeaderCart />
       </MobileHeader.Right>
     </MobileHeader>
@@ -76,8 +77,12 @@ export default function ShopLayout3({
             <NavigationList navigation={header.navigation} />
           </Header.Mid>
 
+          <Box sx={{ flex: 1, maxWidth: 400, mx: 2 }}>
+            <SearchInput2 />
+          </Box>
+
           <Header.Right>
-            <HeaderLogin />
+            <HeaderAccount />
             <HeaderCart />
           </Header.Right>
         </Header>

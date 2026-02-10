@@ -2,284 +2,290 @@ import { CategoryMenuItem } from "models/Navigation.model";
 
 const categoriesMegaMenu: CategoryMenuItem[] = [
   {
-    title: "Fashion",
+    title: "Fresh Produce",
     child: [
       {
-        title: "Men's Fashion",
+        title: "Fruits",
         child: [
-          { title: "T-Shirt", url: "#", icon: "Shirt" },
-          { title: "Formal Shirt", url: "#", icon: "UserTie" },
-          { title: "Shirt", url: "#", icon: "Shirt" },
-          { title: "Shoes", url: "#", icon: "Shoe" },
-          { title: "Jeans Pant", url: "#", icon: "Shirt" },
-          { title: "Gabardine Pant", url: "#", icon: "Shirt" },
-          { title: "Formal Pant", url: "#", icon: "Shirt" },
-          { title: "Sunglass", url: "#", icon: "Vest" },
-          { title: "Formal Shoes", url: "#", icon: "Shoe" },
-          { title: "Lungi", url: "#", icon: "Vest" },
-          { title: "Tank", url: "#", icon: "Shoe" },
-          { title: "Jacket", url: "#", icon: "Vest" }
+          { title: "Apples", url: "/products/search?category=apples", icon: "Apple" },
+          { title: "Berries", url: "/products/search?category=berries", icon: "Apple" },
+          { title: "Citrus", url: "/products/search?category=citrus", icon: "Apple" },
+          { title: "Tropical Fruits", url: "/products/search?category=tropical", icon: "Apple" },
+          { title: "Stone Fruits", url: "/products/search?category=stone-fruits", icon: "Apple" },
+          { title: "Melons", url: "/products/search?category=melons", icon: "Apple" }
         ]
       },
       {
-        title: "Women's Fashion",
+        title: "Vegetables",
         child: [
-          { title: "Clothing", url: "#", icon: "UserProfile" },
-          { title: "Shoes", url: "#", icon: "Shoe" },
-          { title: "Jewelry", url: "#", icon: "Accounts" },
-          { title: "Watches", url: "#", icon: "AdminEcommerce" },
-          { title: "Hand Bags", url: "#", icon: "Calender" },
-          { title: "Accessories", url: "#", icon: "Chat" },
-          { title: "Makeup", url: "#", icon: "Customers" },
-          { title: "Clothing", url: "#", icon: "Dashboard" },
-          { title: "Shoes", url: "#", icon: "DataTable" },
-          { title: "Jewelry", url: "#", icon: "Ecommerce" },
-          { title: "Watches", url: "#", icon: "ElementHub" },
-          { title: "Hand Bags", url: "#", icon: "Invoice" }
+          {
+            title: "Leafy Greens",
+            url: "/products/search?category=leafy-greens",
+            icon: "TreeLeaf"
+          },
+          {
+            title: "Root Vegetables",
+            url: "/products/search?category=root-vegetables",
+            icon: "TreeLeaf"
+          },
+          { title: "Peppers", url: "/products/search?category=peppers", icon: "TreeLeaf" },
+          { title: "Tomatoes", url: "/products/search?category=tomatoes", icon: "TreeLeaf" },
+          {
+            title: "Onions & Garlic",
+            url: "/products/search?category=onions-garlic",
+            icon: "TreeLeaf"
+          },
+          { title: "Squash", url: "/products/search?category=squash", icon: "TreeLeaf" }
         ]
       },
-
       {
-        title: "Girls' Fashion",
+        title: "Herbs & Organic",
         child: [
-          { title: "Clothing", url: "#", icon: "Logout" },
-          { title: "Shoes", url: "#", icon: "Order" },
-          { title: "Jewelry", url: "#", icon: "Pages" },
-          { title: "Watches", url: "#", icon: "Pricing" },
-          { title: "Hand Bags", url: "#", icon: "Products" },
-          { title: "Gadget", url: "#", icon: "ProjectChart" },
-          { title: "Clothing", url: "#", icon: "Refund" },
-          { title: "Watches", url: "#", icon: "Review" },
-          { title: "Shoes", url: "#", icon: "Seller" },
-          { title: "Gadget", url: "#", icon: "Session" },
-          { title: "Jewelry", url: "#", icon: "Settings" },
-          { title: "Hand Bags", url: "#", icon: "TodoList" }
+          { title: "Fresh Herbs", url: "/products/search?category=herbs", icon: "TreeLeaf" },
+          { title: "Organic Produce", url: "/products/search?category=organic", icon: "TreeLeaf" },
+          { title: "Salad Kits", url: "/products/search?category=salad-kits", icon: "TreeLeaf" },
+          { title: "Sprouts", url: "/products/search?category=sprouts", icon: "TreeLeaf" }
         ]
       }
     ]
   },
   {
-    title: "Electronics",
+    title: "Dairy & Eggs",
     child: [
       {
-        title: "Accessories & Supplies",
+        title: "Milk & Cream",
         child: [
+          { title: "Whole Milk", url: "/products/search?category=milk", icon: "Milk" },
+          { title: "Skim & Low-Fat", url: "/products/search?category=skim-milk", icon: "Milk" },
+          { title: "Plant-Based Milk", url: "/products/search?category=plant-milk", icon: "Milk" },
+          { title: "Cream", url: "/products/search?category=cream", icon: "Milk" },
+          { title: "Half & Half", url: "/products/search?category=half-and-half", icon: "Milk" }
+        ]
+      },
+      {
+        title: "Cheese",
+        child: [
+          { title: "Cheddar", url: "/products/search?category=cheddar", icon: "Cheese" },
+          { title: "Mozzarella", url: "/products/search?category=mozzarella", icon: "Cheese" },
+          { title: "Swiss & Provolone", url: "/products/search?category=swiss", icon: "Cheese" },
           {
-            url: "#",
-            title: "Audio & Video Accessories",
-            img: "/assets/images/products/bgearphone.png"
+            title: "Specialty Cheese",
+            url: "/products/search?category=specialty-cheese",
+            icon: "Cheese"
           },
+          { title: "Cream Cheese", url: "/products/search?category=cream-cheese", icon: "Cheese" }
+        ]
+      },
+      {
+        title: "Eggs & Yogurt",
+        child: [
+          { title: "Eggs", url: "/products/search?category=eggs", icon: "Egg" },
+          { title: "Yogurt", url: "/products/search?category=yogurt", icon: "Yogurt" },
+          { title: "Butter & Margarine", url: "/products/search?category=butter", icon: "Butter" },
+          { title: "Sour Cream", url: "/products/search?category=sour-cream", icon: "Milk" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Meat & Seafood",
+    child: [
+      {
+        title: "Fresh Meat",
+        child: [
+          { title: "Beef", url: "/products/search?category=beef", icon: "Meat" },
+          { title: "Chicken", url: "/products/search?category=chicken", icon: "Chicken" },
+          { title: "Pork", url: "/products/search?category=pork", icon: "Meat" },
+          { title: "Turkey", url: "/products/search?category=turkey", icon: "Chicken" },
+          { title: "Lamb", url: "/products/search?category=lamb", icon: "Meat" }
+        ]
+      },
+      {
+        title: "Seafood",
+        child: [
+          { title: "Fresh Fish", url: "/products/search?category=fish", icon: "Fish" },
+          { title: "Shellfish", url: "/products/search?category=shellfish", icon: "Fish" },
+          { title: "Salmon", url: "/products/search?category=salmon", icon: "Fish" },
+          { title: "Shrimp", url: "/products/search?category=shrimp", icon: "Fish" },
+          { title: "Frozen Seafood", url: "/products/search?category=frozen-seafood", icon: "Fish" }
+        ]
+      },
+      {
+        title: "Deli & Prepared",
+        child: [
+          { title: "Deli Meat", url: "/products/search?category=deli-meat", icon: "Meat" },
+          { title: "Hot Dogs", url: "/products/search?category=hot-dogs", icon: "Meat" },
+          { title: "Bacon & Sausage", url: "/products/search?category=bacon", icon: "Meat" },
+          { title: "Prepared Meals", url: "/products/search?category=prepared-meals", icon: "Meal" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Bakery & Bread",
+    child: [
+      {
+        title: "Fresh Bakery",
+        child: [
+          { title: "Artisan Bread", url: "/products/search?category=artisan-bread", icon: "Bread" },
           {
-            url: "#",
-            title: "Cables",
-            img: "/assets/images/products/Electronics/35.beatsbluetoothearpohones.png"
+            title: "Sandwich Bread",
+            url: "/products/search?category=sandwich-bread",
+            icon: "Bread"
           },
+          { title: "Rolls & Buns", url: "/products/search?category=rolls", icon: "Bread" },
+          { title: "Bagels", url: "/products/search?category=bagels", icon: "Bread" },
           {
-            url: "#",
-            title: "Microphones",
-            img: "/assets/images/products/Electronics/33.beatswirelessearphones.png"
-          },
-          {
-            url: "#",
-            title: "Cord Management",
-            img: "/assets/images/products/Electronics/2.COSOR1.png"
-          },
-          {
-            url: "#",
-            title: "Power Protection",
-            img: "/assets/images/products/Electronics/3.PanasonicCharge.png"
-          },
-          {
-            url: "#",
-            title: "Cell Phone Accessories",
-            img: "/assets/images/products/Electronics/32.iphone7.png"
+            title: "English Muffins",
+            url: "/products/search?category=english-muffins",
+            icon: "Bread"
           }
         ]
       },
       {
-        title: "Power Accessories",
+        title: "Pastries & Desserts",
         child: [
+          { title: "Cakes", url: "/products/search?category=cakes", icon: "Cake" },
+          { title: "Cookies", url: "/products/search?category=cookies", icon: "Cookie" },
+          { title: "Pies", url: "/products/search?category=pies", icon: "Cake" },
+          { title: "Donuts", url: "/products/search?category=donuts", icon: "Donut" },
+          { title: "Muffins", url: "/products/search?category=muffins", icon: "Cupcake" }
+        ]
+      },
+      {
+        title: "Specialty Items",
+        child: [
+          { title: "Tortillas", url: "/products/search?category=tortillas", icon: "Bread" },
+          { title: "Pita Bread", url: "/products/search?category=pita", icon: "Bread" },
+          { title: "Crackers", url: "/products/search?category=crackers", icon: "Cracker" },
+          { title: "Breadcrumbs", url: "/products/search?category=breadcrumbs", icon: "Bread" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Frozen Foods",
+    child: [
+      {
+        title: "Frozen Meals",
+        child: [
+          { title: "Frozen Pizza", url: "/products/search?category=frozen-pizza", icon: "Pizza" },
           {
-            url: "#",
-            title: "AC Adapters",
-            img: "/assets/images/products/Electronics/5.AtechCam1080p.png"
+            title: "Frozen Dinners",
+            url: "/products/search?category=frozen-dinners",
+            icon: "Meal"
           },
           {
-            url: "#",
-            title: "Isolation Transformers",
-            img: "/assets/images/products/Electronics/6.Sonya9.png"
+            title: "Frozen Breakfast",
+            url: "/products/search?category=frozen-breakfast",
+            icon: "Breakfast"
           },
           {
-            url: "#",
-            title: "Line Conditioners",
-            img: "/assets/images/products/Electronics/7.beatsw3.png"
-          },
-          {
-            url: "#",
-            title: "PDUs",
-            img: "/assets/images/products/Electronics/8.BenQ2020.png"
-          },
-          {
-            url: "#",
-            title: "Power Converters",
-            img: "/assets/images/products/Electronics/10.SonyPS4.png"
+            title: "Frozen Appetizers",
+            url: "/products/search?category=frozen-appetizers",
+            icon: "Snack"
           }
         ]
       },
       {
-        title: "Video Game Consoles & Accessories",
+        title: "Frozen Vegetables & Fruits",
         child: [
           {
-            url: "#",
-            title: "PlayStation 4",
-            img: "/assets/images/products/Electronics/12.SonyBGB.png"
+            title: "Frozen Vegetables",
+            url: "/products/search?category=frozen-vegetables",
+            icon: "TreeLeaf"
           },
+          { title: "Frozen Fruits", url: "/products/search?category=frozen-fruits", icon: "Apple" },
           {
-            url: "#",
-            title: "PlayStation 3",
-            img: "/assets/images/products/Electronics/13.LGProducts.png"
-          },
-          {
-            url: "#",
-            title: "Xbox One",
-            img: "/assets/images/products/Electronics/14.Panasonic2019.png"
-          },
-          {
-            url: "#",
-            title: "Nintendo Switch",
-            img: "/assets/images/products/Electronics/15.DuneHD.png"
-          },
-          {
-            url: "#",
-            title: "Sony PSP",
-            img: "/assets/images/products/Electronics/16.SonyCCTV.png"
+            title: "Frozen Potatoes",
+            url: "/products/search?category=frozen-potatoes",
+            icon: "Potato"
           }
         ]
-      }
-    ]
-  },
-  {
-    title: "Books",
-    child: [
-      {
-        title: "Arts & Photography",
-        child: [
-          { title: "Architecture", url: "#" },
-          { title: "Business of Art", url: "#" },
-          { title: "History & Criticism", url: "#" },
-          { title: "Individual Artists", url: "#" },
-          { title: "Photography & Video", url: "#" },
-          { title: "Study & Teaching", url: "#" }
-        ]
       },
       {
-        title: "Biographies & Memoirs",
+        title: "Ice Cream & Desserts",
         child: [
-          { title: "Arts & Literature", url: "#" },
-          { title: "Leaders & Notable People", url: "#" },
-          { title: "Professionals & Academics", url: "#" },
-          { title: "Sports & Outdoors", url: "#" },
-          { title: "True Crime", url: "#" }
-        ]
-      },
-      {
-        title: "Children's Books",
-        child: [
-          { title: "Action & Adventure", url: "#" },
-          { title: "Animals", url: "#" },
-          { title: "Biographies", url: "#" },
-          { title: "Geography & Cultures", url: "#" },
-          { title: "Holidays & Celebrations", url: "#" }
+          { title: "Ice Cream", url: "/products/search?category=ice-cream", icon: "IceCream" },
+          {
+            title: "Frozen Yogurt",
+            url: "/products/search?category=frozen-yogurt",
+            icon: "IceCream"
+          },
+          {
+            title: "Frozen Desserts",
+            url: "/products/search?category=frozen-desserts",
+            icon: "Cake"
+          },
+          { title: "Popsicles", url: "/products/search?category=popsicles", icon: "IceCream" }
         ]
       }
     ]
   },
   {
-    title: "Sports and Outdoors",
+    title: "Beverages",
     child: [
       {
-        title: "Outdoor Recreation",
+        title: "Water & Soft Drinks",
         child: [
-          { title: "Accessories", url: "#" },
-          { title: "Camping & Hiking", url: "#" },
-          { title: "Climbing", url: "#" },
-          { title: "Cycling", url: "#" },
-          { title: "Paintball", url: "#" },
-          { title: "Water Sports", url: "#" }
+          { title: "Bottled Water", url: "/products/search?category=water", icon: "Water" },
+          { title: "Soft Drinks", url: "/products/search?category=soda", icon: "Soda" },
+          {
+            title: "Sparkling Water",
+            url: "/products/search?category=sparkling-water",
+            icon: "Water"
+          },
+          { title: "Energy Drinks", url: "/products/search?category=energy-drinks", icon: "Soda" }
         ]
       },
       {
-        title: "Exercise & Fitness",
+        title: "Juice & Coffee",
         child: [
-          { title: "Balance Trainers", url: "#" },
-          { title: "Cardio Training", url: "#" },
-          { title: "Fitness Technology", url: "#" },
-          { title: "Footwear", url: "#" },
-          { title: "Running", url: "#" }
+          { title: "Juice", url: "/products/search?category=juice", icon: "Juice" },
+          { title: "Coffee", url: "/products/search?category=coffee", icon: "Coffee" },
+          { title: "Tea", url: "/products/search?category=tea", icon: "Tea" },
+          { title: "Hot Chocolate", url: "/products/search?category=hot-chocolate", icon: "Coffee" }
         ]
       },
       {
-        title: "Sports Medicine",
+        title: "Wine & Beer",
         child: [
-          { title: "Athletic Tape & Supplies", url: "#" },
-          { title: "First Aid Kits", url: "#" },
-          { title: "Padding Supplies", url: "#" },
-          { title: "Mouthguards", url: "#" }
+          { title: "Wine", url: "/products/search?category=wine", icon: "Wine" },
+          { title: "Beer", url: "/products/search?category=beer", icon: "Beer" },
+          { title: "Spirits", url: "/products/search?category=spirits", icon: "Wine" },
+          { title: "Mixers", url: "/products/search?category=mixers", icon: "Soda" }
         ]
       }
     ]
   },
   {
-    title: "Software",
+    title: "Pantry Essentials",
     child: [
       {
-        title: "Accounting & Finance",
+        title: "Canned Goods",
         child: [
-          { title: "Business Accounting", url: "#" },
-          { title: "Check Printing", url: "#" },
-          { title: "Personal Finance", url: "#" },
-          { title: "Tax Preparation", url: "#" }
+          { title: "Soups", url: "/products/search?category=soups", icon: "Soup" },
+          { title: "Vegetables", url: "/products/search?category=canned-vegetables", icon: "Can" },
+          { title: "Beans", url: "/products/search?category=beans", icon: "Can" },
+          { title: "Tomatoes", url: "/products/search?category=canned-tomatoes", icon: "Can" }
         ]
       },
       {
-        title: "Antivirus & Security",
+        title: "Pasta & Rice",
         child: [
-          { title: "Antivirus", url: "#" },
-          { title: "Internet Security Suites", url: "#" },
-          { title: "Parental Control", url: "#" }
+          { title: "Pasta", url: "/products/search?category=pasta", icon: "Pasta" },
+          { title: "Rice", url: "/products/search?category=rice", icon: "Rice" },
+          { title: "Noodles", url: "/products/search?category=noodles", icon: "Pasta" },
+          { title: "Quinoa & Grains", url: "/products/search?category=grains", icon: "Rice" }
         ]
       },
       {
-        title: "Business & Office",
+        title: "Condiments & Sauces",
         child: [
-          { title: "Communication", url: "#" },
-          { title: "Contact Management", url: "#" },
-          { title: "Database Management", url: "#" },
-          { title: "Document Management", url: "#" },
-          { title: "Office Suites", url: "#" }
-        ]
-      }
-    ]
-  },
-  {
-    title: "Toys and Games",
-    child: [
-      {
-        title: "Arts & Crafts",
-        child: [
-          { title: "Adhesives", url: "#" },
-          { title: "Aprons & Smocks", url: "#" },
-          { title: "Clay & Dough", url: "#" },
-          { title: "Craft Kits", url: "#" }
-        ]
-      },
-      {
-        title: "Baby & Toddler Toys",
-        child: [
-          { title: "Activity Centers", url: "#" },
-          { title: "Balls", url: "#" },
-          { title: "Bath Toys", url: "#" },
-          { title: "Car Seat & Stroller Toys", url: "#" }
+          { title: "Ketchup & Mustard", url: "/products/search?category=ketchup", icon: "Sauce" },
+          { title: "Mayonnaise", url: "/products/search?category=mayo", icon: "Sauce" },
+          { title: "Salad Dressing", url: "/products/search?category=dressing", icon: "Sauce" },
+          { title: "BBQ & Hot Sauce", url: "/products/search?category=hot-sauce", icon: "Sauce" }
         ]
       }
     ]

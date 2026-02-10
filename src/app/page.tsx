@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
-import IndexPageView from "pages-sections/landing/page-view";
+import ShopLayout3 from "components/layouts/shop-layout-3";
+import GroceryOnePageView from "pages-sections/grocery-1/page-view";
+// API FUNCTIONS
+import api from "utils/__api__/layout";
 
 export const metadata: Metadata = {
-  title: "Bazaar - Next.js E-commerce Template",
+  title: "Grocery Store - Fresh Food & Delivery",
   description:
-    "Bazaar is a React Next.js E-commerce template. Build SEO friendly Online store, delivery app and Multi vendor store",
+    "Shop fresh groceries online. Fast delivery, great prices. Your online grocery store.",
   authors: [{ name: "UI-LIB", url: "https://ui-lib.com" }],
-  keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
+  keywords: ["grocery", "online grocery", "food delivery", "fresh produce", "e-commerce"]
 };
 
-export default function IndexPage() {
-  return <IndexPageView />;
+export default async function IndexPage() {
+  const data = await api.getLayoutData();
+
+  return (
+    <ShopLayout3 showFooter={false} showMobileMenu={false} data={data}>
+      <GroceryOnePageView />
+    </ShopLayout3>
+  );
 }

@@ -30,8 +30,6 @@ export default function AddToCartButton({ product }: Props) {
         type: "CHANGE_CART_AMOUNT",
         payload: { id, slug, price, title, thumbnail, qty: 1 }
       });
-
-      router.push("/mini-cart", { scroll: false });
       setLoading(false);
     }, 500);
   };

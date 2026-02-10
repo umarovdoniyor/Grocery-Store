@@ -46,18 +46,16 @@ export default function HoverActions({ product }: Props) {
 
   return (
     <HoverWrapper className="hover-box">
-      <Link scroll={false} href="/mini-cart">
-        <Button
-          fullWidth
-          color="primary"
-          variant="contained"
-          loading={isCartLoading}
-          onClick={handleAddToCart}
-          aria-label="Add to cart"
-        >
-          Add to cart
-        </Button>
-      </Link>
+      <Button
+        fullWidth
+        color="primary"
+        variant="contained"
+        loading={isCartLoading}
+        onClick={handleAddToCart}
+        aria-label="Add to cart"
+      >
+        Add to cart
+      </Button>
 
       <Link scroll={false} href={`/products/${slug}/view`} onNavigate={handleNavigate}>
         <Button

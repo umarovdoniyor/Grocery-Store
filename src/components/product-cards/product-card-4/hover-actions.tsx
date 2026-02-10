@@ -36,8 +36,6 @@ export default function HoverActions({ product }: Props) {
       type: "CHANGE_CART_AMOUNT",
       payload: { id, slug, price, title, thumbnail, qty: 1 }
     });
-
-    router.push("/mini-cart", { scroll: false });
   };
 
   return (

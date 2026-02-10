@@ -38,18 +38,17 @@ export default function HoverActions({ product }: Props) {
 
   return (
     <HoverButtonsWrapper className="hover-buttons">
-      <Link scroll={false} href="/mini-cart" className="add-to-cart-btn">
-        <Button
-          fullWidth
-          color="primary"
-          variant="contained"
-          loading={isLoading}
-          onClick={handleAddToCart}
-          aria-label="Add to cart"
-        >
-          Add to cart
-        </Button>
-      </Link>
+      <Button
+        fullWidth
+        color="primary"
+        variant="contained"
+        loading={isLoading}
+        onClick={handleAddToCart}
+        aria-label="Add to cart"
+        className="add-to-cart-btn"
+      >
+        Add to cart
+      </Button>
 
       <Link scroll={false} href={`/products/${slug}/view`}>
         <Button disableElevation color="primary" variant="contained" aria-label="Quick view">

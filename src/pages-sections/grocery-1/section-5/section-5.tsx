@@ -14,7 +14,7 @@ export default function DiscountSection() {
         <Grid className="content" size={{ xs: 12, md: 6, sm: 7, lg: 5 }}>
           <Typography variant="body1">Till 10 Dec, 2021</Typography>
           <Typography variant="h1">25% Special Off Today Only for Vegetables</Typography>
-          <Link href="/sales-1">
+          <Link href="/products/search?category=vegetables">
             <Button color="primary" variant="contained">
               Shop Now
             </Button>

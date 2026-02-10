@@ -6,7 +6,11 @@ export const categoryMenus: CategoryMenuItem[] = [
     title: "Fashion",
     href: "/fashion",
     component: "Grid",
-    offer: { url: "/assets/images/promotion/offer-1.png", href: "/sales-1", position: "right" },
+    offer: {
+      url: "/assets/images/promotion/offer-1.png",
+      href: "/products/search",
+      position: "right"
+    },
     children: [
       {
         title: "Man Clothes",

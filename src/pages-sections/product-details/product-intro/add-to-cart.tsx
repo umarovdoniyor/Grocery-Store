@@ -27,7 +27,6 @@ export default function AddToCart({ product }: Props) {
         payload: { id, slug, price, title, thumbnail, qty: 1 }
       });
 
-      router.push("/mini-cart", { scroll: false });
       setLoading(false);
     }, 500);
   };

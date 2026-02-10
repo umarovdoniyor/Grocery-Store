@@ -17,6 +17,9 @@ import CartProvider from "contexts/CartContext";
 // SITE SETTINGS PROVIDER
 import SettingsProvider from "contexts/SettingContext";
 
+// AUTH PROVIDER
+import { AuthProvider } from "contexts/AuthContext";
+
 // GLOBAL CUSTOM COMPONENTS
 import RTL from "components/rtl";
 import ProgressBar from "components/progress";
@@ -35,18 +38,20 @@ export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body id="body" className={geist.className}>
-        <CartProvider>
-          <SettingsProvider>
-            <ThemeProvider>
-              <RTL>
-                {modal}
-                {children}
-              </RTL>
+        <AuthProvider>
+          <CartProvider>
+            <SettingsProvider>
+              <ThemeProvider>
+                <RTL>
+                  {modal}
+                  {children}
+                </RTL>
 
-              <ProgressBar />
-            </ThemeProvider>
-          </SettingsProvider>
-        </CartProvider>
+                <ProgressBar />
+              </ThemeProvider>
+            </SettingsProvider>
+          </CartProvider>
+        </AuthProvider>
 
         <GoogleAnalytics gaId="G-XKPD36JXY0" />
       </body>

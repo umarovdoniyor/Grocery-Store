@@ -1,3 +1,5 @@
+export type UserRole = "customer" | "vendor" | "admin";
+
 export default interface User {
   id: string;
   email: string;
@@ -6,6 +8,7 @@ export default interface User {
   password: string;
   dateOfBirth: Date | string;
   verified: boolean;
+  role: UserRole;
   name: { firstName: string; lastName: string };
 }
 

@@ -16,13 +16,8 @@ const breakpoints = {
 let oldMapping: ThemeMapping;
 
 const themeMappings = [
-  { paths: ["/grocery-4"], color: COLORS.GREEN },
-  { paths: ["/gift-shop"], color: COLORS.GIFT },
-  { paths: ["/furniture-2"], color: COLORS.ORANGE },
-  { paths: ["/furniture-3"], color: COLORS.GOLD },
-  { paths: ["/furniture-1", "/medical"], color: COLORS.PASTE },
-  { paths: ["/health-beauty", "/admin", "/vendor"], color: COLORS.HEALTH },
-  { paths: ["/grocery-1", "/grocery-2"], color: COLORS.RED }
+  { paths: ["/grocery-1", "/"], color: COLORS.RED },
+  { paths: ["/admin", "/vendor"], color: COLORS.HEALTH }
 ];
 
 export default function themeOptions(pathname: string) {

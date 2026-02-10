@@ -7,6 +7,7 @@ export const users = [
     password: "wJVineM971smn42",
     dateOfBirth: "1996-04-25T22:23:50.205Z",
     verified: true,
+    role: "customer" as const,
     name: { firstName: "Nick", lastName: "DuBuque" }
   },
   {
@@ -17,6 +18,7 @@ export const users = [
     password: "z18PYo4UfgVqzz8",
     dateOfBirth: "1995-04-24T02:48:46.337Z",
     verified: true,
+    role: "vendor" as const,
     name: { firstName: "Hulda", lastName: "Brakus" }
   },
   {
@@ -27,6 +29,7 @@ export const users = [
     password: "jDBRzl7u_dPSBmh",
     dateOfBirth: "1957-08-19T20:43:27.939Z",
     verified: true,
+    role: "admin" as const,
     name: { firstName: "Jamaal", lastName: "McClure" }
   }
 ];
