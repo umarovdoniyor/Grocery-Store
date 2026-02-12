@@ -36,13 +36,14 @@ export const mobileNavigationTwo = [
 // CATEGORY LIST FOR HEADER
 export const categories = [
   { title: "All Categories", value: "" },
-  { title: "Car", value: "car" },
-  { title: "Clothes", value: "clothes" },
-  { title: "Electronics", value: "electronics" },
-  { title: "Laptop", value: "laptop" },
-  { title: "Desktop", value: "desktop" },
-  { title: "Camera", value: "camera" },
-  { title: "Toys", value: "toys" }
+  { title: "Fresh Produce", value: "produce" },
+  { title: "Dairy & Eggs", value: "dairy" },
+  { title: "Meat & Seafood", value: "meat" },
+  { title: "Bakery", value: "bakery" },
+  { title: "Frozen Foods", value: "frozen" },
+  { title: "Snacks", value: "snacks" },
+  { title: "Beverages", value: "beverages" },
+  { title: "Pantry", value: "pantry" }
 ];
 
 export const footerAboutLinks = [

@@ -1,102 +1,53 @@
 import { CategoryMenuItem } from "models/Category.model";
 
+// GROCERY STORE NAVIGATION - All non-grocery categories removed
 export const categoryMenus: CategoryMenuItem[] = [
   {
-    icon: "ShirtLine",
-    title: "Fashion",
-    href: "/fashion",
+    icon: "Apple",
+    title: "Fresh Produce",
+    href: "/products/search?category=produce",
     component: "Grid",
     offer: {
       url: "/assets/images/promotion/offer-1.png",
-      href: "/products/search",
+      href: "/products/search?category=organic",
       position: "right"
     },
     children: [
       {
-        title: "Man Clothes",
-        href: "#",
+        title: "Fresh Fruits",
+        href: "/products/search?category=fruits",
         children: [
-          { title: "Shirt", href: "/products/search?category=clothes" },
-          { title: "T- shirt", href: "/products/search?category=clothes" },
-          { title: "Pant", href: "/products/search?category=clothes" },
-          { title: "Underwear", href: "/products/search?category=clothes" }
+          { title: "Apples", href: "/products/search?category=apples" },
+          { title: "Berries", href: "/products/search?category=berries" },
+          { title: "Citrus", href: "/products/search?category=citrus" },
+          { title: "Tropical Fruits", href: "/products/search?category=tropical" }
         ]
       },
       {
-        title: "Accessories",
-        href: "#",
+        title: "Fresh Vegetables",
+        href: "/products/search?category=vegetables",
         children: [
-          { title: "Belt", href: "/products/search?category=clothes" },
-          { title: "Hat", href: "/products/search?category=clothes" },
-          { title: "Watches", href: "/products/search?category=clothes" },
-          { title: "Sunglasses", href: "/products/search?category=clothes" }
+          { title: "Leafy Greens", href: "/products/search?category=leafy-greens" },
+          { title: "Root Vegetables", href: "/products/search?category=root-vegetables" },
+          { title: "Peppers & Tomatoes", href: "/products/search?category=peppers" },
+          { title: "Onions & Garlic", href: "/products/search?category=onions-garlic" }
         ]
       },
       {
-        title: "Shoes",
-        href: "#",
+        title: "Herbs & Organic",
+        href: "/products/search?category=herbs",
         children: [
-          { title: "Sneakers", href: "/products/search?category=clothes" },
-          { title: "Sandals", href: "/products/search?category=clothes" },
-          { title: "Formal", href: "/products/search?category=clothes" },
-          { title: "Casual", href: "/products/search?category=clothes" }
-        ]
-      },
-      {
-        title: "Bags",
-        href: "#",
-        children: [
-          { title: "Backpack", href: "/products/search?category=clothes" },
-          { title: "Crossbody Bags", href: "/products/search?category=clothes" },
-          { title: "Side Bags", href: "/products/search?category=clothes" },
-          { title: "Slides", href: "/products/search?category=clothes" }
-        ]
-      },
-      {
-        title: "Woman Clothes",
-        href: "#",
-        children: [
-          { title: "Shirt", href: "/products/search?category=clothes" },
-          { title: "T- shirt", href: "/products/search?category=clothes" },
-          { title: "Pant", href: "/products/search?category=clothes" },
-          { title: "Underwear", href: "/products/search?category=clothes" }
-        ]
-      },
-      {
-        title: "Accessories",
-        href: "#",
-        children: [
-          { title: "Belt", href: "/products/search?category=clothes" },
-          { title: "Hat", href: "/products/search?category=clothes" },
-          { title: "Watches", href: "/products/search?category=clothes" },
-          { title: "Sunglasses", href: "/products/search?category=clothes" }
-        ]
-      },
-      {
-        title: "Shoes",
-        href: "#",
-        children: [
-          { title: "Sneakers", href: "/products/search?category=clothes" },
-          { title: "Sandals", href: "/products/search?category=clothes" },
-          { title: "Formal", href: "/products/search?category=clothes" },
-          { title: "Casual", href: "/products/search?category=clothes" }
-        ]
-      },
-      {
-        title: "Bags",
-        href: "#",
-        children: [
-          { title: "Backpack", href: "/products/search?category=clothes" },
-          { title: "Crossbody Bags", href: "/products/search?category=clothes" },
-          { title: "Side Bags", href: "/products/search?category=clothes" },
-          { title: "Slides", href: "/products/search?category=clothes" }
+          { title: "Fresh Herbs", href: "/products/search?category=herbs" },
+          { title: "Organic Produce", href: "/products/search?category=organic" },
+          { title: "Salad Kits", href: "/products/search?category=salad-kits" },
+          { title: "Sprouts", href: "/products/search?category=sprouts" }
         ]
       }
     ]
   },
   {
-    icon: "LaptopMobile",
-    title: "Electronics",
+    icon: "Milk",
+    title: "Dairy & Eggs",
     component: "Grid",
     href: "/electronics",
     offer: { url: "/assets/images/promotion/offer-5.png", href: "/", position: "bottom" },
