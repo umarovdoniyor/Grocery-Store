@@ -1,13 +1,28 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, PropsWithChildren } from "react";
-import axios from "utils/axiosInstance";
+import {
+  getJwtToken,
+  logIn as authLogIn,
+  logOut as authLogOut,
+  signUp as authSignUp,
+  updateUserInfo
+} from "../../libs/auth";
+import { initializeApollo } from "../../apollo/client";
+import { GET_MEMBER_PROFILE, ME } from "../../apollo/user/query";
+import { UPDATE_MEMBER } from "../../apollo/user/mutation";
+import { userVar } from "../../apollo/store";
 import User, { UserRole } from "models/User.model";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
+  updateMemberProfile: (data: UpdateProfileData) => Promise<{ success: boolean; error?: string }>;
+  refreshUser: () => Promise<{ success: boolean; error?: string }>;
+  getMemberProfile: (
+    memberId: string
+  ) => Promise<{ success: boolean; user?: User; error?: string }>;
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -24,57 +39,216 @@ interface RegisterData {
   businessLicense?: string;
 }
 
+interface UpdateProfileData {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  avatar?: string;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const mapMemberTypeToRole = (memberType?: string): UserRole => {
+  if (memberType === "ADMIN") return "admin";
+  if (memberType === "VENDOR") return "vendor";
+  return "customer";
+};
+
+const mapMemberToUser = (member: any): User => ({
+  id: member?._id || "",
+  email: member?.memberEmail || "",
+  phone: member?.memberPhone || "",
+  avatar: member?.memberAvatar || "",
+  password: "",
+  dateOfBirth: "",
+  verified: Boolean(member?.isEmailVerified || member?.isPhoneVerified),
+  role: mapMemberTypeToRole(member?.memberType),
+  name: {
+    firstName: member?.memberFirstName || member?.memberNickname || "",
+    lastName: member?.memberLastName || ""
+  }
+});
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        localStorage.removeItem("user");
-      }
+  const restoreFromToken = async () => {
+    const token = getJwtToken();
+
+    if (!token) {
+      return { success: false, error: "No token" };
     }
-    setIsLoading(false);
+
+    const apolloClient = await initializeApollo();
+    const { data } = await apolloClient.query({
+      query: ME,
+      fetchPolicy: "network-only"
+    });
+
+    const member = data?.me;
+
+    if (!member) {
+      return { success: false, error: "Failed to restore user" };
+    }
+
+    updateUserInfo(token, member);
+    const userData = mapMemberToUser(member);
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    return { success: true };
+  };
+
+  // Restore auth state on app load using JWT + me query
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreAuthState = async () => {
+      try {
+        await restoreFromToken();
+      } catch (error) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        userVar({
+          _id: "",
+          memberEmail: "",
+          memberType: "",
+          memberStatus: "",
+          memberPhone: "",
+          memberNickname: "",
+          memberFirstName: "",
+          memberLastName: "",
+          memberAvatar: "",
+          memberAddress: "",
+          isEmailVerified: false,
+          isPhoneVerified: false
+        });
+
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+
+      return;
+    };
+
+    restoreAuthState();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post("/api/users/login", { email, password });
-      const userData = response.data as User;
+      await authLogIn(email, password);
+      const memberData = userVar();
+      const userData = mapMemberToUser(memberData);
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       return { success: true };
     } catch (error: any) {
-      const message = error.response?.data?.message || "Login failed";
+      const message = error?.message || "Login failed";
       return { success: false, error: message };
     }
   };
 
   const register = async (registerData: RegisterData) => {
     try {
-      const { name, email, password, role = "customer", ...vendorData } = registerData;
+      const { name, email, password, role = "customer" } = registerData;
 
-      const response = await axios.post("/api/users/register", {
-        name,
-        email,
-        password,
-        role,
-        ...vendorData
-      });
+      if (role === "vendor") {
+        return { success: false, error: "Vendor registration is not enabled yet." };
+      }
 
-      const userData = response.data as User;
+      const nameParts = name.trim().split(/\s+/);
+      const firstName = nameParts[0] || name;
+      const lastName = nameParts.slice(1).join(" ") || "User";
+      const nickname = firstName;
+
+      await authSignUp(email, password, nickname, firstName, lastName);
+
+      const memberData = userVar();
+      const userData = mapMemberToUser(memberData);
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       return { success: true };
     } catch (error: any) {
-      const message = error.response?.data?.message || "Registration failed";
+      const message = error?.message || "Registration failed";
+      return { success: false, error: message };
+    }
+  };
+
+  const refreshUser = async () => {
+    try {
+      await restoreFromToken();
+      return { success: true };
+    } catch (error: any) {
+      const message = error?.message || "Failed to refresh user";
+      return { success: false, error: message };
+    }
+  };
+
+  const getMemberProfile = async (memberId: string) => {
+    try {
+      const apolloClient = await initializeApollo();
+      const { data } = await apolloClient.query({
+        query: GET_MEMBER_PROFILE,
+        variables: { memberId },
+        fetchPolicy: "network-only"
+      });
+
+      const member = data?.getMemberProfile;
+
+      if (!member) {
+        return { success: false, error: "Profile not found" };
+      }
+
+      return { success: true, user: mapMemberToUser(member) };
+    } catch (error: any) {
+      const message = error?.message || "Failed to load profile";
+      return { success: false, error: message };
+    }
+  };
+
+  const updateMemberProfile = async (profileData: UpdateProfileData) => {
+    try {
+      const apolloClient = await initializeApollo();
+      const input: any = {};
+
+      if (profileData.firstName) input.memberFirstName = profileData.firstName;
+      if (profileData.lastName) input.memberLastName = profileData.lastName;
+      if (profileData.phone) input.memberPhone = profileData.phone;
+      if (profileData.address) input.memberAddress = profileData.address;
+      if (profileData.avatar) input.memberAvatar = profileData.avatar;
+
+      const { data } = await apolloClient.mutate({
+        mutation: UPDATE_MEMBER,
+        variables: { input }
+      });
+
+      const updatedMember = data?.updateMember;
+
+      if (!updatedMember) {
+        return { success: false, error: "Failed to update profile" };
+      }
+
+      // Update global state
+      updateUserInfo(getJwtToken(), updatedMember);
+      const userData = mapMemberToUser(updatedMember);
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      return { success: true };
+    } catch (error: any) {
+      const message = error?.message || "Failed to update profile";
       return { success: false, error: message };
     }
   };
@@ -82,6 +256,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    authLogOut();
   };
 
   return (
@@ -90,6 +265,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         user,
         login,
         register,
+        updateMemberProfile,
+        refreshUser,
+        getMemberProfile,
         logout,
         isAuthenticated: !!user,
         isLoading

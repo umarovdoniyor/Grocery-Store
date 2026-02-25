@@ -20,7 +20,7 @@ import { useAuth } from "contexts/AuthContext";
 // LOGIN FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
   password: yup.string().required("Password is required"),
-  email: yup.string().email("Invalid Email Address").required("Email is required")
+  identifier: yup.string().required("Email or phone is required")
 });
 
 export default function LoginPageView() {
@@ -29,7 +29,7 @@ export default function LoginPageView() {
   const { visiblePassword, togglePasswordVisible } = usePasswordVisible();
   const [error, setError] = useState<string | null>(null);
 
-  const initialValues = { email: "", password: "" };
+  const initialValues = { identifier: "", password: "" };
 
   const methods = useForm({
     defaultValues: initialValues,
@@ -43,7 +43,7 @@ export default function LoginPageView() {
 
   const handleSubmitForm = handleSubmit(async (values) => {
     setError(null);
-    const result = await login(values.email, values.password);
+    const result = await login(values.identifier, values.password);
 
     if (result.success) {
       router.push("/");
@@ -64,10 +64,10 @@ export default function LoginPageView() {
         <Label>Email or Phone Number</Label>
         <TextField
           fullWidth
-          name="email"
-          type="email"
+          name="identifier"
+          type="text"
           size="medium"
-          placeholder="exmple@mail.com"
+          placeholder="example@mail.com or +8210..."
         />
       </div>
 

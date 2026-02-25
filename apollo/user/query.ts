@@ -14,6 +14,7 @@ export const ME = gql`
       memberFirstName
       memberLastName
       memberAvatar
+      memberAddress
       memberType
       memberStatus
       isEmailVerified
@@ -35,6 +36,7 @@ export const GET_MEMBER_PROFILE = gql`
       memberFirstName
       memberLastName
       memberAvatar
+      memberAddress
       memberType
       memberStatus
       isEmailVerified

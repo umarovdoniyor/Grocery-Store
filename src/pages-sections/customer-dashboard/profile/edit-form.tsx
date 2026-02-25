@@ -12,12 +12,16 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { FormProvider, TextField } from "components/form-hook";
 // CUSTOM DATA MODEL
 import User from "models/User.model";
+import { useAuth } from "contexts/AuthContext";
+import { sweetTopSmallSuccessAlert, sweetMixinErrorAlert } from "libs/sweetAlert";
+import { useRouter } from "next/navigation";
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
   email: yup.string().email("invalid email").required("Email is required"),
   contact: yup.string().required("Contact is required"),
+  address: yup.string(),
   birthOfDate: yup.date().required("Birth date is required")
 });
 
@@ -26,9 +30,13 @@ type Props = { user: User };
 // ==============================================================
 
 export default function ProfileEditForm({ user }: Props) {
+  const router = useRouter();
+  const { updateMemberProfile } = useAuth();
+
   const initialValues = {
     email: user?.email || "",
     contact: user?.phone || "",
+    address: user?.address || "",
     lastName: user?.name?.lastName || "",
     firstName: user?.name?.firstName || "",
     birthOfDate: user?.dateOfBirth ? new Date(user.dateOfBirth) : new Date()
@@ -45,8 +53,24 @@ export default function ProfileEditForm({ user }: Props) {
     formState: { isSubmitting }
   } = methods;
 
-  const handleSubmitForm = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2));
+  const handleSubmitForm = handleSubmit(async (values) => {
+    try {
+      const { success, error } = await updateMemberProfile({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phone: values.contact,
+        address: values.address
+      });
+
+      if (success) {
+        sweetTopSmallSuccessAlert("Profile updated successfully!");
+        router.push("/profile");
+      } else {
+        sweetMixinErrorAlert(error || "Failed to update profile");
+      }
+    } catch (error: any) {
+      sweetMixinErrorAlert(error?.message || "An error occurred");
+    }
   });
 
   return (
@@ -66,6 +90,10 @@ export default function ProfileEditForm({ user }: Props) {
 
         <Grid size={{ md: 6, xs: 12 }}>
           <TextField size="medium" fullWidth label="Phone" name="contact" />
+        </Grid>
+
+        <Grid size={12}>
+          <TextField size="medium" fullWidth label="Address" name="address" />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>

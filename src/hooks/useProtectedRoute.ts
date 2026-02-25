@@ -15,12 +15,18 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { requiredRole, redirectTo = "/login" } = options;
 
+  const roleLandingPath: Record<UserRole, string> = {
+    customer: "/profile",
+    vendor: "/vendor/dashboard",
+    admin: "/admin/orders"
+  };
+
   useEffect(() => {
     if (isLoading) return;
 
     // Not authenticated - redirect to login
     if (!isAuthenticated) {
-      router.push(redirectTo);
+      router.replace(redirectTo);
       return;
     }
 
@@ -29,20 +35,8 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
       const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
 
       if (!allowedRoles.includes(user.role)) {
-        // Redirect based on user role
-        switch (user.role) {
-          case "customer":
-            router.push("/");
-            break;
-          case "vendor":
-            router.push("/vendor/dashboard");
-            break;
-          case "admin":
-            router.push("/admin/orders");
-            break;
-          default:
-            router.push("/");
-        }
+        const landingPath = roleLandingPath[user.role] || "/";
+        router.replace(landingPath);
       }
     }
   }, [isAuthenticated, isLoading, user, requiredRole, redirectTo, router]);
