@@ -1,160 +1,183 @@
 /** This file handles all authentication logic - login, signup, logout, and token management. */
-import decodeJWT from 'jwt-decode';
-import { initializeApollo } from '../../apollo/client';
-import { userVar } from '../../apollo/store';
-import { CustomJwtPayload } from '../types/customJwtPayload';
-import { sweetMixinErrorAlert } from '../sweetAlert';
-import { LOGIN, SIGN_UP } from '../../apollo/user/mutation';
+import { jwtDecode } from "jwt-decode";
+import { initializeApollo } from "../../apollo/client";
+import { userVar } from "../../apollo/store";
+import { CustomJwtPayload } from "../types/customJwtPayload";
+import { sweetMixinErrorAlert } from "../sweetAlert";
+import { LOGIN, SIGN_UP } from "../../apollo/user/mutation";
 
 /** =============== getJwtToken ===============*/
 /** Purpose: Retrieve JWT token from browser's localStorage */
 export function getJwtToken(): any {
-	if (typeof window !== 'undefined') {
-		//Check if code is running in browser (not server-side)
-		return localStorage.getItem('accessToken') ?? '';
-	}
+  if (typeof window !== "undefined") {
+    //Check if code is running in browser (not server-side)
+    return localStorage.getItem("accessToken") ?? "";
+  }
 }
 
 /** =============== setJwtToken ===============*/
 /** Purpose: Store JWT token in browser's localStorage */
 export function setJwtToken(token: string) {
-	localStorage.setItem('accessToken', token);
+  localStorage.setItem("accessToken", token);
 }
 
 /** =============== logIn ===============*/
 /** Purpose: Authenticate user and store JWT token */
-export const logIn = async (nick: string, password: string): Promise<void> => {
-	try {
-		// 1. Request JWT token from server
-		const { jwtToken } = await requestJwtToken({ nick, password });
+export const logIn = async (identifier: string, password: string): Promise<void> => {
+  try {
+    // 1. Request JWT token from server
+    const { jwtToken, member } = await requestJwtToken({ identifier, password });
 
-		// 2. If token received, store it and update user info
-		if (jwtToken) {
-			updateStorage({ jwtToken });
-			updateUserInfo(jwtToken);
-		}
-	} catch (err) {
-		// 3. Handle errors during login process
-		console.warn('login err', err);
-		logOut(); // Clear any existing user data on error
-		throw new Error('Login Err');
-	}
+    // 2. If token received, store it and update user info
+    if (jwtToken) {
+      updateStorage({ jwtToken });
+      updateUserInfo(jwtToken, member);
+    }
+  } catch (err) {
+    // 3. Handle errors during login process
+    console.warn("login err", err);
+    logOut(); // Clear any existing user data on error
+    throw new Error("Login Err");
+  }
 };
 
 /** =============== requestJwtToken ===============*/
 /** Purpose: Request JWT token from server during login */
 const requestJwtToken = async ({
-	nick,
-	password,
+  identifier,
+  password
 }: {
-	nick: string;
-	password: string;
-}): Promise<{ jwtToken: string }> => {
-	// 1. Get Apollo Client instance
-	const apolloClient = await initializeApollo();
+  identifier: string;
+  password: string;
+}): Promise<{ jwtToken: string; member: any }> => {
+  // 1. Get Apollo Client instance
+  const apolloClient = await initializeApollo();
 
-	try {
-		// 2. Execute login mutation
-		const result = await apolloClient.mutate({
-			mutation: LOGIN,
-			variables: { input: { memberNick: nick, memberPassword: password } },
-			fetchPolicy: 'network-only', // Don't use cache, always fetch fresh
-		});
+  try {
+    // 2. Execute login mutation
+    const result = await apolloClient.mutate({
+      mutation: LOGIN,
+      variables: { input: { identifier, memberPassword: password } },
+      fetchPolicy: "network-only" // Don't use cache, always fetch fresh
+    });
 
-		console.log('---------- login ----------');
-		// 3. Extract accessToken from response
-		const { accessToken } = result?.data?.login;
+    console.log("---------- login ----------");
+    // 3. Extract accessToken and member from response
+    const { accessToken, member } = result?.data?.logIn;
 
-		return { jwtToken: accessToken };
-	} catch (err: any) {
-		// 4. Handle errors from server
-		console.log('request token err', err.graphQLErrors);
-		switch (err.graphQLErrors[0].message) {
-			case 'Definer: login and password do not match':
-				await sweetMixinErrorAlert('Please check your password again');
-				break;
-			case 'Definer: user has been blocked!':
-				await sweetMixinErrorAlert('User has been blocked!');
-				break;
-		}
-		throw new Error('token error');
-	}
+    return { jwtToken: accessToken, member };
+  } catch (err: any) {
+    // 4. Handle errors from server
+    console.log("request token err", err.graphQLErrors);
+    if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+      const message = err.graphQLErrors[0].message;
+      if (message.includes("password")) {
+        await sweetMixinErrorAlert("Please check your password again");
+      } else if (message.includes("blocked")) {
+        await sweetMixinErrorAlert("User has been blocked!");
+      } else {
+        await sweetMixinErrorAlert(message);
+      }
+    }
+    throw new Error("token error");
+  }
 };
 
 /** =============== signUp ===============*/
 /** Purpose: Register new user and store JWT token */
-export const signUp = async (nick: string, password: string, phone: string, type: string): Promise<void> => {
-	try {
-		// 1. Request JWT token from server after signup
-		const { jwtToken } = await requestSignUpJwtToken({ nick, password, phone, type });
+export const signUp = async (
+  email: string,
+  password: string,
+  nickname: string,
+  firstName: string,
+  lastName: string,
+  phone?: string
+): Promise<void> => {
+  try {
+    // 1. Request JWT token from server after signup
+    const { jwtToken, member } = await requestSignUpJwtToken({
+      email,
+      password,
+      nickname,
+      firstName,
+      lastName,
+      phone
+    });
 
-		// 2. If token received, store it and update user info
-		if (jwtToken) {
-			updateStorage({ jwtToken });
-			updateUserInfo(jwtToken);
-		}
-	} catch (err) {
-		// 3. Handle errors during signup process
-		console.warn('login err', err);
-		logOut(); // Clear any existing user data on error
-		throw new Error('Login Err');
-	}
+    // 2. If token received, store it and update user info
+    if (jwtToken) {
+      updateStorage({ jwtToken });
+      updateUserInfo(jwtToken, member);
+    }
+  } catch (err) {
+    // 3. Handle errors during signup process
+    console.warn("signup err", err);
+    logOut(); // Clear any existing user data on error
+    throw new Error("Signup Err");
+  }
 };
 
 /** =============== requestSignUpJwtToken ===============*/
 /** Purpose: Request JWT token from server during signup */
 const requestSignUpJwtToken = async ({
-	nick,
-	password,
-	phone,
-	type,
+  email,
+  password,
+  nickname,
+  firstName,
+  lastName,
+  phone
 }: {
-	nick: string;
-	password: string;
-	phone: string;
-	type: string;
-}): Promise<{ jwtToken: string }> => {
-	// 1. Get Apollo Client instance
-	const apolloClient = await initializeApollo();
+  email: string;
+  password: string;
+  nickname: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}): Promise<{ jwtToken: string; member: any }> => {
+  // 1. Get Apollo Client instance
+  const apolloClient = await initializeApollo();
 
-	try {
-		// 2. Execute signup mutation
-		const result = await apolloClient.mutate({
-			mutation: SIGN_UP,
-			variables: {
-				input: { memberNick: nick, memberPassword: password, memberPhone: phone, memberType: type },
-			},
-			fetchPolicy: 'network-only', // Don't use cache, always fetch fresh
-		});
+  try {
+    // 2. Execute signup mutation
+    const result = await apolloClient.mutate({
+      mutation: SIGN_UP,
+      variables: {
+        input: {
+          memberEmail: email,
+          memberPassword: password,
+          memberNickname: nickname,
+          memberFirstName: firstName,
+          memberLastName: lastName,
+          memberPhone: phone
+        }
+      },
+      fetchPolicy: "network-only" // Don't use cache, always fetch fresh
+    });
 
-		console.log('---------- signup ----------');
-		// 3. Extract accessToken from response
-		const { accessToken } = result?.data?.signup;
+    console.log("---------- signup ----------");
+    // 3. Extract accessToken and member from response
+    const { accessToken, member } = result?.data?.signUp;
 
-		return { jwtToken: accessToken };
-	} catch (err: any) {
-		console.log('request token err', err.graphQLErrors);
-		switch (err.graphQLErrors[0].message) {
-			case 'Definer: login and password do not match':
-				await sweetMixinErrorAlert('Please check your password again');
-				break;
-			case 'Definer: user has been blocked!':
-				await sweetMixinErrorAlert('User has been blocked!');
-				break;
-		}
-		throw new Error('token error');
-	}
+    return { jwtToken: accessToken, member };
+  } catch (err: any) {
+    console.log("request token err", err.graphQLErrors);
+    if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+      const message = err.graphQLErrors[0].message;
+      await sweetMixinErrorAlert(message);
+    }
+    throw new Error("token error");
+  }
 };
 
 /** =============== updateStorage ===============*/
 /** Purpose: Update localStorage with new JWT token and login timestamp */
 export const updateStorage = ({ jwtToken }: { jwtToken: any }) => {
-	// 1. Store JWT token in localStorage under 'accessToken' key
-	setJwtToken(jwtToken);
-	// 2. Update login timestamp to notify other tabs/windows
-	window.localStorage.setItem('login', Date.now().toString());
+  // 1. Store JWT token in localStorage under 'accessToken' key
+  setJwtToken(jwtToken);
+  // 2. Update login timestamp to notify other tabs/windows
+  window.localStorage.setItem("login", Date.now().toString());
 
-	/** LocalStorage after login: {
+  /** LocalStorage after login: {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "login": "1675434567890"
 } */
@@ -162,75 +185,61 @@ export const updateStorage = ({ jwtToken }: { jwtToken: any }) => {
 
 /** =============== updateUserInfo ===============*/
 /** Purpose: Decode JWT token and update user information in Apollo Client state */
-export const updateUserInfo = (jwtToken: any) => {
-	if (!jwtToken) return false;
+export const updateUserInfo = (jwtToken: any, member?: any) => {
+  if (!jwtToken) return false;
 
-	const claims = decodeJWT<CustomJwtPayload>(jwtToken);
-	userVar({
-		_id: claims._id ?? '',
-		memberType: claims.memberType ?? '',
-		memberStatus: claims.memberStatus ?? '',
-		memberAuthType: claims.memberAuthType,
-		memberPhone: claims.memberPhone ?? '',
-		memberNick: claims.memberNick ?? '',
-		memberFullName: claims.memberFullName ?? '',
-		memberImage:
-			claims.memberImage === null || claims.memberImage === undefined
-				? '/img/profile/defaultUser.svg'
-				: `${claims.memberImage}`,
-		memberAddress: claims.memberAddress ?? '',
-		memberDesc: claims.memberDesc ?? '',
-		memberProperties: claims.memberProperties,
-		memberRank: claims.memberRank,
-		memberArticles: claims.memberArticles,
-		memberPoints: claims.memberPoints,
-		memberLikes: claims.memberLikes,
-		memberViews: claims.memberViews,
-		memberWarnings: claims.memberWarnings,
-		memberBlocks: claims.memberBlocks,
-	});
+  const claims = jwtDecode<CustomJwtPayload>(jwtToken);
+
+  userVar({
+    _id: member?._id || claims.sub || claims._id || "",
+    memberEmail: member?.memberEmail || claims.memberEmail || "",
+    memberType: member?.memberType || claims.memberType || "",
+    memberStatus: member?.memberStatus || claims.memberStatus || "",
+    memberPhone: member?.memberPhone || claims.memberPhone || "",
+    memberNickname: member?.memberNickname || claims.memberNickname || "",
+    memberFirstName: member?.memberFirstName || claims.memberFirstName || "",
+    memberLastName: member?.memberLastName || claims.memberLastName || "",
+    memberAvatar: member?.memberAvatar || claims.memberAvatar || "",
+    memberAddress: member?.memberAddress || claims.memberAddress || "",
+    isEmailVerified: member?.isEmailVerified || claims.isEmailVerified || false,
+    isPhoneVerified: member?.isPhoneVerified || claims.isPhoneVerified || false
+  });
 };
 
 /** =============== logOut ===============*/
 /** Purpose: Log out user by clearing JWT token and user info */
 export const logOut = () => {
-	deleteStorage();
-	deleteUserInfo();
-	window.location.reload();
+  deleteStorage();
+  deleteUserInfo();
+  window.location.reload();
 };
 
 /** =============== deleteStorage ===============*/
 /** Purpose: Remove JWT token from localStorage and notify other tabs/windows */
 const deleteStorage = () => {
-	// 1. Remove JWT token from localStorage under 'accessToken' key
-	localStorage.removeItem('accessToken');
-	// 2. Update logout timestamp to notify other tabs/windows
-	window.localStorage.setItem('logout', Date.now().toString());
+  // 1. Remove JWT token from localStorage under 'accessToken' key
+  localStorage.removeItem("accessToken");
+  // 2. Update logout timestamp to notify other tabs/windows
+  window.localStorage.setItem("logout", Date.now().toString());
 };
 
 /** =============== deleteUserInfo ===============*/
 /** Purpose: Clear user information from Apollo Client state */
 const deleteUserInfo = () => {
-	userVar({
-		_id: '',
-		memberType: '',
-		memberStatus: '',
-		memberAuthType: '',
-		memberPhone: '',
-		memberNick: '',
-		memberFullName: '',
-		memberImage: '',
-		memberAddress: '',
-		memberDesc: '',
-		memberProperties: 0,
-		memberRank: 0,
-		memberArticles: 0,
-		memberPoints: 0,
-		memberLikes: 0,
-		memberViews: 0,
-		memberWarnings: 0,
-		memberBlocks: 0,
-	});
+  userVar({
+    _id: "",
+    memberEmail: "",
+    memberType: "",
+    memberStatus: "",
+    memberPhone: "",
+    memberNickname: "",
+    memberFirstName: "",
+    memberLastName: "",
+    memberAvatar: "",
+    memberAddress: "",
+    isEmailVerified: false,
+    isPhoneVerified: false
+  });
 };
 
 /**
