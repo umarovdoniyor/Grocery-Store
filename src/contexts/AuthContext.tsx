@@ -9,8 +9,8 @@ import {
   updateUserInfo
 } from "../../libs/auth";
 import { initializeApollo } from "../../apollo/client";
-import { GET_MEMBER_PROFILE, ME } from "../../apollo/user/query";
-import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD } from "../../apollo/user/mutation";
+import { GET_MEMBER_PROFILE, ME, GET_MY_VENDOR_APPLICATION } from "../../apollo/user/query";
+import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apollo/user/mutation";
 import { userVar } from "../../apollo/store";
 import User, { UserRole } from "models/User.model";
 
@@ -20,6 +20,14 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   updateMemberProfile: (data: UpdateProfileData) => Promise<{ success: boolean; error?: string }>;
   changePassword: (data: ChangePasswordData) => Promise<{ success: boolean; error?: string }>;
+  applyVendor: (
+    data: ApplyVendorData
+  ) => Promise<{ success: boolean; applicationId?: string; error?: string }>;
+  getMyVendorApplication: () => Promise<{
+    success: boolean;
+    application?: VendorApplication | null;
+    error?: string;
+  }>;
   refreshUser: () => Promise<{ success: boolean; error?: string }>;
   getMemberProfile: (
     memberId: string
@@ -53,6 +61,24 @@ interface ChangePasswordData {
   newPassword: string;
 }
 
+interface ApplyVendorData {
+  storeName: string;
+  description: string;
+  businessLicenseUrl: string;
+}
+
+interface VendorApplication {
+  _id: string;
+  memberId: string;
+  storeName: string;
+  description: string;
+  businessLicenseUrl: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejectionReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const mapMemberTypeToRole = (memberType?: string): UserRole => {
@@ -66,6 +92,7 @@ const mapMemberToUser = (member: any): User => ({
   email: member?.memberEmail || "",
   phone: member?.memberPhone || "",
   avatar: member?.memberAvatar || "",
+  address: member?.memberAddress || "",
   password: "",
   dateOfBirth: "",
   verified: Boolean(member?.isEmailVerified || member?.isPhoneVerified),
@@ -73,7 +100,15 @@ const mapMemberToUser = (member: any): User => ({
   name: {
     firstName: member?.memberFirstName || member?.memberNickname || "",
     lastName: member?.memberLastName || ""
-  }
+  },
+  vendorProfile: member?.vendorProfile
+    ? {
+        storeName: member.vendorProfile.storeName || "",
+        storeDescription: member.vendorProfile.storeDescription || "",
+        businessLicense: member.vendorProfile.businessLicense || "",
+        taxId: member.vendorProfile.taxId || ""
+      }
+    : undefined
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -304,6 +339,69 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const applyVendor = async (vendorData: ApplyVendorData) => {
+    try {
+      // Check if user is authenticated
+      const token = getJwtToken();
+      if (!token || !user) {
+        return { success: false, error: "You must be logged in to apply as a vendor" };
+      }
+
+      // Check if user is already a vendor
+      if (user.role === "vendor") {
+        return { success: false, error: "You are already a vendor" };
+      }
+
+      const apolloClient = await initializeApollo();
+
+      const { data } = await apolloClient.mutate({
+        mutation: APPLY_VENDOR,
+        variables: {
+          input: {
+            storeName: vendorData.storeName,
+            description: vendorData.description,
+            businessLicenseUrl: vendorData.businessLicenseUrl
+          }
+        }
+      });
+
+      const application = data?.applyVendor;
+
+      if (!application) {
+        return { success: false, error: "Failed to apply for vendor" };
+      }
+
+      return { success: true, applicationId: application._id };
+    } catch (error: any) {
+      const message = error?.message || "Failed to apply for vendor";
+      return { success: false, error: message };
+    }
+  };
+
+  const getMyVendorApplication = async () => {
+    try {
+      // Check if user is authenticated
+      const token = getJwtToken();
+      if (!token || !user) {
+        return { success: false, error: "You must be logged in to view vendor application" };
+      }
+
+      const apolloClient = await initializeApollo();
+
+      const { data } = await apolloClient.query({
+        query: GET_MY_VENDOR_APPLICATION,
+        fetchPolicy: "network-only"
+      });
+
+      const application = data?.getMyVendorApplication;
+
+      return { success: true, application };
+    } catch (error: any) {
+      const message = error?.message || "Failed to fetch vendor application";
+      return { success: false, error: message };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -318,6 +416,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         register,
         updateMemberProfile,
         changePassword,
+        applyVendor,
+        getMyVendorApplication,
         refreshUser,
         getMemberProfile,
         logout,

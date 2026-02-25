@@ -98,6 +98,38 @@ export const CHANGE_MEMBER_PASSWORD = gql`
   }
 `;
 
+export const APPLY_VENDOR = gql`
+  mutation ApplyVendor($input: ApplyVendorInput!) {
+    applyVendor(input: $input) {
+      _id
+      memberId
+      storeName
+      description
+      businessLicenseUrl
+      status
+      rejectionReason
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const REVIEW_VENDOR_APPLICATION = gql`
+  mutation ReviewVendorApplication($input: ReviewVendorApplicationInput!) {
+    reviewVendorApplication(input: $input) {
+      _id
+      memberId
+      storeName
+      description
+      businessLicenseUrl
+      status
+      rejectionReason
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const LIKE_TARGET_MEMBER = gql`
   mutation LikeTargetMember($input: String!) {
     likeTargetMember(memberId: $input) {

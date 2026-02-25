@@ -48,6 +48,22 @@ export const GET_MEMBER_PROFILE = gql`
   }
 `;
 
+export const GET_MY_VENDOR_APPLICATION = gql`
+  query GetMyVendorApplication {
+    getMyVendorApplication {
+      _id
+      memberId
+      storeName
+      description
+      businessLicenseUrl
+      status
+      rejectionReason
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_AGENTS = gql`
   query GetAgents($input: AgentsInquiry!) {
     getAgents(input: $input) {
