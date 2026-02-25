@@ -58,27 +58,42 @@ export const UPDATE_MEMBER = gql`
   mutation UpdateMember($input: MemberUpdate!) {
     updateMember(input: $input) {
       _id
+      memberEmail
+      memberPhone
+      memberNickname
+      memberFirstName
+      memberLastName
+      memberAvatar
+      memberAddress
       memberType
       memberStatus
-      memberAuthType
-      memberPhone
-      memberNick
-      memberFullName
-      memberImage
-      memberAddress
-      memberDesc
-      memberProperties
-      memberRank
-      memberArticles
-      memberPoints
-      memberLikes
-      memberViews
-      memberWarnings
-      memberBlocks
-      deletedAt
+      isEmailVerified
+      isPhoneVerified
+      lastLoginAt
       createdAt
       updatedAt
-      accessToken
+    }
+  }
+`;
+
+export const CHANGE_MEMBER_PASSWORD = gql`
+  mutation ChangeMemberPassword($input: ChangeMemberPasswordInput!) {
+    changeMemberPassword(input: $input) {
+      _id
+      memberEmail
+      memberPhone
+      memberNickname
+      memberFirstName
+      memberLastName
+      memberAvatar
+      memberAddress
+      memberType
+      memberStatus
+      isEmailVerified
+      isPhoneVerified
+      lastLoginAt
+      createdAt
+      updatedAt
     }
   }
 `;

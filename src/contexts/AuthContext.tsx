@@ -10,7 +10,7 @@ import {
 } from "../../libs/auth";
 import { initializeApollo } from "../../apollo/client";
 import { GET_MEMBER_PROFILE, ME } from "../../apollo/user/query";
-import { UPDATE_MEMBER } from "../../apollo/user/mutation";
+import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD } from "../../apollo/user/mutation";
 import { userVar } from "../../apollo/store";
 import User, { UserRole } from "models/User.model";
 
@@ -19,6 +19,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   updateMemberProfile: (data: UpdateProfileData) => Promise<{ success: boolean; error?: string }>;
+  changePassword: (data: ChangePasswordData) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<{ success: boolean; error?: string }>;
   getMemberProfile: (
     memberId: string
@@ -45,6 +46,11 @@ interface UpdateProfileData {
   phone?: string;
   address?: string;
   avatar?: string;
+}
+
+interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -259,6 +265,45 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const changePassword = async (passwordData: ChangePasswordData) => {
+    try {
+      // Check if user is authenticated
+      const token = getJwtToken();
+      if (!token || !user) {
+        return { success: false, error: "You must be logged in to change your password" };
+      }
+
+      const apolloClient = await initializeApollo();
+
+      const { data } = await apolloClient.mutate({
+        mutation: CHANGE_MEMBER_PASSWORD,
+        variables: {
+          input: {
+            currentPassword: passwordData.currentPassword,
+            newPassword: passwordData.newPassword
+          }
+        }
+      });
+
+      const updatedMember = data?.changeMemberPassword;
+
+      if (!updatedMember) {
+        return { success: false, error: "Failed to change password" };
+      }
+
+      // Update global state
+      updateUserInfo(token, updatedMember);
+      const userData = mapMemberToUser(updatedMember);
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      return { success: true };
+    } catch (error: any) {
+      const message = error?.message || "Failed to change password";
+      return { success: false, error: message };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -272,6 +317,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         login,
         register,
         updateMemberProfile,
+        changePassword,
         refreshUser,
         getMemberProfile,
         logout,
