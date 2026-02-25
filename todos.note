@@ -1,0 +1,32 @@
+Yes—best method is a hybrid: finish members/auth first, then build by dependency slices (not random module-by-module).
+That gives you working milestones and lets me connect frontend immediately after each slice.
+
+Recommended Build Order
+
+Phase 1: Members/Auth (finish fully)
+signUp, logIn, me, getMemberProfile
+updateMemberProfile, changePassword, logout (if needed)
+optional: applyVendor, getMyVendorApplication
+Phase 2: Catalog Read (customer browsing)
+getProducts, getProduct, searchProducts, getCategories
+Phase 3: Engagement
+likeProduct/unlikeProduct, getLikedProducts
+viewProduct (increment view count), optional recent views
+Phase 4: Cart + Checkout
+getCart, addToCart, updateCartItem, removeCartItem, clearCart
+createOrder, getMyOrders, getOrder
+Phase 5: Vendor Product Management
+createProduct, updateProduct, deleteProduct, getMyProducts
+Phase 6: Admin Controls
+member moderation + vendor approval + product moderation
+Why this is better
+
+Keeps auth/guards stable first.
+Delivers usable frontend early (browse -> like/view -> buy).
+Avoids blocked work (e.g., product mutations before vendor/admin flow exists).
+How we execute together
+
+You implement one phase backend APIs.
+I immediately wire frontend for that phase (queries/mutations, pages, guards, UX states).
+Then we move to next phase.
+If you agree, we start now with Phase 1 remaining APIs (updateMemberProfile, changePassword) before touching products.

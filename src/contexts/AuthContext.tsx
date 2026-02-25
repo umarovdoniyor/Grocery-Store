@@ -220,6 +220,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const updateMemberProfile = async (profileData: UpdateProfileData) => {
     try {
+      // Check if user is authenticated
+      const token = getJwtToken();
+      if (!token || !user) {
+        return { success: false, error: "You must be logged in to update your profile" };
+      }
+
       const apolloClient = await initializeApollo();
       const input: any = {};
 
@@ -241,7 +247,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
 
       // Update global state
-      updateUserInfo(getJwtToken(), updatedMember);
+      updateUserInfo(token, updatedMember);
       const userData = mapMemberToUser(updatedMember);
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
