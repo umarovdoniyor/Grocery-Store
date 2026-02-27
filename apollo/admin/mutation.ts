@@ -211,3 +211,59 @@ export const REMOVE_CATEGORY = gql`
     }
   }
 `;
+
+export const UPDATE_PRODUCT_STATUS_BY_ADMIN = gql`
+  mutation UpdateProductStatusByAdmin($input: UpdateProductStatusByAdminInput!) {
+    updateProductStatusByAdmin(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const REMOVE_PRODUCT_BY_ADMIN = gql`
+  mutation RemoveProductByAdmin($input: RemoveProductInput!) {
+    removeProductByAdmin(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;

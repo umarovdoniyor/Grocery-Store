@@ -222,3 +222,64 @@ export const GET_CATEGORIES_BY_ADMIN = gql`
     }
   }
 `;
+
+export const GET_PRODUCTS_BY_ADMIN = gql`
+  query GetProductsByAdmin($input: AdminProductsInquiry) {
+    getProductsByAdmin(input: $input) {
+      list {
+        _id
+        memberId
+        title
+        description
+        categoryIds
+        brand
+        sku
+        unit
+        price
+        salePrice
+        stockQty
+        minOrderQty
+        tags
+        images
+        thumbnail
+        status
+        views
+        likes
+        ordersCount
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_BY_ID_BY_ADMIN = gql`
+  query GetProductByIdByAdmin($productId: String!) {
+    getProductByIdByAdmin(productId: $productId) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
