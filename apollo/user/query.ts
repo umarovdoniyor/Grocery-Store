@@ -64,6 +64,87 @@ export const GET_MY_VENDOR_APPLICATION = gql`
   }
 `;
 
+export const GET_MY_PRODUCTS = gql`
+  query GetMyProducts($input: MyProductsInquiry) {
+    getMyProducts(input: $input) {
+      list {
+        _id
+        memberId
+        title
+        description
+        categoryIds
+        brand
+        sku
+        unit
+        price
+        salePrice
+        stockQty
+        minOrderQty
+        tags
+        images
+        thumbnail
+        status
+        views
+        likes
+        ordersCount
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCTS = gql`
+  query GetProducts($input: ProductsInquiry) {
+    getProducts(input: $input) {
+      list {
+        _id
+        title
+        status
+        price
+        thumbnail
+        categoryIds
+        stockQty
+        createdAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_BY_ID = gql`
+  query GetProductById($productId: String!) {
+    getProductById(productId: $productId) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_CATEGORIES = gql`
   query GetCategories($input: CategoryInquiry) {
     getCategories(input: $input) {

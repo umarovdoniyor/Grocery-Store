@@ -130,6 +130,90 @@ export const REVIEW_VENDOR_APPLICATION = gql`
   }
 `;
 
+export const CREATE_PRODUCT = gql`
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($input: UpdateProductInput!) {
+    updateProduct(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const REMOVE_PRODUCT = gql`
+  mutation RemoveProduct($input: RemoveProductInput!) {
+    removeProduct(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const LIKE_TARGET_MEMBER = gql`
   mutation LikeTargetMember($input: String!) {
     likeTargetMember(memberId: $input) {
