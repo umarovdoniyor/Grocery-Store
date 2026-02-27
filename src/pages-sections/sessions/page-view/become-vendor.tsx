@@ -96,11 +96,11 @@ export default function BecomeVendorPageView() {
           </Typography>
 
           <Grid container spacing={3} mb={3}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField fullWidth name="name" label="Full Name" placeholder="John Doe" />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 name="email"
@@ -110,7 +110,7 @@ export default function BecomeVendorPageView() {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 name="password"
@@ -120,7 +120,7 @@ export default function BecomeVendorPageView() {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 name="re_password"
@@ -136,7 +136,7 @@ export default function BecomeVendorPageView() {
           </Typography>
 
           <Grid container spacing={3} mb={3}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 name="storeName"
@@ -145,7 +145,7 @@ export default function BecomeVendorPageView() {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -156,7 +156,7 @@ export default function BecomeVendorPageView() {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 name="businessLicense"

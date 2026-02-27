@@ -33,9 +33,10 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
     // Check role if required
     if (requiredRole && user) {
       const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+      const currentUserRole = user.role ?? "customer";
 
-      if (!allowedRoles.includes(user.role)) {
-        const landingPath = roleLandingPath[user.role] || "/";
+      if (!allowedRoles.includes(currentUserRole)) {
+        const landingPath = roleLandingPath[currentUserRole] || "/";
         router.replace(landingPath);
       }
     }

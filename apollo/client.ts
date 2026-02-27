@@ -1,11 +1,18 @@
-import { useMemo } from 'react';
-import { ApolloClient, ApolloLink, InMemoryCache, split, from, NormalizedCacheObject } from '@apollo/client';
-import createUploadLink from 'apollo-upload-client/public/createUploadLink.js';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { onError } from '@apollo/client/link/error';
-import { getJwtToken, logOut } from '../libs/auth';
-import { TokenRefreshLink } from 'apollo-link-token-refresh';
+import { useMemo } from "react";
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  split,
+  from,
+  NormalizedCacheObject
+} from "@apollo/client";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { onError } from "@apollo/client/link/error";
+import { getJwtToken, logOut } from "../libs/auth";
+import { TokenRefreshLink } from "apollo-link-token-refresh";
 
 // Singleton Apollo Client instance
 let apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -13,139 +20,139 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 /** =============== getHeaders ===============*/
 /** Purpose: Build HTTP headers with authentication token */
 function getHeaders() {
-	//1.Create empty headers object
-	const headers = {} as HeadersInit;
+  //1.Create empty headers object
+  const headers = {} as HeadersInit;
 
-	// 2. Get JWT token from localStorage (Retrieves token saved during login. Returns empty string if not logged in)
-	const token = getJwtToken();
-	// @ts-ignore
-	// 3. If token exists, add Authorization header
-	if (token) headers['Authorization'] = `Bearer ${token}`;
+  // 2. Get JWT token from localStorage (Retrieves token saved during login. Returns empty string if not logged in)
+  const token = getJwtToken();
+  // @ts-ignore
+  // 3. If token exists, add Authorization header
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
-	// 4.Return headers object
-	return headers;
+  // 4.Return headers object
+  return headers;
 
-	// Logged in user: { Authorization: 'Bearer <token>' }
-	// Not logged in user: {}
+  // Logged in user: { Authorization: 'Bearer <token>' }
+  // Not logged in user: {}
 }
 
 /** =============== getHeaders ===============*/
 /** Purpose: Auto-refresh JWT tokens before they expire */
 const tokenRefreshLink = new TokenRefreshLink({
-	accessTokenField: 'accessToken',
-	isTokenValidOrUndefined: () => {
-		return true;
-	}, // @ts-ignore
-	fetchAccessToken: () => {
-		// execute refresh token
-		return null;
-	},
+  accessTokenField: "accessToken",
+  isTokenValidOrUndefined: async () => {
+    return true;
+  }, // @ts-ignore
+  fetchAccessToken: () => {
+    // execute refresh token
+    return null;
+  }
 });
 
 /** =============== createIsomorphicLink ===============*/
 /** Purpose: Create appropriate link chain for client or server environment */
 function createIsomorphicLink() {
-	if (typeof window !== 'undefined') {
-		// Purpose: Interceptor that adds authentication to all requests
-		const authLink = new ApolloLink((operation, forward) => {
-			// operation - The GraphQL query/mutation being sent, forward - Function to pass to next link in chain
-			operation.setContext(({ headers = {} }) => ({
-				headers: {
-					...headers, // Keep existing headers
-					...getHeaders(), // Add Authorization header
-				},
-			}));
-			console.warn('requesting.. ', operation);
+  if (typeof window !== "undefined") {
+    // Purpose: Interceptor that adds authentication to all requests
+    const authLink = new ApolloLink((operation, forward) => {
+      // operation - The GraphQL query/mutation being sent, forward - Function to pass to next link in chain
+      operation.setContext(({ headers = {} }) => ({
+        headers: {
+          ...headers, // Keep existing headers
+          ...getHeaders() // Add Authorization header
+        }
+      }));
+      console.warn("requesting.. ", operation);
 
-			// Pass operation to next link
-			return forward(operation);
+      // Pass operation to next link
+      return forward(operation);
 
-			/**
-			 * Example:
-			 * Before authLink:
-			 * headers = { 'Content-Type': 'application/json' }
-			 *
-			 * After authLink (if logged in):
-			 * headers = {
-			 *   'Content-Type': 'application/json',
-			 *   'Authorization': 'Bearer <token>'
-			 * }
-			 */
-		});
+      /**
+       * Example:
+       * Before authLink:
+       * headers = { 'Content-Type': 'application/json' }
+       *
+       * After authLink (if logged in):
+       * headers = {
+       *   'Content-Type': 'application/json',
+       *   'Authorization': 'Bearer <token>'
+       * }
+       */
+    });
 
-		// @ts-ignore
-		// Purpose: HTTP link for file uploads and standard requests
-		const link = new createUploadLink({
-			uri: process.env.REACT_APP_API_GRAPHQL_URL,
+    // @ts-ignore
+    // Purpose: HTTP link for file uploads and standard requests
+    const link = new createUploadLink({
+      uri: process.env.REACT_APP_API_GRAPHQL_URL
 
-			/**
-			 * Used for: Uploading property images, user avatars
-			 */
-		});
+      /**
+       * Used for: Uploading property images, user avatars
+       */
+    });
 
-		/* WEBSOCKET SUBSCRIPTION LINK */
-		const wsLink = new WebSocketLink({
-			uri: process.env.REACT_APP_API_WS ?? 'ws://127.0.0.1:3007',
-			options: {
-				reconnect: false,
-				timeout: 30000,
-				connectionParams: () => {
-					return { headers: getHeaders() };
-				},
-			},
-		});
+    /* WEBSOCKET SUBSCRIPTION LINK */
+    const wsLink = new WebSocketLink({
+      uri: process.env.REACT_APP_API_WS ?? "ws://127.0.0.1:3007",
+      options: {
+        reconnect: false,
+        timeout: 30000,
+        connectionParams: () => {
+          return { headers: getHeaders() };
+        }
+      }
+    });
 
-		// Purpose: Catch and handle errors from all GraphQL requests
-		const errorLink = onError(({ graphQLErrors, networkError, response }) => {
-			if (graphQLErrors) {
-				graphQLErrors.map(({ message, locations, path, extensions }) =>
-					console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
-				);
-			}
-			if (networkError) console.log(`[Network error]: ${networkError}`);
-			// @ts-ignore
-			if (networkError?.statusCode === 401) {
-				logOut();
-				window.location.href = '/account/join';
-			}
-		});
+    // Purpose: Catch and handle errors from all GraphQL requests
+    const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+      if (graphQLErrors) {
+        graphQLErrors.map(({ message, locations, path, extensions }) =>
+          console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+        );
+      }
+      if (networkError) console.log(`[Network error]: ${networkError}`);
+      // @ts-ignore
+      if (networkError?.statusCode === 401) {
+        logOut();
+        window.location.href = "/account/join";
+      }
+    });
 
-		// Purpose: Route requests to WebSocket or HTTP based on operation type
-		const splitLink = split(
-			({ query }) => {
-				const definition = getMainDefinition(query);
-				return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'; // Returns true/false
-			},
-			wsLink, // If true, use WebSocket link
-			authLink.concat(link), // If false, use HTTP link with authentication
-		);
+    // Purpose: Route requests to WebSocket or HTTP based on operation type
+    const splitLink = split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return definition.kind === "OperationDefinition" && definition.operation === "subscription"; // Returns true/false
+      },
+      wsLink, // If true, use WebSocket link
+      authLink.concat(link) // If false, use HTTP link with authentication
+    );
 
-		return from([errorLink, tokenRefreshLink, splitLink]);
-	}
+    return from([errorLink, tokenRefreshLink, splitLink]);
+  }
 }
 
 /** =============== createApolloClient ===============*/
 /** Purpose: Instantiate Apollo Client with appropriate settings */
 function createApolloClient() {
-	return new ApolloClient({
-		ssrMode: typeof window === 'undefined', // Purpose: Enable/disable server-side rendering mode (=== true on server, false in browser)
-		link: createIsomorphicLink(),
-		cache: new InMemoryCache(),
-		resolvers: {},
-	});
+  return new ApolloClient({
+    ssrMode: typeof window === "undefined", // Purpose: Enable/disable server-side rendering mode (=== true on server, false in browser)
+    link: createIsomorphicLink(),
+    cache: new InMemoryCache(),
+    resolvers: {}
+  });
 }
 
 export function initializeApollo(initialState = null) {
-	const _apolloClient = apolloClient ?? createApolloClient();
-	if (initialState) _apolloClient.cache.restore(initialState); // Purpose: Hydrate cache with initial state (e.g. from server-side rendering)
-	if (typeof window === 'undefined') return _apolloClient; // Purpose: On server, return immediately without saving to singleton
-	if (!apolloClient) apolloClient = _apolloClient; // Purpose: Save client to global variable for reuse (browser only)
+  const _apolloClient = apolloClient ?? createApolloClient();
+  if (initialState) _apolloClient.cache.restore(initialState); // Purpose: Hydrate cache with initial state (e.g. from server-side rendering)
+  if (typeof window === "undefined") return _apolloClient; // Purpose: On server, return immediately without saving to singleton
+  if (!apolloClient) apolloClient = _apolloClient; // Purpose: Save client to global variable for reuse (browser only)
 
-	return _apolloClient;
+  return _apolloClient;
 }
 
 export function useApollo(initialState: any) {
-	return useMemo(() => initializeApollo(initialState), [initialState]);
+  return useMemo(() => initializeApollo(initialState), [initialState]);
 }
 
 /**

@@ -13,7 +13,7 @@ import { FormProvider, TextField } from "components/form-hook";
 // CUSTOM DATA MODEL
 import User from "models/User.model";
 import { useAuth } from "contexts/AuthContext";
-import { sweetTopSmallSuccessAlert, sweetMixinErrorAlert } from "libs/sweetAlert";
+import { sweetTopSmallSuccessAlert, sweetMixinErrorAlert } from "../../../../libs/sweetAlert";
 import { useRouter } from "next/navigation";
 
 const validationSchema = yup.object().shape({
@@ -21,7 +21,7 @@ const validationSchema = yup.object().shape({
   lastName: yup.string().required("Last name is required"),
   email: yup.string().email("invalid email").required("Email is required"),
   contact: yup.string().required("Contact is required"),
-  address: yup.string(),
+  address: yup.string().defined(),
   birthOfDate: yup.date().required("Birth date is required")
 });
 

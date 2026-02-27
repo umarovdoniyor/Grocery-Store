@@ -15,7 +15,7 @@ export default interface User {
   password: string;
   dateOfBirth: Date | string;
   verified: boolean;
-  role: UserRole;
+  role?: UserRole;
   name: { firstName: string; lastName: string };
   address?: string;
   vendorProfile?: VendorProfile;
