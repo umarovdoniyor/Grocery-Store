@@ -64,6 +64,65 @@ export const GET_MY_VENDOR_APPLICATION = gql`
   }
 `;
 
+export const GET_CATEGORIES = gql`
+  query GetCategories($input: CategoryInquiry) {
+    getCategories(input: $input) {
+      list {
+        _id
+        name
+        slug
+        description
+        icon
+        image
+        status
+        sortOrder
+        parentId
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_CATEGORY_BY_ID = gql`
+  query GetCategoryById($categoryId: String!) {
+    getCategoryById(categoryId: $categoryId) {
+      _id
+      name
+      slug
+      description
+      icon
+      image
+      status
+      sortOrder
+      parentId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CATEGORY_BY_SLUG = gql`
+  query GetCategoryBySlug($slug: String!) {
+    getCategoryBySlug(slug: $slug) {
+      _id
+      name
+      slug
+      description
+      icon
+      image
+      status
+      sortOrder
+      parentId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_AGENTS = gql`
   query GetAgents($input: AgentsInquiry!) {
     getAgents(input: $input) {
