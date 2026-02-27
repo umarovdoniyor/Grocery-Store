@@ -138,6 +138,8 @@ export const GET_PRODUCT_BY_ID = gql`
       status
       views
       likes
+      meLiked
+      meViewed
       ordersCount
       createdAt
       updatedAt

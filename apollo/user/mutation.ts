@@ -214,6 +214,28 @@ export const REMOVE_PRODUCT = gql`
   }
 `;
 
+export const TOGGLE_LIKE = gql`
+  mutation ToggleLike($input: ToggleLikeInput!) {
+    toggleLike(input: $input) {
+      likeGroup
+      likeRefId
+      liked
+      totalLikes
+    }
+  }
+`;
+
+export const RECORD_VIEW = gql`
+  mutation RecordView($input: RecordViewInput!) {
+    recordView(input: $input) {
+      viewGroup
+      viewRefId
+      viewed
+      totalViews
+    }
+  }
+`;
+
 export const LIKE_TARGET_MEMBER = gql`
   mutation LikeTargetMember($input: String!) {
     likeTargetMember(memberId: $input) {

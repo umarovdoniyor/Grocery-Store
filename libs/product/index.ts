@@ -1,9 +1,17 @@
 import { initializeApollo } from "../../apollo/client";
-import { CREATE_PRODUCT, UPDATE_PRODUCT, REMOVE_PRODUCT } from "../../apollo/user/mutation";
+import {
+  CREATE_PRODUCT,
+  UPDATE_PRODUCT,
+  REMOVE_PRODUCT,
+  TOGGLE_LIKE,
+  RECORD_VIEW
+} from "../../apollo/user/mutation";
 import { GET_MY_PRODUCTS, GET_PRODUCTS, GET_PRODUCT_BY_ID } from "../../apollo/user/query";
 
 export type ProductUnit = "PCS" | "KG" | "G" | "L" | "ML" | "PACK";
 export type ProductStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type LikeGroup = "PRODUCT" | "MEMBER" | "SHOP" | "VENDOR";
+export type ViewGroup = "PRODUCT" | "MEMBER" | "SHOP" | "VENDOR";
 
 export interface CreateProductInput {
   title: string;
@@ -41,6 +49,8 @@ export interface Product {
   status: ProductStatus;
   views: number;
   likes: number;
+  meLiked?: boolean;
+  meViewed?: boolean;
   ordersCount: number;
   createdAt: string;
   updatedAt: string;
@@ -79,6 +89,30 @@ export interface ProductsInquiryInput {
   page?: number;
   limit?: number;
   search?: string;
+}
+
+export interface ToggleLikeInput {
+  likeGroup: LikeGroup;
+  likeRefId: string;
+}
+
+export interface ToggleLikeResponse {
+  likeGroup: LikeGroup;
+  likeRefId: string;
+  liked: boolean;
+  totalLikes: number;
+}
+
+export interface RecordViewInput {
+  viewGroup: ViewGroup;
+  viewRefId: string;
+}
+
+export interface RecordViewResponse {
+  viewGroup: ViewGroup;
+  viewRefId: string;
+  viewed: boolean;
+  totalViews: number;
 }
 
 export interface ProductSummary {
@@ -239,6 +273,58 @@ export async function removeProduct(input: RemoveProductInput): Promise<{
     return { success: true, product };
   } catch (error: any) {
     const message = error?.message || "Failed to remove product";
+    return { success: false, error: message };
+  }
+}
+
+export async function toggleLike(input: ToggleLikeInput): Promise<{
+  success: boolean;
+  like?: ToggleLikeResponse;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: TOGGLE_LIKE,
+      variables: { input }
+    });
+
+    const like = data?.toggleLike;
+
+    if (!like) {
+      return { success: false, error: "Failed to toggle like" };
+    }
+
+    return { success: true, like };
+  } catch (error: any) {
+    const message = error?.message || "Failed to toggle like";
+    return { success: false, error: message };
+  }
+}
+
+export async function recordView(input: RecordViewInput): Promise<{
+  success: boolean;
+  view?: RecordViewResponse;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: RECORD_VIEW,
+      variables: { input }
+    });
+
+    const view = data?.recordView;
+
+    if (!view) {
+      return { success: false, error: "Failed to record view" };
+    }
+
+    return { success: true, view };
+  } catch (error: any) {
+    const message = error?.message || "Failed to record view";
     return { success: false, error: message };
   }
 }
