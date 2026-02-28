@@ -147,6 +147,162 @@ export const GET_PRODUCT_BY_ID = gql`
   }
 `;
 
+export const GET_MY_CART = gql`
+  query GetMyCart {
+    getMyCart {
+      _id
+      memberId
+      items {
+        _id
+        cartId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        status
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        createdAt
+        updatedAt
+      }
+      itemsCount
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CHECKOUT_SUMMARY = gql`
+  query GetCheckoutSummary {
+    getCheckoutSummary {
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+    }
+  }
+`;
+
+export const GET_MY_ORDERS = gql`
+  query GetMyOrders($input: GetMyOrdersInput!) {
+    getMyOrders(input: $input) {
+      list {
+        _id
+        orderNo
+        memberId
+        status
+        paymentMethod
+        paymentStatus
+        subtotal
+        discountAmount
+        deliveryFee
+        taxAmount
+        totalAmount
+        currency
+        addressFullName
+        addressPhone
+        addressLine1
+        addressLine2
+        addressCity
+        addressState
+        addressPostalCode
+        addressCountry
+        note
+        placedAt
+        canceledAt
+        deliveredAt
+        items {
+          _id
+          orderId
+          memberId
+          productId
+          vendorId
+          quantity
+          unitPrice
+          salePrice
+          appliedPrice
+          lineTotal
+          productSnapshotTitle
+          productSnapshotThumbnail
+          productSnapshotUnit
+          productSnapshotSku
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_MY_ORDER_BY_ID = gql`
+  query GetMyOrderById($orderId: String!) {
+    getMyOrderById(orderId: $orderId) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      items {
+        _id
+        orderId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_CATEGORIES = gql`
   query GetCategories($input: CategoryInquiry) {
     getCategories(input: $input) {

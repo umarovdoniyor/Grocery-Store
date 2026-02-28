@@ -236,6 +236,275 @@ export const RECORD_VIEW = gql`
   }
 `;
 
+export const ADD_TO_CART = gql`
+  mutation AddToCart($input: AddToCartInput!) {
+    addToCart(input: $input) {
+      _id
+      memberId
+      items {
+        _id
+        cartId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        status
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        createdAt
+        updatedAt
+      }
+      itemsCount
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_CART_ITEM_QTY = gql`
+  mutation UpdateCartItemQty($input: UpdateCartItemQtyInput!) {
+    updateCartItemQty(input: $input) {
+      _id
+      memberId
+      items {
+        _id
+        cartId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        status
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        createdAt
+        updatedAt
+      }
+      itemsCount
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const REMOVE_CART_ITEM = gql`
+  mutation RemoveCartItem($input: RemoveCartItemInput!) {
+    removeCartItem(input: $input) {
+      _id
+      memberId
+      items {
+        _id
+        cartId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        status
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        createdAt
+        updatedAt
+      }
+      itemsCount
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CLEAR_CART = gql`
+  mutation ClearCart {
+    clearCart {
+      _id
+      memberId
+      items {
+        _id
+        cartId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        status
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        createdAt
+        updatedAt
+      }
+      itemsCount
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const VALIDATE_CART_FOR_CHECKOUT = gql`
+  mutation ValidateCartForCheckout {
+    validateCartForCheckout {
+      isValid
+      issues {
+        code
+        message
+        productId
+        requestedQty
+        availableQty
+      }
+      summary {
+        subtotal
+        discountAmount
+        deliveryFee
+        taxAmount
+        totalAmount
+        currency
+      }
+    }
+  }
+`;
+
+export const CREATE_ORDER_FROM_CART = gql`
+  mutation CreateOrderFromCart($input: CreateOrderFromCartInput!) {
+    createOrderFromCart(input: $input) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      items {
+        _id
+        orderId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CANCEL_MY_ORDER = gql`
+  mutation CancelMyOrder($input: CancelMyOrderInput!) {
+    cancelMyOrder(input: $input) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      items {
+        _id
+        orderId
+        memberId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const LIKE_TARGET_MEMBER = gql`
   mutation LikeTargetMember($input: String!) {
     likeTargetMember(memberId: $input) {
