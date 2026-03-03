@@ -236,6 +236,18 @@ export const RECORD_VIEW = gql`
   }
 `;
 
+export const IMAGE_UPLOADER = gql`
+  mutation ImageUploader($file: Upload!, $target: String!) {
+    imageUploader(file: $file, target: $target)
+  }
+`;
+
+export const IMAGES_UPLOADER = gql`
+  mutation ImagesUploader($files: [Upload!]!, $target: String!) {
+    imagesUploader(files: $files, target: $target)
+  }
+`;
+
 export const ADD_TO_CART = gql`
   mutation AddToCart($input: AddToCartInput!) {
     addToCart(input: $input) {
