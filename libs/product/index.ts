@@ -6,10 +6,18 @@ import {
   TOGGLE_LIKE,
   RECORD_VIEW
 } from "../../apollo/user/mutation";
-import { GET_MY_PRODUCTS, GET_PRODUCTS, GET_PRODUCT_BY_ID } from "../../apollo/user/query";
+import {
+  GET_MY_PRODUCTS,
+  GET_PRODUCTS,
+  GET_PRODUCT_BY_ID,
+  GET_FEATURED_PRODUCTS,
+  GET_RELATED_PRODUCTS,
+  SEARCH_SUGGESTIONS
+} from "../../apollo/user/query";
 
 export type ProductUnit = "PCS" | "KG" | "G" | "L" | "ML" | "PACK";
 export type ProductStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type ProductSortBy = "NEWEST" | "PRICE_ASC" | "PRICE_DESC" | "POPULAR";
 export type LikeGroup = "PRODUCT" | "MEMBER" | "SHOP" | "VENDOR";
 export type ViewGroup = "PRODUCT" | "MEMBER" | "SHOP" | "VENDOR";
 
@@ -56,6 +64,22 @@ export interface Product {
   updatedAt: string;
 }
 
+export interface ProductVendor {
+  _id: string;
+  memberNickname?: string;
+  memberFirstName?: string;
+  memberLastName?: string;
+  memberAvatar?: string;
+  memberType: string;
+}
+
+export interface ProductDetail extends Product {
+  slug: string;
+  meLiked: boolean;
+  meViewed: boolean;
+  vendor?: ProductVendor | null;
+}
+
 export interface UpdateProductInput {
   productId: string;
   title?: string;
@@ -85,10 +109,30 @@ export interface MyProductsInquiryInput {
   search?: string;
 }
 
-export interface ProductsInquiryInput {
-  page?: number;
-  limit?: number;
+export interface CatalogProductsInquiryInput {
+  page: number;
+  limit: number;
   search?: string;
+  categoryIds?: string[];
+  brand?: string | null;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  sortBy?: ProductSortBy;
+}
+
+export interface FeaturedProductsInquiryInput {
+  limit: number;
+}
+
+export interface RelatedProductsInquiryInput {
+  productId: string;
+  limit: number;
+}
+
+export interface SearchSuggestionsInput {
+  keyword: string;
+  limit: number;
 }
 
 export interface ToggleLikeInput {
@@ -118,12 +162,22 @@ export interface RecordViewResponse {
 export interface ProductSummary {
   _id: string;
   title: string;
-  status: ProductStatus;
-  price: number;
+  slug: string;
   thumbnail: string;
-  categoryIds: string[];
+  price: number;
+  salePrice?: number;
   stockQty: number;
+  status: ProductStatus;
+  likes: number;
+  views: number;
   createdAt: string;
+}
+
+export interface SearchSuggestion {
+  _id: string;
+  title: string;
+  slug: string;
+  thumbnail?: string;
 }
 
 export async function createProduct(input: CreateProductInput): Promise<{
@@ -203,7 +257,7 @@ export async function updateProduct(input: UpdateProductInput): Promise<{
   }
 }
 
-export async function getProducts(input?: ProductsInquiryInput): Promise<{
+export async function getProducts(input: CatalogProductsInquiryInput): Promise<{
   success: boolean;
   list?: ProductSummary[];
   total?: number;
@@ -230,7 +284,7 @@ export async function getProducts(input?: ProductsInquiryInput): Promise<{
 
 export async function getProductById(productId: string): Promise<{
   success: boolean;
-  product?: Product | null;
+  product?: ProductDetail | null;
   error?: string;
 }> {
   try {
@@ -247,6 +301,75 @@ export async function getProductById(productId: string): Promise<{
     return { success: true, product };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch product";
+    return { success: false, error: message };
+  }
+}
+
+export async function getFeaturedProducts(input: FeaturedProductsInquiryInput): Promise<{
+  success: boolean;
+  list?: ProductSummary[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_FEATURED_PRODUCTS,
+      variables: { input },
+      fetchPolicy: "cache-first"
+    });
+
+    const list = data?.getFeaturedProducts || [];
+
+    return { success: true, list };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch featured products";
+    return { success: false, error: message };
+  }
+}
+
+export async function getRelatedProducts(input: RelatedProductsInquiryInput): Promise<{
+  success: boolean;
+  list?: ProductSummary[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_RELATED_PRODUCTS,
+      variables: { input },
+      fetchPolicy: "cache-first"
+    });
+
+    const list = data?.getRelatedProducts || [];
+
+    return { success: true, list };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch related products";
+    return { success: false, error: message };
+  }
+}
+
+export async function searchSuggestions(input: SearchSuggestionsInput): Promise<{
+  success: boolean;
+  list?: SearchSuggestion[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: SEARCH_SUGGESTIONS,
+      variables: { input },
+      fetchPolicy: "cache-first"
+    });
+
+    const list = data?.searchSuggestions || [];
+
+    return { success: true, list };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch search suggestions";
     return { success: false, error: message };
   }
 }
