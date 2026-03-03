@@ -2,6 +2,22 @@ import { initializeApollo } from "../../apollo/client";
 import { IMAGE_UPLOADER, IMAGES_UPLOADER } from "../../apollo/user/mutation";
 
 export type UploadTarget = "member" | "product" | "vendor" | "category" | "general";
+export type UploadFieldKey =
+  | "memberAvatar"
+  | "productThumbnail"
+  | "productGallery"
+  | "vendorImage"
+  | "categoryImage"
+  | "generalImage";
+
+export const UPLOAD_TARGET_BY_FIELD: Record<UploadFieldKey, UploadTarget> = {
+  memberAvatar: "member",
+  productThumbnail: "product",
+  productGallery: "product",
+  vendorImage: "vendor",
+  categoryImage: "category",
+  generalImage: "general"
+};
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024;
@@ -77,6 +93,18 @@ export async function uploadSingleImage(
   }
 }
 
+export async function uploadByField(
+  file: File,
+  field: UploadFieldKey,
+  token?: string
+): Promise<{
+  success: boolean;
+  path?: string;
+  error?: string;
+}> {
+  return uploadSingleImage(file, UPLOAD_TARGET_BY_FIELD[field], token);
+}
+
 export async function uploadMultipleImages(
   files: File[],
   target: UploadTarget,
@@ -114,8 +142,42 @@ export async function uploadMultipleImages(
   }
 }
 
+export async function uploadManyByField(
+  files: File[],
+  field: UploadFieldKey,
+  token?: string
+): Promise<{
+  success: boolean;
+  paths?: string[];
+  error?: string;
+}> {
+  return uploadMultipleImages(files, UPLOAD_TARGET_BY_FIELD[field], token);
+}
+
+export async function uploadMemberAvatar(file: File, token?: string) {
+  return uploadByField(file, "memberAvatar", token);
+}
+
+export async function uploadProductThumbnail(file: File, token?: string) {
+  return uploadByField(file, "productThumbnail", token);
+}
+
+export async function uploadProductGallery(files: File[], token?: string) {
+  return uploadManyByField(files, "productGallery", token);
+}
+
+export async function uploadCategoryImage(file: File, token?: string) {
+  return uploadByField(file, "categoryImage", token);
+}
+
+export async function uploadVendorImage(file: File, token?: string) {
+  return uploadByField(file, "vendorImage", token);
+}
+
 export function toPublicImageUrl(path: string, apiBaseUrl: string): string {
   if (!path) return "";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return `${apiBaseUrl}${path}`;
+  const base = apiBaseUrl.endsWith("/") ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${normalizedPath}`;
 }

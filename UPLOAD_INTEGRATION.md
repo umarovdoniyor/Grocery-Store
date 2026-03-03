@@ -12,8 +12,28 @@ This guide shows how to use the shared upload helper in frontend forms.
 ```ts
 uploadSingleImage(file, target, token?)
 uploadMultipleImages(files, target, token?)
+uploadByField(file, field, token?)
+uploadManyByField(files, field, token?)
+uploadMemberAvatar(file, token?)
+uploadProductThumbnail(file, token?)
+uploadProductGallery(files, token?)
+uploadCategoryImage(file, token?)
+uploadVendorImage(file, token?)
 toPublicImageUrl(path, apiBaseUrl)
 ```
+
+## Canonical field-to-target mapping
+
+Use these mappings consistently to keep upload paths correct:
+
+- `memberAvatar` -> `member`
+- `productThumbnail` -> `product`
+- `productGallery` -> `product`
+- `vendorImage` -> `vendor`
+- `categoryImage` -> `category`
+- `generalImage` -> `general`
+
+Note: `avatar` should use `member` target in this backend.
 
 ## Supported targets
 
@@ -78,11 +98,11 @@ async function submitCategoryForm({ imageFile, payload, token }: any) {
 ## Member avatar pattern
 
 ```ts
-import { uploadSingleImage } from "../libs/upload";
+import { uploadMemberAvatar } from "../libs/upload";
 import { updateMember } from "../libs/auth";
 
 async function updateAvatar({ avatarFile, token }: any) {
-  const upload = await uploadSingleImage(avatarFile, "member", token);
+  const upload = await uploadMemberAvatar(avatarFile, token);
   if (!upload.success || !upload.path) {
     throw new Error(upload.error || "Avatar upload failed");
   }
