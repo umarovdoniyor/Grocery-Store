@@ -98,16 +98,19 @@ export const GET_MY_PRODUCTS = gql`
 `;
 
 export const GET_PRODUCTS = gql`
-  query GetProducts($input: ProductsInquiry) {
+  query GetProducts($input: CatalogProductsInquiry!) {
     getProducts(input: $input) {
       list {
         _id
         title
-        status
-        price
+        slug
         thumbnail
-        categoryIds
+        price
+        salePrice
         stockQty
+        status
+        likes
+        views
         createdAt
       }
       metaCounter {
@@ -123,6 +126,7 @@ export const GET_PRODUCT_BY_ID = gql`
       _id
       memberId
       title
+      slug
       description
       categoryIds
       brand
@@ -138,11 +142,66 @@ export const GET_PRODUCT_BY_ID = gql`
       status
       views
       likes
+      ordersCount
       meLiked
       meViewed
-      ordersCount
       createdAt
       updatedAt
+      vendor {
+        _id
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+        memberType
+      }
+    }
+  }
+`;
+
+export const GET_FEATURED_PRODUCTS = gql`
+  query GetFeaturedProducts($input: FeaturedProductsInquiry!) {
+    getFeaturedProducts(input: $input) {
+      _id
+      title
+      slug
+      thumbnail
+      price
+      salePrice
+      stockQty
+      status
+      likes
+      views
+      createdAt
+    }
+  }
+`;
+
+export const GET_RELATED_PRODUCTS = gql`
+  query GetRelatedProducts($input: RelatedProductsInquiry!) {
+    getRelatedProducts(input: $input) {
+      _id
+      title
+      slug
+      thumbnail
+      price
+      salePrice
+      stockQty
+      status
+      likes
+      views
+      createdAt
+    }
+  }
+`;
+
+export const SEARCH_SUGGESTIONS = gql`
+  query SearchSuggestions($input: SearchSuggestionsInput!) {
+    searchSuggestions(input: $input) {
+      _id
+      title
+      slug
+      thumbnail
     }
   }
 `;
