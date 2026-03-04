@@ -1,0 +1,88 @@
+import type Order from "models/Order.model";
+import type { OrderStatus } from "models/Order.model";
+import type User from "models/User.model";
+import { getOrderByIdByAdmin, getOrdersByAdmin, OrderByAdmin } from "../../../libs/admin";
+
+function toUiOrderStatus(status: string): OrderStatus {
+  if (status === "DELIVERED") return "Delivered";
+  if (status === "CANCELED") return "Cancelled";
+  if (["PAID", "CONFIRMED", "PACKING", "SHIPPED"].includes(status)) return "Processing";
+  return "Pending";
+}
+
+function toShippingAddress(order: OrderByAdmin): string {
+  const addressParts = [
+    order.addressLine1,
+    order.addressLine2,
+    order.addressCity,
+    order.addressState,
+    order.addressPostalCode,
+    order.addressCountry
+  ].filter(Boolean);
+
+  return addressParts.join(", ");
+}
+
+function toPlaceholderUser(memberId: string): User {
+  return {
+    id: memberId,
+    email: "",
+    phone: "",
+    avatar: "",
+    password: "",
+    dateOfBirth: "",
+    verified: false,
+    name: { firstName: "", lastName: "" }
+  };
+}
+
+export function mapAdminOrderToUi(order: OrderByAdmin): Order {
+  const createdAt = new Date(order.createdAt);
+  const deliveredAt = order.deliveredAt ? new Date(order.deliveredAt) : createdAt;
+
+  return {
+    id: order._id,
+    user: toPlaceholderUser(order.memberId),
+    tax: order.taxAmount,
+    items: order.items.map((item) => ({
+      product_img: item.productSnapshotThumbnail || "/assets/images/products/placeholder.png",
+      product_name: item.productSnapshotTitle,
+      product_price: item.appliedPrice,
+      product_quantity: item.quantity,
+      variant: item.productSnapshotUnit || undefined
+    })),
+    createdAt,
+    discount: order.discountAmount,
+    deliveredAt,
+    totalPrice: order.totalAmount,
+    isDelivered: order.status === "DELIVERED",
+    shippingAddress: toShippingAddress(order),
+    status: toUiOrderStatus(order.status)
+  };
+}
+
+export async function fetchAdminOrdersForUi(): Promise<{ orders: Order[]; error?: string }> {
+  const response = await getOrdersByAdmin({ page: 1, limit: 50 });
+
+  if (!response.success) {
+    return { orders: [], error: response.error || "Failed to fetch admin orders" };
+  }
+
+  return { orders: (response.list || []).map(mapAdminOrderToUi) };
+}
+
+export async function fetchAdminOrderByIdForUi(
+  orderId: string
+): Promise<{ order: Order | null; error?: string }> {
+  const response = await getOrderByIdByAdmin(orderId);
+
+  if (!response.success) {
+    return { order: null, error: response.error || "Failed to fetch admin order" };
+  }
+
+  if (!response.order) {
+    return { order: null };
+  }
+
+  return { order: mapAdminOrderToUi(response.order) };
+}

@@ -1,22 +1,29 @@
 import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 // MUI ICON COMPONENTS
-import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
 // STYLED COMPONENTS
-import { StyledIconButton, StyledTableCell, StyledTableRow } from "../styles";
+import { StatusWrapper, StyledIconButton, StyledTableCell, StyledTableRow } from "../styles";
 
 // ========================================================================
-type Props = { customer: any };
+type Props = {
+  customer: any;
+  isUpdating?: boolean;
+  onToggleMemberStatus: (customer: any) => void;
+};
 // ========================================================================
 
-export default function CustomerRow({ customer }: Props) {
-  const { email, name, phone, avatar, balance, orders } = customer;
+export default function CustomerRow({ customer, isUpdating, onToggleMemberStatus }: Props) {
+  const { email, name, phone, avatar, balance, orders, memberStatus } = customer;
+
+  const statusLabel = memberStatus === "ACTIVE" ? "Accepted" : "Rejected";
+  const actionLabel = memberStatus === "ACTIVE" ? "Suspend" : "Activate";
 
   const STYLE = { fontWeight: 400 };
 
@@ -48,10 +55,20 @@ export default function CustomerRow({ customer }: Props) {
         {orders}
       </StyledTableCell>
 
+      <StyledTableCell align="left">
+        <StatusWrapper status={statusLabel}>{memberStatus}</StatusWrapper>
+      </StyledTableCell>
+
       <StyledTableCell align="center">
-        <StyledIconButton>
-          <Edit />
-        </StyledIconButton>
+        <Button
+          size="small"
+          variant="outlined"
+          color="info"
+          loading={Boolean(isUpdating)}
+          onClick={() => onToggleMemberStatus(customer)}
+        >
+          {actionLabel}
+        </Button>
 
         <StyledIconButton>
           <Delete />

@@ -5,5 +5,6 @@ export const tableHeading = [
   { id: "email", label: "Email", align: "left" },
   { id: "balance", label: "Wallet Balance", align: "left" },
   { id: "orders", label: "No Of Orders", align: "left" },
+  { id: "memberStatus", label: "Status", align: "left" },
   { id: "action", label: "Action", align: "center" }
 ];

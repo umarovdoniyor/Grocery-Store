@@ -18,10 +18,18 @@ import PageWrapper from "../../page-wrapper";
 import { tableHeading } from "../table-heading";
 
 // =============================================================================
-type Props = { customers: any[] };
+type Props = {
+  customers: any[];
+  updatingMemberId?: string | null;
+  onToggleMemberStatus: (customer: any) => void;
+};
 // =============================================================================
 
-export default function CustomersPageView({ customers }: Props) {
+export default function CustomersPageView({
+  customers,
+  updatingMemberId,
+  onToggleMemberStatus
+}: Props) {
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: customers });
 
@@ -46,7 +54,12 @@ export default function CustomersPageView({ customers }: Props) {
 
               <TableBody>
                 {filteredList.map((customer) => (
-                  <CustomerRow customer={customer} key={customer.id} />
+                  <CustomerRow
+                    customer={customer}
+                    key={customer.id}
+                    isUpdating={updatingMemberId === customer.id}
+                    onToggleMemberStatus={onToggleMemberStatus}
+                  />
                 ))}
               </TableBody>
             </Table>

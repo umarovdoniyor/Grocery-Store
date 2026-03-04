@@ -1,7 +1,5 @@
 import { Metadata } from "next";
-import { OrdersPageView } from "pages-sections/vendor-dashboard/orders/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import OrdersClient from "./orders-client";
 
 export const metadata: Metadata = {
   title: "Orders - Bazaar Next.js E-commerce Template",
@@ -11,6 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Orders() {
-  const orders = await api.orders();
-  return <OrdersPageView orders={orders} />;
+  return <OrdersClient />;
 }
