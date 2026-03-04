@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 // MUI ICON COMPONENTS
 import Edit from "@mui/icons-material/Edit";
@@ -17,13 +17,15 @@ import { StyledIconButton, StyledTableCell, StyledTableRow } from "../styles";
 import { Seller } from "./types";
 
 // ========================================================================
-type Props = { seller: Seller };
+type Props = {
+  seller: Seller;
+  isUpdating?: boolean;
+  onToggleSeller: (seller: Seller) => void;
+};
 // ========================================================================
 
-export default function SellerRow({ seller }: Props) {
+export default function SellerRow({ seller, isUpdating, onToggleSeller }: Props) {
   const { name, phone, image, balance, published, shopName, package: sellerPackage } = seller;
-
-  const [shopPublish, setShopPublish] = useState(published);
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
@@ -53,11 +55,11 @@ export default function SellerRow({ seller }: Props) {
       </StyledTableCell>
 
       <StyledTableCell align="left">
-        <BazaarSwitch
-          color="info"
-          checked={shopPublish}
-          onChange={() => setShopPublish((state) => !state)}
-        />
+        {isUpdating ? (
+          <CircularProgress size={18} color="info" />
+        ) : (
+          <BazaarSwitch color="info" checked={published} onChange={() => onToggleSeller(seller)} />
+        )}
       </StyledTableCell>
 
       <StyledTableCell align="center">

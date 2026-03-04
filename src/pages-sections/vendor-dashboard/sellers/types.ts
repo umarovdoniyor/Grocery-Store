@@ -1,4 +1,5 @@
 export interface Seller {
+  id: string;
   name: string;
   phone: string;
   image: string;
@@ -6,4 +7,5 @@ export interface Seller {
   package: string;
   shopName: string;
   published: boolean;
+  status: string;
 }

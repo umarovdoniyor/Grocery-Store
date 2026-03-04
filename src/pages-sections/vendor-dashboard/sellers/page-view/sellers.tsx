@@ -20,10 +20,14 @@ import { tableHeading } from "../table-heading";
 import { Seller } from "../types";
 
 // =============================================================================
-type Props = { sellers: Seller[] };
+type Props = {
+  sellers: Seller[];
+  updatingSellerId?: string | null;
+  onToggleSeller: (seller: Seller) => void;
+};
 // =============================================================================
 
-export default function SellersPageView({ sellers }: Props) {
+export default function SellersPageView({ sellers, updatingSellerId, onToggleSeller }: Props) {
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: sellers });
 
@@ -48,7 +52,12 @@ export default function SellersPageView({ sellers }: Props) {
 
               <TableBody>
                 {filteredList.map((seller, index) => (
-                  <SellerRow seller={seller} key={index} />
+                  <SellerRow
+                    seller={seller}
+                    key={index}
+                    isUpdating={updatingSellerId === seller.id}
+                    onToggleSeller={onToggleSeller}
+                  />
                 ))}
               </TableBody>
             </Table>
