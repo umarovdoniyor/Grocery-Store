@@ -1,95 +1,96 @@
 import { cache } from "react";
-import axios from "utils/axiosInstance";
 import Brand from "models/Brand.model";
 import Order from "models/Order.model";
 import Review from "models/Review.model";
 import Product from "models/Product.model";
 import Category from "models/Category.model";
+import { brands as dbBrands } from "__server__/__db__/dashboard/brand";
+import { orders as dbOrders } from "__server__/__db__/dashboard/orders";
+import { reviews as dbReviews } from "__server__/__db__/dashboard/reviews";
+import { payouts as dbPayouts } from "__server__/__db__/dashboard/payouts";
+import { sellers as dbSellers } from "__server__/__db__/dashboard/sellers";
+import { products as dbProducts } from "__server__/__db__/dashboard/products";
+import { customers as dbCustomers } from "__server__/__db__/dashboard/customers";
+import { categories as dbCategories } from "__server__/__db__/dashboard/categories";
+import { refundRequest as dbRefundRequest } from "__server__/__db__/dashboard/refundRequests";
+import { earningHistory as dbEarningHistory } from "__server__/__db__/dashboard/earning-history";
+import { payoutRequests as dbPayoutRequests } from "__server__/__db__/dashboard/payout-requests";
+import { packagePayments as dbPackagePayments } from "__server__/__db__/dashboard/package-payments";
+import {
+  cardList as dbCardList,
+  recentPurchase as dbRecentPurchase,
+  stockOutProducts as dbStockOutProducts
+} from "__server__/__db__/dashboard/data";
 
 // dashboard
 const getAllCard = cache(async () => {
-  const response = await axios.get("/api/admin/dashboard-cards");
-  return response.data;
+  return dbCardList;
 });
 
 const recentPurchase = cache(async () => {
-  const response = await axios.get("/api/admin/recent-purchase");
-  return response.data;
+  return dbRecentPurchase;
 });
 
 const stockOutProducts = cache(async () => {
-  const response = await axios.get("/api/admin/stock-out-products");
-  return response.data;
+  return dbStockOutProducts;
 });
 
 // products
 const products = cache(async (): Promise<Product[]> => {
-  const response = await axios.get("/api/admin/products");
-  return response.data;
+  return dbProducts as unknown as Product[];
 });
 
 const category = cache(async (): Promise<Category[]> => {
-  const response = await axios.get("/api/admin/category");
-  return response.data;
+  return dbCategories as unknown as Category[];
 });
 
 const brands = cache(async (): Promise<Brand[]> => {
-  const response = await axios.get("/api/admin/brands");
-  return response.data;
+  return dbBrands as unknown as Brand[];
 });
 
 const reviews = cache(async (): Promise<Review[]> => {
-  const response = await axios.get("/api/admin/reviews");
-  return response.data;
+  return dbReviews as unknown as Review[];
 });
 
 // orders
 const orders = cache(async (): Promise<Order[]> => {
-  const response = await axios.get("/api/admin/orders");
-  return response.data;
+  return dbOrders as unknown as Order[];
 });
 
 const getOrder = cache(async (id: string): Promise<Order> => {
-  const response = await axios.get("/api/admin/orders/1", { params: { id } });
-  return response.data;
+  const order = (dbOrders as unknown as Order[]).find((item) => item.id === id);
+  return (order || dbOrders[0]) as unknown as Order;
 });
 
 // customers
 const customers = cache(async () => {
-  const response = await axios.get("/api/admin/customers");
-  return response.data;
+  return dbCustomers;
 });
 
 // refund request
 const refundRequests = cache(async () => {
-  const response = await axios.get("/api/admin/refund-requests");
-  return response.data;
+  return dbRefundRequest;
 });
 
 // sellers
 const sellers = cache(async () => {
-  const response = await axios.get("/api/admin/sellers");
-  return response.data;
+  return dbSellers;
 });
 
 const packagePayments = cache(async () => {
-  const response = await axios.get("/api/admin/package-payments");
-  return response.data;
+  return dbPackagePayments;
 });
 
 const earningHistory = cache(async () => {
-  const response = await axios.get("/api/admin/earning-history");
-  return response.data;
+  return dbEarningHistory;
 });
 
 const payouts = cache(async () => {
-  const response = await axios.get("/api/admin/payouts");
-  return response.data;
+  return dbPayouts;
 });
 
 const payoutRequests = cache(async () => {
-  const response = await axios.get("/api/admin/payout-requests");
-  return response.data;
+  return dbPayoutRequests;
 });
 
 export default {
