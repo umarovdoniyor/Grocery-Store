@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 // MUI ICON COMPONENTS
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
@@ -17,7 +17,7 @@ import { currency } from "lib";
 import { StyledTableRow, CategoryWrapper, StyledTableCell, StyledIconButton } from "../styles";
 
 // ========================================================================
-interface Product {
+export interface ProductRowItem {
   id: string;
   slug: string;
   name: string;
@@ -28,13 +28,24 @@ interface Product {
   published: boolean;
 }
 
-type Props = { product: Product };
+type RowProps = {
+  product: ProductRowItem;
+  isUpdating?: boolean;
+  isRemoving?: boolean;
+  onTogglePublished: (product: ProductRowItem) => void;
+  onRemoveProduct: (product: ProductRowItem) => void;
+};
 // ========================================================================
 
-export default function ProductRow({ product }: Props) {
+export default function ProductRow({
+  product,
+  isUpdating,
+  isRemoving,
+  onTogglePublished,
+  onRemoveProduct
+}: RowProps) {
   const { category, name, price, image, brand, id, published, slug } = product;
-
-  const [productPublish, setProductPublish] = useState(published);
+  const isBrandImage = brand?.startsWith("/") || brand?.startsWith("http");
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
@@ -59,19 +70,29 @@ export default function ProductRow({ product }: Props) {
       </StyledTableCell>
 
       <StyledTableCell align="left">
-        <Box sx={{ width: 55, height: 25, position: "relative", img: { objectFit: "contain" } }}>
-          <Image fill src={brand} alt={name} sizes="(55px, 25px)" />
-        </Box>
+        {isBrandImage ? (
+          <Box sx={{ width: 55, height: 25, position: "relative", img: { objectFit: "contain" } }}>
+            <Image fill src={brand} alt={name} sizes="(55px, 25px)" />
+          </Box>
+        ) : (
+          <Typography variant="body2" sx={{ color: "grey.700" }}>
+            {brand || "-"}
+          </Typography>
+        )}
       </StyledTableCell>
 
       <StyledTableCell align="left">{currency(price)}</StyledTableCell>
 
       <StyledTableCell align="left">
-        <BazaarSwitch
-          color="info"
-          checked={productPublish}
-          onChange={() => setProductPublish((state) => !state)}
-        />
+        {isUpdating ? (
+          <CircularProgress size={18} color="info" />
+        ) : (
+          <BazaarSwitch
+            color="info"
+            checked={published}
+            onChange={() => onTogglePublished(product)}
+          />
+        )}
       </StyledTableCell>
 
       <StyledTableCell align="center">
@@ -85,9 +106,13 @@ export default function ProductRow({ product }: Props) {
           <RemoveRedEye />
         </StyledIconButton>
 
-        <StyledIconButton>
-          <Delete />
-        </StyledIconButton>
+        {isRemoving ? (
+          <CircularProgress size={18} color="error" />
+        ) : (
+          <StyledIconButton onClick={() => onRemoveProduct(product)}>
+            <Delete />
+          </StyledIconButton>
+        )}
       </StyledTableCell>
     </StyledTableRow>
   );

@@ -12,10 +12,9 @@ import { TableHeader, TablePagination } from "components/data-table";
 import useMuiTable from "hooks/useMuiTable";
 //  LOCAL CUSTOM COMPONENT
 import ProductRow from "../product-row";
+import type { ProductRowItem } from "../product-row";
 import SearchArea from "../../search-box";
 import PageWrapper from "../../page-wrapper";
-// CUSTOM DATA MODEL
-import Product from "models/Product.model";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -28,21 +27,23 @@ const tableHeading = [
 ];
 
 // =============================================================================
-type Props = { products: Product[] };
+type Props = {
+  products: ProductRowItem[];
+  updatingProductId?: string | null;
+  removingProductId?: string | null;
+  onTogglePublished: (product: any) => void;
+  onRemoveProduct: (product: any) => void;
+};
 // =============================================================================
 
-export default function ProductsPageView({ products }: Props) {
-  // RESHAPE THE PRODUCT LIST BASED TABLE HEAD CELL ID
-  const reshapedProducts = products.map((item) => ({
-    id: item.id,
-    slug: item.slug,
-    name: item.title,
-    brand: item.brand!,
-    price: item.price,
-    image: item.thumbnail,
-    published: item.published!,
-    category: item.categories[0]
-  }));
+export default function ProductsPageView({
+  products,
+  updatingProductId,
+  removingProductId,
+  onTogglePublished,
+  onRemoveProduct
+}: Props) {
+  const reshapedProducts = products;
 
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: reshapedProducts });
@@ -68,7 +69,14 @@ export default function ProductsPageView({ products }: Props) {
 
               <TableBody>
                 {filteredList.map((product, index) => (
-                  <ProductRow key={index} product={product} />
+                  <ProductRow
+                    key={index}
+                    product={product}
+                    isUpdating={updatingProductId === product.id}
+                    isRemoving={removingProductId === product.id}
+                    onTogglePublished={onTogglePublished}
+                    onRemoveProduct={onRemoveProduct}
+                  />
                 ))}
               </TableBody>
             </Table>
