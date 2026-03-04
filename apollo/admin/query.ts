@@ -38,6 +38,29 @@ export const GET_ALL_MEMBERS_BY_ADMIN = gql`
   }
 `;
 
+export const GET_MEMBERS_BY_ADMIN = gql`
+  query GetMembersByAdmin($input: MembersInquiryByAdminInput!) {
+    getMembersByAdmin(input: $input) {
+      list {
+        _id
+        memberEmail
+        memberPhone
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+        memberType
+        memberStatus
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
 /**************************
  *        PROPERTY        *
  *************************/
@@ -280,6 +303,132 @@ export const GET_PRODUCT_BY_ID_BY_ADMIN = gql`
       ordersCount
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const GET_VENDOR_APPLICATIONS_BY_ADMIN = gql`
+  query GetVendorApplicationsByAdmin($input: VendorApplicationsInquiryInput!) {
+    getVendorApplicationsByAdmin(input: $input) {
+      list {
+        _id
+        memberId
+        storeName
+        description
+        businessLicenseUrl
+        status
+        rejectionReason
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_ORDERS_BY_ADMIN = gql`
+  query GetOrdersByAdmin($input: AdminOrdersInquiryInput!) {
+    getOrdersByAdmin(input: $input) {
+      list {
+        _id
+        orderNo
+        memberId
+        status
+        paymentMethod
+        paymentStatus
+        subtotal
+        discountAmount
+        deliveryFee
+        taxAmount
+        totalAmount
+        currency
+        addressFullName
+        addressPhone
+        addressLine1
+        addressLine2
+        addressCity
+        addressState
+        addressPostalCode
+        addressCountry
+        note
+        placedAt
+        canceledAt
+        deliveredAt
+        createdAt
+        updatedAt
+        items {
+          _id
+          orderId
+          productId
+          vendorId
+          quantity
+          unitPrice
+          salePrice
+          appliedPrice
+          lineTotal
+          productSnapshotTitle
+          productSnapshotThumbnail
+          productSnapshotUnit
+          productSnapshotSku
+          createdAt
+          updatedAt
+        }
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_ORDER_BY_ID_BY_ADMIN = gql`
+  query GetOrderByIdByAdmin($orderId: String!) {
+    getOrderByIdByAdmin(orderId: $orderId) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      createdAt
+      updatedAt
+      items {
+        _id
+        orderId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

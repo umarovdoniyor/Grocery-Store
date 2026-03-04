@@ -33,6 +33,24 @@ export const UPDATE_MEMBER_BY_ADMIN = gql`
   }
 `;
 
+export const UPDATE_MEMBER_STATUS_BY_ADMIN = gql`
+  mutation UpdateMemberStatusByAdmin($input: UpdateMemberStatusByAdminInput!) {
+    updateMemberStatusByAdmin(input: $input) {
+      _id
+      memberEmail
+      memberPhone
+      memberNickname
+      memberFirstName
+      memberLastName
+      memberAvatar
+      memberType
+      memberStatus
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 /**************************
  *        PROPERTY        *
  *************************/
@@ -264,6 +282,106 @@ export const REMOVE_PRODUCT_BY_ADMIN = gql`
       ordersCount
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const UPDATE_ORDER_STATUS_BY_ADMIN = gql`
+  mutation UpdateOrderStatusByAdmin($input: UpdateOrderStatusByAdminInput!) {
+    updateOrderStatusByAdmin(input: $input) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      createdAt
+      updatedAt
+      items {
+        _id
+        orderId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+export const CANCEL_ORDER_BY_ADMIN = gql`
+  mutation CancelOrderByAdmin($input: CancelOrderByAdminInput!) {
+    cancelOrderByAdmin(input: $input) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      createdAt
+      updatedAt
+      items {
+        _id
+        orderId
+        productId
+        vendorId
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

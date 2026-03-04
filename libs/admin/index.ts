@@ -5,12 +5,19 @@ import {
   UPDATE_CATEGORY,
   REMOVE_CATEGORY,
   UPDATE_PRODUCT_STATUS_BY_ADMIN,
-  REMOVE_PRODUCT_BY_ADMIN
+  REMOVE_PRODUCT_BY_ADMIN,
+  UPDATE_ORDER_STATUS_BY_ADMIN,
+  CANCEL_ORDER_BY_ADMIN,
+  UPDATE_MEMBER_STATUS_BY_ADMIN
 } from "../../apollo/admin/mutation";
 import {
   GET_CATEGORIES_BY_ADMIN,
   GET_PRODUCTS_BY_ADMIN,
-  GET_PRODUCT_BY_ID_BY_ADMIN
+  GET_PRODUCT_BY_ID_BY_ADMIN,
+  GET_VENDOR_APPLICATIONS_BY_ADMIN,
+  GET_ORDERS_BY_ADMIN,
+  GET_ORDER_BY_ID_BY_ADMIN,
+  GET_MEMBERS_BY_ADMIN
 } from "../../apollo/admin/query";
 
 export interface CreateCategoryInput {
@@ -65,6 +72,20 @@ export interface AdminProductsInquiryInput {
   status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
 }
 
+export interface MembersInquiryByAdminInput {
+  page: number;
+  limit: number;
+  memberType?: string;
+  memberStatus?: string;
+  search?: string;
+}
+
+export interface UpdateMemberStatusByAdminInput {
+  memberId: string;
+  status: string;
+  reason?: string;
+}
+
 export interface RemoveCategoryInput {
   categoryId: string;
 }
@@ -76,6 +97,41 @@ export interface UpdateProductStatusByAdminInput {
 
 export interface RemoveProductByAdminInput {
   productId: string;
+}
+
+export interface VendorApplicationsInquiryInput {
+  page: number;
+  limit: number;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+  search?: string;
+}
+
+export interface AdminOrdersInquiryInput {
+  page: number;
+  limit: number;
+  status?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  memberId?: string;
+  orderNo?: string;
+}
+
+export interface UpdateOrderStatusByAdminInput {
+  orderId: string;
+  status: string;
+  note?: string;
+}
+
+export interface CancelOrderByAdminInput {
+  orderId: string;
+  reason: string;
+  currentStatus?: string;
+}
+
+export const CANCELLABLE_ORDER_STATUSES = ["PENDING_PAYMENT", "PAID", "CONFIRMED"] as const;
+
+export function isOrderCancellableByAdmin(status: string): boolean {
+  return (CANCELLABLE_ORDER_STATUSES as readonly string[]).includes(status);
 }
 
 export interface ProductByAdmin {
@@ -102,18 +158,105 @@ export interface ProductByAdmin {
   updatedAt: string;
 }
 
-export interface ReviewVendorApplicationInput {
-  applicationId: string;
+export type ReviewVendorApplicationInput =
+  | {
+      applicationId: string;
+      status: "APPROVED";
+      rejectionReason?: never;
+    }
+  | {
+      applicationId: string;
+      status: "REJECTED";
+      rejectionReason: string;
+    };
+
+export interface VendorApplicationByAdmin {
+  _id: string;
+  memberId: string;
+  storeName: string;
+  description?: string;
+  businessLicenseUrl?: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
-  rejectionReason?: string;
+  rejectionReason?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderItemByAdmin {
+  _id: string;
+  orderId: string;
+  productId: string;
+  vendorId: string;
+  quantity: number;
+  unitPrice: number;
+  salePrice?: number | null;
+  appliedPrice: number;
+  lineTotal: number;
+  productSnapshotTitle: string;
+  productSnapshotThumbnail?: string | null;
+  productSnapshotUnit?: string | null;
+  productSnapshotSku?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderByAdmin {
+  _id: string;
+  orderNo: string;
+  memberId: string;
+  status: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  subtotal: number;
+  discountAmount: number;
+  deliveryFee: number;
+  taxAmount: number;
+  totalAmount: number;
+  currency: string;
+  addressFullName: string;
+  addressPhone: string;
+  addressLine1: string;
+  addressLine2?: string | null;
+  addressCity: string;
+  addressState?: string | null;
+  addressPostalCode: string;
+  addressCountry: string;
+  note?: string | null;
+  placedAt?: string | null;
+  canceledAt?: string | null;
+  deliveredAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  items: OrderItemByAdmin[];
+}
+
+export interface MemberByAdmin {
+  _id: string;
+  memberEmail: string;
+  memberPhone?: string | null;
+  memberNickname?: string | null;
+  memberFirstName?: string | null;
+  memberLastName?: string | null;
+  memberAvatar?: string | null;
+  memberType: string;
+  memberStatus: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export async function reviewVendorApplication(input: ReviewVendorApplicationInput): Promise<{
   success: boolean;
-  application?: any;
+  application?: VendorApplicationByAdmin;
   error?: string;
 }> {
   try {
+    if (input.status === "REJECTED" && !input.rejectionReason.trim()) {
+      return {
+        success: false,
+        error: "Rejection reason is required when rejecting an application"
+      };
+    }
+
     const apolloClient = await initializeApollo();
 
     const { data } = await apolloClient.mutate({
@@ -130,6 +273,194 @@ export async function reviewVendorApplication(input: ReviewVendorApplicationInpu
     return { success: true, application };
   } catch (error: any) {
     const message = error?.message || "Failed to review vendor application";
+    return { success: false, error: message };
+  }
+}
+
+export async function getVendorApplicationsByAdmin(input: VendorApplicationsInquiryInput): Promise<{
+  success: boolean;
+  list?: VendorApplicationByAdmin[];
+  total?: number;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_VENDOR_APPLICATIONS_BY_ADMIN,
+      variables: { input },
+      fetchPolicy: "network-only"
+    });
+
+    const list = data?.getVendorApplicationsByAdmin?.list || [];
+    const total = data?.getVendorApplicationsByAdmin?.metaCounter?.total || 0;
+
+    return { success: true, list, total };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch vendor applications by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function getMembersByAdmin(input: MembersInquiryByAdminInput): Promise<{
+  success: boolean;
+  list?: MemberByAdmin[];
+  total?: number;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_MEMBERS_BY_ADMIN,
+      variables: { input },
+      fetchPolicy: "network-only"
+    });
+
+    const list = data?.getMembersByAdmin?.list || [];
+    const total = data?.getMembersByAdmin?.metaCounter?.total || 0;
+
+    return { success: true, list, total };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch members by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function updateMemberStatusByAdmin(input: UpdateMemberStatusByAdminInput): Promise<{
+  success: boolean;
+  member?: MemberByAdmin;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: UPDATE_MEMBER_STATUS_BY_ADMIN,
+      variables: { input }
+    });
+
+    const member = data?.updateMemberStatusByAdmin;
+
+    if (!member) {
+      return { success: false, error: "Failed to update member status by admin" };
+    }
+
+    return { success: true, member };
+  } catch (error: any) {
+    const message = error?.message || "Failed to update member status by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function getOrdersByAdmin(input: AdminOrdersInquiryInput): Promise<{
+  success: boolean;
+  list?: OrderByAdmin[];
+  total?: number;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_ORDERS_BY_ADMIN,
+      variables: { input },
+      fetchPolicy: "network-only"
+    });
+
+    const list = data?.getOrdersByAdmin?.list || [];
+    const total = data?.getOrdersByAdmin?.metaCounter?.total || 0;
+
+    return { success: true, list, total };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch orders by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function getOrderByIdByAdmin(orderId: string): Promise<{
+  success: boolean;
+  order?: OrderByAdmin | null;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_ORDER_BY_ID_BY_ADMIN,
+      variables: { orderId },
+      fetchPolicy: "network-only"
+    });
+
+    const order = data?.getOrderByIdByAdmin || null;
+
+    return { success: true, order };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch order by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function updateOrderStatusByAdmin(input: UpdateOrderStatusByAdminInput): Promise<{
+  success: boolean;
+  order?: OrderByAdmin;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: UPDATE_ORDER_STATUS_BY_ADMIN,
+      variables: { input }
+    });
+
+    const order = data?.updateOrderStatusByAdmin;
+
+    if (!order) {
+      return { success: false, error: "Failed to update order status by admin" };
+    }
+
+    return { success: true, order };
+  } catch (error: any) {
+    const message = error?.message || "Failed to update order status by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function cancelOrderByAdmin(input: CancelOrderByAdminInput): Promise<{
+  success: boolean;
+  order?: OrderByAdmin;
+  error?: string;
+}> {
+  try {
+    if (!input.reason.trim()) {
+      return { success: false, error: "Cancel reason is required" };
+    }
+
+    if (input.currentStatus && !isOrderCancellableByAdmin(input.currentStatus)) {
+      return { success: false, error: "Order cannot be canceled at current status" };
+    }
+
+    const apolloClient = await initializeApollo();
+    const payload: { orderId: string; reason: string } = {
+      orderId: input.orderId,
+      reason: input.reason
+    };
+
+    const { data } = await apolloClient.mutate({
+      mutation: CANCEL_ORDER_BY_ADMIN,
+      variables: { input: payload }
+    });
+
+    const order = data?.cancelOrderByAdmin;
+
+    if (!order) {
+      return { success: false, error: "Failed to cancel order by admin" };
+    }
+
+    return { success: true, order };
+  } catch (error: any) {
+    const message = error?.message || "Failed to cancel order by admin";
     return { success: false, error: message };
   }
 }
