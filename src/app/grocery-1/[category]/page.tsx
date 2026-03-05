@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GroceryOnePageView from "pages-sections/grocery-1/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/grocery-1";
+import { getGroceryCategory } from "utils/services/grocery-home";
 
 export const metadata: Metadata = {
   title: "Grocery 1 - Bazaar Next.js E-commerce Template",
@@ -21,7 +20,7 @@ interface Props {
 export default async function GroceryOneWithCategory({ params }: Props) {
   const { category: cat } = await params;
 
-  const category = await api.getCategory(cat);
+  const category = await getGroceryCategory(cat);
   if (!category) notFound();
 
   return <GroceryOnePageView selected={category.title} />;

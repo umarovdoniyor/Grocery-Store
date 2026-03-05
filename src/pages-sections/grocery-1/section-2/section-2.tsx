@@ -4,11 +4,10 @@ import Container from "@mui/material/Container";
 import IconComponent from "components/IconComponent";
 // STYLED COMPONENT
 import { ServiceCard } from "./styles";
-// API FUNCTIONS
-import api from "utils/__api__/grocery-1";
+import { getGroceryServices } from "utils/services/grocery-home";
 
 export default async function Section2() {
-  const services = await api.getServices();
+  const services = await getGroceryServices();
 
   if (!services || !services.length) return null;
 

@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 
 import ProductQuickView from "./components/product-quick-view";
 
-import api from "utils/__api__/products";
+import { getProductBySlug } from "utils/services/product-details";
 import { SlugParams } from "models/Common";
 
 export async function generateMetadata({ params }: SlugParams): Promise<Metadata> {
   const { slug } = await params;
-  const product = await api.getProduct(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) notFound();
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 
 export default async function QuickViewPage({ params }: SlugParams) {
   const { slug } = await params;
-  const product = await api.getProduct(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) notFound();
 

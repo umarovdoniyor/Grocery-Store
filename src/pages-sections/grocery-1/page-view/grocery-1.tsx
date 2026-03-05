@@ -12,8 +12,12 @@ import Section2 from "../section-2";
 import Section3 from "../section-3";
 import Section4 from "../section-4";
 import Section5 from "../section-5";
-// API FUNCTIONS
-import api from "utils/__api__/grocery-1";
+import {
+  getGroceryProducts,
+  getPopularProducts,
+  getTrendingProducts,
+  getGrocery1Navigation
+} from "utils/services/grocery-home";
 import { mobileNavigationTwo } from "data/layout-data";
 
 // =====================================================
@@ -22,10 +26,10 @@ type Props = { selected?: string };
 
 export default async function GroceryOnePageView({ selected }: Props) {
   const [products, popularProducts, trendingProducts, grocery1NavList] = await Promise.all([
-    api.getProducts(selected),
-    api.getPopularProducts(),
-    api.getTrendingProducts(),
-    api.getGrocery1Navigation()
+    getGroceryProducts(selected),
+    getPopularProducts(),
+    getTrendingProducts(),
+    getGrocery1Navigation()
   ]);
 
   // SIDE NAVBAR COMPONENT

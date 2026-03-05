@@ -2,9 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 // PAGE VIEW COMPONENT
 import { ShopDetailsPageView } from "pages-sections/shops/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/shop";
-import { getFilters } from "utils/__api__/product-search";
+import { getProductsBySlug } from "utils/services/shop-directory";
+import { getCatalogFilters } from "utils/services/storefront-catalog";
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
@@ -19,8 +18,8 @@ export const metadata: Metadata = {
 export default async function ShopDetails({ params }: SlugParams) {
   const { slug } = await params;
 
-  const shop = await api.getProductsBySlug(slug);
-  const filters = await getFilters();
+  const shop = await getProductsBySlug(slug);
+  const filters = await getCatalogFilters();
 
   if (!shop) notFound();
 

@@ -6,8 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 // STYLED COMPONENTS
 import { StyledCard } from "./styles";
-// API FUNCTIONS
-import { getAvailableShops } from "utils/__api__/shop";
+import { getAvailableShops } from "utils/services/shop-directory";
 
 export default async function AvailableShops() {
   const shops = await getAvailableShops();

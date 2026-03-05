@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-// API FUNCTIONS
-import api from "utils/__api__/shop";
+import { getShopList } from "utils/services/shop-directory";
 // PAGE VIEW COMPONENT
 import { ShopsPageView } from "pages-sections/shops/page-view";
 
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Shops() {
-  const { shops, meta } = await api.getShopList();
+  const { shops, meta } = await getShopList();
   if (!shops) return notFound();
 
   return (

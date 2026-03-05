@@ -8,12 +8,16 @@ import ReviewForm from "./review-form";
 import { getDateDifference } from "lib";
 // STYLED COMPONENTS
 import { ReviewRoot } from "./styles";
-// API FUNCTIONS
-import api from "utils/__api__/products";
 
-export default async function ProductReviews() {
-  const reviews = await api.getProductReviews();
+const reviews: Array<{
+  comment: string;
+  date: string;
+  imgUrl: string;
+  name: string;
+  rating: number;
+}> = [];
 
+export default function ProductReviews() {
   return (
     <div>
       {/* REVIEW LIST */}
@@ -42,6 +46,12 @@ export default async function ProductReviews() {
           </Typography>
         </ReviewRoot>
       ))}
+
+      {reviews.length === 0 && (
+        <Typography variant="body1" sx={{ color: "text.secondary", mb: 2 }}>
+          No reviews yet.
+        </Typography>
+      )}
 
       {/* REVIEW FORM */}
       <Typography variant="h3" sx={{ mt: 7, mb: 2.5 }}>

@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 // PAGE VIEW COMPONENT
 import { ProductDetailsPageView } from "pages-sections/product-details/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/products";
-import { getFrequentlyBought, getRelatedProducts } from "utils/__api__/related-products";
+import {
+  getFrequentlyBoughtProducts,
+  getProductBySlug,
+  getRelatedProductsBySlug
+} from "utils/services/product-details";
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
 export async function generateMetadata({ params }: SlugParams): Promise<Metadata> {
   const { slug } = await params;
-  const product = await api.getProduct(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   return {
@@ -24,9 +26,9 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 export default async function ProductDetails({ params }: SlugParams) {
   const { slug } = await params;
   const [product, relatedProducts, frequentlyBought] = await Promise.all([
-    api.getProduct(slug),
-    getRelatedProducts(),
-    getFrequentlyBought()
+    getProductBySlug(slug),
+    getRelatedProductsBySlug(slug),
+    getFrequentlyBoughtProducts()
   ]);
 
   if (!product) notFound();

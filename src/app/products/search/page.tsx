@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 // PAGE VIEW COMPONENT
 import { ProductSearchPageView } from "pages-sections/product-details/page-view";
-// API FUNCTIONS
-import { getFilters, getProducts } from "utils/__api__/product-search";
+import { getCatalogFilters, getCatalogProducts } from "utils/services/storefront-catalog";
 
 export const metadata: Metadata = {
   title: "Product Search - Bazaar Next.js E-commerce Template",
@@ -32,8 +31,8 @@ export default async function ProductSearch({ searchParams }: Props) {
   const { q, page, sort, sale, prices, colors, brands, rating, category } = await searchParams;
 
   const [filters, data] = await Promise.all([
-    getFilters(),
-    getProducts({ q, page, sort, sale, prices, colors, brands, rating, category })
+    getCatalogFilters(),
+    getCatalogProducts({ q, page, sort, sale, prices, colors, brands, rating, category })
   ]);
 
   return (

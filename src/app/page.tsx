@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import ShopLayout3 from "components/layouts/shop-layout-3";
 import GroceryOnePageView from "pages-sections/grocery-1/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/layout";
+import { getLayoutData } from "utils/services/layout-data";
 
 export const metadata: Metadata = {
   title: "Grocery Store - Fresh Food & Delivery",
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function IndexPage() {
-  const data = await api.getLayoutData();
+  const data = await getLayoutData();
 
   return (
     <ShopLayout3 showFooter={false} showMobileMenu={false} data={data}>
