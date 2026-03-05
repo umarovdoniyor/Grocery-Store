@@ -8,10 +8,11 @@ const axiosInstance = axios.create({
   // Axios configuration options here
 });
 
-// Remove following 2 lines if you don't want to use MockAdapter
-export const Mock = new MockAdapter(axiosInstance);
-
-const enableDashboardMocks = process.env.NEXT_PUBLIC_ENABLE_DASHBOARD_MOCKS === "true";
-MockEndPoints(Mock, { enableDashboardMocks });
+const enableMocks = process.env.NEXT_PUBLIC_ENABLE_MOCKS === "true";
+if (enableMocks) {
+  const mock = new MockAdapter(axiosInstance);
+  const enableDashboardMocks = process.env.NEXT_PUBLIC_ENABLE_DASHBOARD_MOCKS === "true";
+  MockEndPoints(mock, { enableDashboardMocks });
+}
 
 export default axiosInstance;

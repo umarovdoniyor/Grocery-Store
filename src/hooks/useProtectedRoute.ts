@@ -10,16 +10,16 @@ interface UseProtectedRouteOptions {
   redirectTo?: string;
 }
 
+const ROLE_LANDING_PATH: Record<UserRole, string> = {
+  customer: "/profile",
+  vendor: "/vendor/dashboard",
+  admin: "/admin/orders"
+};
+
 export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
   const router = useRouter();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { requiredRole, redirectTo = "/login" } = options;
-
-  const roleLandingPath: Record<UserRole, string> = {
-    customer: "/profile",
-    vendor: "/vendor/dashboard",
-    admin: "/admin/orders"
-  };
 
   useEffect(() => {
     if (isLoading) return;
@@ -36,7 +36,7 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
       const currentUserRole = user.role ?? "customer";
 
       if (!allowedRoles.includes(currentUserRole)) {
-        const landingPath = roleLandingPath[currentUserRole] || "/";
+        const landingPath = ROLE_LANDING_PATH[currentUserRole] || "/";
         router.replace(landingPath);
       }
     }

@@ -21,11 +21,10 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 /** Purpose: Build HTTP headers with authentication token */
 function getHeaders() {
   //1.Create empty headers object
-  const headers = {} as HeadersInit;
+  const headers: Record<string, string> = {};
 
   // 2. Get JWT token from localStorage (Retrieves token saved during login. Returns empty string if not logged in)
   const token = getJwtToken();
-  // @ts-ignore
   // 3. If token exists, add Authorization header
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -42,10 +41,9 @@ const tokenRefreshLink = new TokenRefreshLink({
   accessTokenField: "accessToken",
   isTokenValidOrUndefined: async () => {
     return true;
-  }, // @ts-ignore
-  fetchAccessToken: () => {
-    // execute refresh token
-    return null;
+  },
+  fetchAccessToken: async () => {
+    return new Response(null, { status: 204 });
   }
 });
 
@@ -80,9 +78,8 @@ function createIsomorphicLink() {
        */
     });
 
-    // @ts-ignore
     // Purpose: HTTP link for file uploads and standard requests
-    const link = new createUploadLink({
+    const link = createUploadLink({
       uri: process.env.REACT_APP_API_GRAPHQL_URL
 
       /**
@@ -110,8 +107,8 @@ function createIsomorphicLink() {
         );
       }
       if (networkError) console.log(`[Network error]: ${networkError}`);
-      // @ts-ignore
-      if (networkError?.statusCode === 401) {
+      const statusCode = (networkError as { statusCode?: number } | undefined)?.statusCode;
+      if (statusCode === 401) {
         logOut();
         window.location.href = "/account/join";
       }

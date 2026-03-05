@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "set-root": "bazaar set-root",
-    "lint": "next lint",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "log": "npm run build && npm start >> server.log 2>&1",
     "format": "prettier --write .",
