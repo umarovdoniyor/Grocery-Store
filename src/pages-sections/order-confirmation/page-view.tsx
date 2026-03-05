@@ -2,12 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 // STYLED COMPONENT
 import { Wrapper, StyledButton } from "./styles";
 
 export default function OrderConfirmationPageView() {
+  const searchParams = useSearchParams();
+  const paymentMethod = searchParams.get("method");
+
   return (
     <Container className="mt-2 mb-5">
       <Wrapper>
@@ -35,6 +39,12 @@ export default function OrderConfirmationPageView() {
         <Typography fontSize={16} variant="body1" color="text.secondary">
           Your order number is <strong>#1234567890</strong>.
         </Typography>
+
+        {paymentMethod && (
+          <Typography fontSize={16} variant="body1" color="text.secondary">
+            Payment method: <strong>{paymentMethod}</strong>
+          </Typography>
+        )}
 
         <StyledButton
           color="primary"

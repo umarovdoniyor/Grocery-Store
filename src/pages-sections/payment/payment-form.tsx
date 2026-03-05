@@ -1,23 +1,51 @@
 import Link from "next/link";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 // MUI
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 // LOCAL CUSTOM COMPONENTS
 import FormLabel from "./form-label";
 import CreditCardForm from "./credit-card-form";
+import { validateCheckoutServer } from "utils/services/checkout-flow";
 
 export default function PaymentForm() {
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
+  const [error, setError] = useState<string | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
+
+  const paymentMethodLabel = useMemo(() => {
+    if (paymentMethod === "paypal") return "PayPal";
+    if (paymentMethod === "cod") return "COD";
+    return "CARD";
+  }, [paymentMethod]);
 
   const handleChangeTo = useCallback((e: React.SyntheticEvent<Element, Event>) => {
     setPaymentMethod((e.target as HTMLInputElement).name);
   }, []);
+
+  const handleReview = useCallback(async () => {
+    setIsReviewing(true);
+    setError(null);
+
+    const validation = await validateCheckoutServer();
+
+    if (validation.success && validation.validation && !validation.validation.isValid) {
+      const firstIssue = validation.validation.issues?.[0]?.message;
+      setError(firstIssue || "Cart validation failed. Please update your cart and try again.");
+      setIsReviewing(false);
+      return;
+    }
+
+    router.push(`/order-confirmation?method=${paymentMethodLabel}`);
+  }, [paymentMethodLabel, router]);
 
   return (
     <Fragment>
@@ -71,6 +99,12 @@ export default function PaymentForm() {
         />
       </Card>
 
+      {error && (
+        <Typography color="error.main" sx={{ mt: -2, mb: 2 }}>
+          {error}
+        </Typography>
+      )}
+
       {/* BUTTONS SECTION */}
       <Stack direction="row" spacing={3}>
         <Button
@@ -85,7 +119,15 @@ export default function PaymentForm() {
           Back to checkout
         </Button>
 
-        <Button fullWidth size="large" type="submit" color="primary" variant="contained">
+        <Button
+          fullWidth
+          size="large"
+          type="button"
+          color="primary"
+          variant="contained"
+          loading={isReviewing}
+          onClick={handleReview}
+        >
           Review
         </Button>
       </Stack>

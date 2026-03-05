@@ -71,7 +71,9 @@ export default function CheckoutForm() {
   });
 
   const handleSubmitForm = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2));
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("checkout_shipping", JSON.stringify(values));
+    }
     router.push("/payment");
   });
 

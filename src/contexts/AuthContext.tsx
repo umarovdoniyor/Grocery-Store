@@ -94,7 +94,7 @@ const mapMemberToUser = (member: any): User => ({
   avatar: member?.memberAvatar || "",
   address: member?.memberAddress || "",
   password: "",
-  dateOfBirth: "",
+  dateOfBirth: member?.memberBirthDate || member?.birthDate || member?.createdAt || "",
   verified: Boolean(member?.isEmailVerified || member?.isPhoneVerified),
   role: mapMemberTypeToRole(member?.memberType),
   name: {

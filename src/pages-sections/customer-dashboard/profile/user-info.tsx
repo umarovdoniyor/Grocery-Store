@@ -12,6 +12,11 @@ type Props = { user: User };
 // ==============================================================
 
 export default function UserInfo({ user }: Props) {
+  const birthDate = new Date(user.dateOfBirth);
+  const formattedBirthDate = Number.isNaN(birthDate.getTime())
+    ? "N/A"
+    : format(birthDate, "dd MMM, yyyy");
+
   return (
     <Link href={`/profile/${user.id}`}>
       <Card
@@ -32,10 +37,7 @@ export default function UserInfo({ user }: Props) {
         <TableRowItem title="Last Name" value={user.name.lastName} />
         <TableRowItem title="Email" value={user.email} />
         <TableRowItem title="Phone" value={user.phone} />
-        <TableRowItem
-          title="Birth date"
-          value={format(new Date(user.dateOfBirth), "dd MMM, yyyy")}
-        />
+        <TableRowItem title="Birth date" value={formattedBirthDate} />
       </Card>
     </Link>
   );

@@ -1,14 +1,22 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TicketDetailsPageView } from "pages-sections/customer-dashboard/support-tickets/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/ticket";
+import { getCustomerTicketBySlug } from "utils/services/customer-dashboard";
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
 export async function generateMetadata({ params }: SlugParams): Promise<Metadata> {
   const { slug } = await params;
-  const ticket = await api.getTicket(slug);
+  const ticket = getCustomerTicketBySlug(slug);
+
+  if (!ticket) {
+    return {
+      title: "Support Ticket - Bazaar Next.js E-commerce Template",
+      description: "Bazaar is a React Next.js E-commerce template.",
+      authors: [{ name: "UI-LIB", url: "https://ui-lib.com" }],
+      keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
+    };
+  }
 
   return {
     title: ticket.title + " - Bazaar Next.js E-commerce Template",
@@ -20,7 +28,7 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 
 export default async function SupportTicketDetails({ params }: SlugParams) {
   const { slug } = await params;
-  const ticket = await api.getTicket(slug);
+  const ticket = getCustomerTicketBySlug(slug);
 
   if (!ticket) notFound();
 

@@ -10,15 +10,23 @@ import { FlexBetween, FlexBox } from "components/flex-box";
 import { currency } from "lib";
 // CUSTOM DATA MODEL
 import User from "models/User.model";
-// API FUNCTIONS
-import api from "utils/__api__/users";
 
 // ==============================================================
 type Props = { user: User };
 // ==============================================================
 
-export default async function UserAnalytics({ user }: Props) {
-  const { balance, orderSummary, type } = await api.getUserAnalytics(user.id);
+const DEFAULT_ORDER_SUMMARY = [
+  { title: "0", subtitle: "All Orders" },
+  { title: "0", subtitle: "Awaiting Payments" },
+  { title: "0", subtitle: "Awaiting Shipment" },
+  { title: "0", subtitle: "Awaiting Delivery" }
+];
+
+export default function UserAnalytics({ user }: Props) {
+  const balance = 0;
+  const type = `${(user.role || "customer").toUpperCase()} USER`;
+  const orderSummary = DEFAULT_ORDER_SUMMARY;
+  const avatarSrc = user.avatar || "/assets/images/faces/propic(9).png";
 
   return (
     <Grid container spacing={3}>
@@ -36,7 +44,7 @@ export default async function UserAnalytics({ user }: Props) {
           }}
         >
           <Avatar variant="rounded" sx={{ height: 65, width: 65 }}>
-            <Image fill alt={user.name.firstName} src={user.avatar} sizes="(65px, 65px)" />
+            <Image fill alt={user.name.firstName} src={avatarSrc} sizes="(65px, 65px)" />
           </Avatar>
 
           <FlexBetween flexWrap="wrap" flex={1}>

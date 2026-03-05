@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { OrdersPageView } from "pages-sections/customer-dashboard/orders/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/orders";
+import { getCustomerOrders } from "utils/services/customer-orders";
 
 export const metadata: Metadata = {
   title: "Orders - Bazaar Next.js E-commerce Template",
@@ -19,11 +18,12 @@ interface Props {
 
 export default async function Orders({ searchParams }: Props) {
   const { page } = await searchParams;
-  const data = await api.getOrders(+page || 1);
+  const currentPage = Number.parseInt(page || "1", 10) || 1;
+  const data = await getCustomerOrders(currentPage);
 
-  if (!data || data.orders.length === 0) {
+  if (!data.success || !data.orders) {
     return <div>Failed to load</div>;
   }
 
-  return <OrdersPageView orders={data.orders} totalPages={data.totalPages} />;
+  return <OrdersPageView orders={data.orders} totalPages={data.totalPages || 1} />;
 }

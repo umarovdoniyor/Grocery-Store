@@ -1,8 +1,5 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { PaymentDetailsPageView } from "pages-sections/customer-dashboard/payment-methods/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/payments";
+import PaymentMethodDetailsClient from "./payment-method-details-client";
 // TYPES
 import { IdParams } from "models/Common";
 
@@ -15,9 +12,5 @@ export const metadata: Metadata = {
 
 export default async function PaymentMethodDetails({ params }: IdParams) {
   const { id } = await params;
-  const payment = await api.getPayment(id);
-
-  if (!payment) notFound();
-
-  return <PaymentDetailsPageView payment={payment} />;
+  return <PaymentMethodDetailsClient id={id} />;
 }

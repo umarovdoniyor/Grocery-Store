@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { AddressPageView } from "pages-sections/customer-dashboard/address/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/address";
+import AddressClient from "./address-client";
 
 export const metadata: Metadata = {
   title: "Address - Bazaar Next.js E-commerce Template",
@@ -19,11 +17,5 @@ interface Props {
 
 export default async function Address({ searchParams }: Props) {
   const { page } = await searchParams;
-  const data = await api.getAddressList(+page || 1);
-
-  if (!data || data.addressList.length === 0) {
-    return <div>Data not found</div>;
-  }
-
-  return <AddressPageView addresses={data.addressList} totalPages={data.totalPages} />;
+  return <AddressClient page={page} />;
 }
