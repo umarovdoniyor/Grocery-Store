@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { PackagePaymentPageView } from "pages-sections/vendor-dashboard/package-payments/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import { getAdminPackagePayments } from "utils/services/admin-dashboard";
 
 export const metadata: Metadata = {
   title: "Package Payments - Bazaar Next.js E-commerce Template",
@@ -11,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function PackagePayments() {
-  const payments = await api.packagePayments();
+  const payments = await getAdminPackagePayments();
   return <PackagePaymentPageView payments={payments} />;
 }

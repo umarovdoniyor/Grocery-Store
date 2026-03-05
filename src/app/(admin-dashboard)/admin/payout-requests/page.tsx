@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { PayoutRequestsPageView } from "pages-sections/vendor-dashboard/payout-requests/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import { getAdminPayoutRequests } from "utils/services/admin-dashboard";
 
 export const metadata: Metadata = {
   title: "Payout Requests - Bazaar Next.js E-commerce Template",
@@ -11,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function PayoutRequests() {
-  const requests = await api.payoutRequests();
+  const requests = await getAdminPayoutRequests();
   return <PayoutRequestsPageView requests={requests} />;
 }

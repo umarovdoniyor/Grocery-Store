@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { RefundRequestPageView } from "pages-sections/vendor-dashboard/refund-request/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import { getAdminRefundRequests } from "utils/services/admin-dashboard";
 
 export const metadata: Metadata = {
   title: "Refund Request - Bazaar Next.js E-commerce Template",
@@ -11,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RefundRequest() {
-  const requests = await api.refundRequests();
+  const requests = await getAdminRefundRequests();
   return <RefundRequestPageView requests={requests} />;
 }

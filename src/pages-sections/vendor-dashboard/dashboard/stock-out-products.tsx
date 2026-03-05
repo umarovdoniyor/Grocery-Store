@@ -5,8 +5,7 @@ import Typography from "@mui/material/Typography";
 import { FlexBetween } from "components/flex-box";
 // LOCAL CUSTOM COMPONENT
 import DataListTable from "./table";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import { getAdminStockOutProducts } from "utils/services/admin-dashboard";
 // DATA TYPES
 import { StockOut } from "./types";
 
@@ -18,7 +17,7 @@ const tableHeading = [
 ];
 
 export default async function StockOutProducts() {
-  const stockOutProducts: StockOut[] = await api.stockOutProducts();
+  const stockOutProducts: StockOut[] = await getAdminStockOutProducts();
 
   return (
     <Card>

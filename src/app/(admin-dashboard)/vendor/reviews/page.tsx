@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { ReviewsPageView } from "pages-sections/vendor-dashboard/reviews/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/vendor";
+import { getVendorReviews } from "utils/services/vendor-dashboard";
 
 export const metadata: Metadata = {
   title: "Reviews - Bazaar Next.js E-commerce Template",
@@ -11,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Reviews() {
-  const reviews = await api.getAllProductReviews();
+  const reviews = await getVendorReviews();
   return <ReviewsPageView reviews={reviews} />;
 }

@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { EarningHistoryPageView } from "pages-sections/vendor-dashboard/earning-history/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/dashboard";
+import { getAdminEarningHistory } from "utils/services/admin-dashboard";
 
 export const metadata: Metadata = {
   title: "Earning History - Bazaar Next.js E-commerce Template",
@@ -11,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function EarningHistory() {
-  const earnings = await api.earningHistory();
+  const earnings = await getAdminEarningHistory();
   return <EarningHistoryPageView earnings={earnings} />;
 }

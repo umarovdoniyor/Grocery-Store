@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SupportTicketsPageView } from "pages-sections/vendor-dashboard/support-tickets/page-view";
-// API FUNCTIONS
-import api from "utils/__api__/ticket";
+import { getVendorSupportTickets } from "utils/services/vendor-dashboard";
 
 export const metadata: Metadata = {
   title: "Support Tickets - Bazaar Next.js E-commerce Template",
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SupportTickets() {
-  const { tickets } = await api.getTicketList();
+  const tickets = await getVendorSupportTickets();
   if (!tickets || tickets.length === 0) notFound();
 
   return <SupportTicketsPageView tickets={tickets} />;
