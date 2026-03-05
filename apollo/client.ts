@@ -44,6 +44,9 @@ const tokenRefreshLink = new TokenRefreshLink({
   },
   fetchAccessToken: async () => {
     return new Response(null, { status: 204 });
+  },
+  handleFetch: (_accessToken: string) => {
+    // Token refresh is currently disabled (isTokenValidOrUndefined always returns true).
   }
 });
 
