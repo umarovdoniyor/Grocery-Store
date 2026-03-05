@@ -14,6 +14,7 @@ requiredRole: ["vendor", "admin"]
 if (isLoading) return <div>Loading...</div>;
 
 return (
+
 <div>
 <h1>Welcome, {user?.name.firstName}!</h1>
 {/_ Your vendor dashboard content _/}
@@ -35,6 +36,7 @@ requiredRole: "admin"
 if (isLoading) return <div>Loading...</div>;
 
 return (
+
 <div>
 <h1>Admin Panel</h1>
 {/_ Your admin content _/}
@@ -54,6 +56,7 @@ const { user, isLoading } = useProtectedRoute();
 if (isLoading) return <div>Loading...</div>;
 
 return (
+
 <div>
 <h1>My Profile</h1>
 {/_ User profile content _/}
