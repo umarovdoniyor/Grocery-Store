@@ -415,6 +415,31 @@ export const VALIDATE_CART_FOR_CHECKOUT = gql`
   }
 `;
 
+export const ADD_TO_WISHLIST = gql`
+  mutation AddToWishlist($input: AddToWishlistInput!) {
+    addToWishlist(input: $input) {
+      success
+      message
+      wishlistItem {
+        _id
+        memberId
+        productId
+        createdAt
+      }
+    }
+  }
+`;
+
+export const REMOVE_FROM_WISHLIST = gql`
+  mutation RemoveFromWishlist($input: RemoveFromWishlistInput!) {
+    removeFromWishlist(input: $input) {
+      success
+      message
+      removedProductId
+    }
+  }
+`;
+
 export const CREATE_ORDER_FROM_CART = gql`
   mutation CreateOrderFromCart($input: CreateOrderFromCartInput!) {
     createOrderFromCart(input: $input) {

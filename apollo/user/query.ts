@@ -255,6 +255,47 @@ export const GET_CHECKOUT_SUMMARY = gql`
   }
 `;
 
+export const GET_MY_WISHLIST = gql`
+  query GetMyWishlist($input: GetMyWishlistInput!) {
+    getMyWishlist(input: $input) {
+      list {
+        _id
+        memberId
+        productId
+        createdAt
+        product {
+          _id
+          slug
+          title
+          thumbnail
+          price
+          salePrice
+          status
+        }
+      }
+      metaCounter {
+        page
+        limit
+        total
+        totalPages
+        hasNextPage
+        hasPrevPage
+      }
+    }
+  }
+`;
+
+export const GET_WISHLIST_STATUS = gql`
+  query GetWishlistStatus($input: GetWishlistStatusInput!) {
+    getWishlistStatus(input: $input) {
+      list {
+        productId
+        isWishlisted
+      }
+    }
+  }
+`;
+
 export const GET_MY_ORDERS = gql`
   query GetMyOrders($input: GetMyOrdersInput!) {
     getMyOrders(input: $input) {

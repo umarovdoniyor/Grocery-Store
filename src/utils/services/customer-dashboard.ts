@@ -3,7 +3,7 @@ import type Payment from "models/Payment.model";
 import type User from "models/User.model";
 import type Ticket from "models/Ticket.model";
 import type Product from "models/Product.model";
-import productDatabase from "data/product-database";
+import { getMyWishlist } from "../../../libs/wishlist";
 import { messageList, ticketList } from "__server__/__db__/ticket/data";
 
 const PAYMENT_METHODS: Payment[] = [
@@ -127,13 +127,48 @@ export function getCustomerTicketBySlug(slug: string): Ticket | null {
   };
 }
 
-export function getCustomerWishlistProducts(page = 1): { products: Product[]; totalPages: number } {
+export async function getCustomerWishlistProducts(page = 1): Promise<{
+  success: boolean;
+  products?: Product[];
+  totalPages?: number;
+  error?: string;
+}> {
   const PAGE_SIZE = 6;
-  const products = productDatabase.slice(0, 30);
-  const currentProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const result = await getMyWishlist(page, PAGE_SIZE);
+  if (!result.success) {
+    return { success: false, error: result.error || "Failed to fetch wishlist" };
+  }
+
+  const products = (result.list || []).map((item) => {
+    const thumbnail =
+      item.product.thumbnail ||
+      "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
+    const price = Number(item.product.salePrice ?? item.product.price ?? 0);
+    const basePrice = Number(item.product.price || 0);
+    const discount =
+      basePrice > 0 && item.product.salePrice && basePrice > item.product.salePrice
+        ? Math.round(((basePrice - item.product.salePrice) / basePrice) * 100)
+        : 0;
+
+    return {
+      id: item.product._id,
+      slug: item.product.slug,
+      title: item.product.title,
+      thumbnail,
+      images: [thumbnail],
+      price,
+      discount,
+      rating: 0,
+      categories: [],
+      status: item.product.status,
+      published: item.product.status === "PUBLISHED"
+    } as Product;
+  });
 
   return {
-    products: currentProducts,
-    totalPages: Math.max(1, Math.ceil(products.length / PAGE_SIZE))
+    success: true,
+    products,
+    totalPages: result.meta?.totalPages || 1
   };
 }

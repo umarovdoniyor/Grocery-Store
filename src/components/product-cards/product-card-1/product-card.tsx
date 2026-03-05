@@ -24,7 +24,7 @@ interface Props {
 // ========================================================
 
 export default function ProductCard1({ product, showProductSize, showRating = true }: Props) {
-  const { slug, title, price, thumbnail, rating, discount } = product;
+  const { id, slug, title, price, thumbnail, rating, discount } = product;
 
   return (
     <StyledCard>
@@ -40,7 +40,7 @@ export default function ProductCard1({ product, showProductSize, showRating = tr
             </IconButton>
           </Link>
 
-          <FavoriteButton />
+          <FavoriteButton productId={id} />
         </HoverIconWrapper>
 
         {/* PRODUCT IMAGE / THUMBNAIL */}
