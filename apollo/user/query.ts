@@ -462,6 +462,74 @@ export const GET_CATEGORY_BY_SLUG = gql`
   }
 `;
 
+export const GET_VENDORS = gql`
+  query GetVendors($input: VendorsInquiry!) {
+    getVendors(input: $input) {
+      list {
+        _id
+        slug
+        storeName
+        memberPhone
+        memberAddress
+        memberImage
+        coverImage
+        verified
+        status
+        productsCount
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_VENDOR_BY_SLUG = gql`
+  query GetVendorBySlug($slug: String!) {
+    getVendorBySlug(slug: $slug) {
+      _id
+      slug
+      storeName
+      memberPhone
+      memberAddress
+      memberImage
+      coverImage
+      verified
+      status
+      productsCount
+      createdAt
+      updatedAt
+      storeDescription
+      memberEmail
+    }
+  }
+`;
+
+export const GET_VENDOR_PRODUCTS = gql`
+  query GetVendorProducts($vendorId: String!, $input: VendorProductsInquiry!) {
+    getVendorProducts(vendorId: $vendorId, input: $input) {
+      list {
+        _id
+        title
+        slug
+        thumbnail
+        price
+        salePrice
+        stockQty
+        status
+        likes
+        views
+        createdAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
 export const GET_AGENTS = gql`
   query GetAgents($input: AgentsInquiry!) {
     getAgents(input: $input) {

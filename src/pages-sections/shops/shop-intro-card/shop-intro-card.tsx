@@ -21,7 +21,7 @@ type Props = { shop: Shop };
 // =======================================================
 
 export default function ShopIntroCard({ shop }: Props) {
-  const { name, phone, address, coverPicture, profilePicture, socialLinks } = shop;
+  const { name, phone, address, coverPicture, profilePicture, socialLinks, email } = shop;
 
   const socials = [
     { Icon: FacebookFilled, url: socialLinks.facebook },
@@ -96,7 +96,7 @@ export default function ShopIntroCard({ shop }: Props) {
               </FlexBox>
             </div>
 
-            <a href="mailto:scarletbeauty@xmail.com">
+            <a href={`mailto:${email}`}>
               <Button variant="outlined" color="primary" sx={{ my: 1.5 }}>
                 Contact Vendor
               </Button>
