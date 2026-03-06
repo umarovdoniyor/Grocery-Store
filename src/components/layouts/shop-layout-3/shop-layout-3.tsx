@@ -14,7 +14,7 @@ import {
   FooterSocialLinks
 } from "components/footer";
 import Sticky from "components/sticky";
-import { SearchInput2 } from "components/search-box";
+import { SearchInput1 } from "components/search-box";
 import { NavigationList } from "components/navbar";
 import { MobileMenu } from "components/mobile-navbar/mobile-menu";
 import { MobileNavigationBar } from "components/mobile-navigation";
@@ -49,7 +49,7 @@ export default function ShopLayout3({
 
       <MobileHeader.Right>
         <HeaderSearch>
-          <SearchInput2 />
+          <SearchInput1 categories={header.categories} />
         </HeaderSearch>
 
         <HeaderAccount />
@@ -78,7 +78,7 @@ export default function ShopLayout3({
           </Header.Mid>
 
           <Box sx={{ flex: 1, maxWidth: 400, mx: 2 }}>
-            <SearchInput2 />
+            <SearchInput1 categories={header.categories} />
           </Box>
 
           <Header.Right>
