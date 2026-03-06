@@ -2,50 +2,57 @@ import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-// LOCAL CUSTOM COMPONENT
 import ReviewForm from "./review-form";
-// CUSTOM UTILS LIBRARY FUNCTION
-import { getDateDifference } from "lib";
 // STYLED COMPONENTS
 import { ReviewRoot } from "./styles";
+import type Review from "models/Review.model";
 
-const reviews: Array<{
-  comment: string;
-  date: string;
-  imgUrl: string;
-  name: string;
-  rating: number;
-}> = [];
+type Props = {
+  productId: string;
+  reviews?: Review[];
+};
 
-export default function ProductReviews() {
+export default function ProductReviews({ productId, reviews = [] }: Props) {
   return (
     <div>
       {/* REVIEW LIST */}
-      {reviews.map(({ comment, date, imgUrl, name, rating }, ind) => (
-        <ReviewRoot key={ind}>
-          <div className="user-info">
-            <Avatar variant="rounded" className="user-avatar">
-              <Image src={imgUrl} alt={name} fill sizes="(48px 48px)" />
-            </Avatar>
+      {reviews.map((review, ind) => {
+        const name =
+          `${review.customer?.name?.firstName || ""} ${review.customer?.name?.lastName || ""}`.trim() ||
+          review.customer?.email ||
+          "Customer";
 
-            <div>
-              <Typography variant="h5" sx={{ mb: 1 }}>
-                {name}
-              </Typography>
+        return (
+          <ReviewRoot key={ind}>
+            <div className="user-info">
+              <Avatar variant="rounded" className="user-avatar">
+                <Image
+                  src={review.customer?.avatar || "/assets/images/faces/propic.png"}
+                  alt={name}
+                  fill
+                  sizes="(48px 48px)"
+                />
+              </Avatar>
 
-              <div className="user-rating">
-                <Rating size="small" value={rating} color="warn" readOnly />
-                <Typography variant="h6">{rating}</Typography>
-                <Typography component="span">{getDateDifference(date)}</Typography>
+              <div>
+                <Typography variant="h5" sx={{ mb: 1 }}>
+                  {name}
+                </Typography>
+
+                <div className="user-rating">
+                  <Rating size="small" value={review.rating || 0} color="warn" readOnly />
+                  <Typography variant="h6">{review.rating || 0}</Typography>
+                  <Typography component="span">Verified customer</Typography>
+                </div>
               </div>
             </div>
-          </div>
 
-          <Typography variant="body1" sx={{ color: "grey.700" }}>
-            {comment}
-          </Typography>
-        </ReviewRoot>
-      ))}
+            <Typography variant="body1" sx={{ color: "grey.700" }}>
+              {review.comment}
+            </Typography>
+          </ReviewRoot>
+        );
+      })}
 
       {reviews.length === 0 && (
         <Typography variant="body1" sx={{ color: "text.secondary", mb: 2 }}>
@@ -53,12 +60,11 @@ export default function ProductReviews() {
         </Typography>
       )}
 
-      {/* REVIEW FORM */}
       <Typography variant="h3" sx={{ mt: 7, mb: 2.5 }}>
         Write a Review for this product
       </Typography>
 
-      <ReviewForm />
+      <ReviewForm productId={productId} />
     </div>
   );
 }
