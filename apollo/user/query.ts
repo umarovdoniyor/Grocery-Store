@@ -530,6 +530,115 @@ export const GET_VENDOR_PRODUCTS = gql`
   }
 `;
 
+export const GET_PRODUCT_REVIEWS = gql`
+  query GetProductReviews($input: ProductReviewsInquiry!) {
+    getProductReviews(input: $input) {
+      list {
+        _id
+        productId
+        memberId
+        orderId
+        rating
+        comment
+        images
+        status
+        moderationReason
+        moderatedBy
+        moderatedAt
+        createdAt
+        updatedAt
+        member {
+          _id
+          memberNickname
+          memberFirstName
+          memberLastName
+          memberAvatar
+        }
+      }
+      metaCounter {
+        total
+      }
+      summary {
+        ratingAvg
+        reviewsCount
+        rating1Count
+        rating2Count
+        rating3Count
+        rating4Count
+        rating5Count
+      }
+    }
+  }
+`;
+
+export const GET_MY_PRODUCT_REVIEW = gql`
+  query GetMyProductReview($productId: String!) {
+    getMyProductReview(productId: $productId) {
+      _id
+      productId
+      memberId
+      orderId
+      rating
+      comment
+      images
+      status
+      moderationReason
+      moderatedBy
+      moderatedAt
+      createdAt
+      updatedAt
+      member {
+        _id
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+      }
+    }
+  }
+`;
+
+export const GET_REVIEWS_BY_ADMIN = gql`
+  query GetReviewsByAdmin($input: ReviewsByAdminInquiry!) {
+    getReviewsByAdmin(input: $input) {
+      list {
+        _id
+        productId
+        memberId
+        orderId
+        rating
+        comment
+        images
+        status
+        moderationReason
+        moderatedBy
+        moderatedAt
+        createdAt
+        updatedAt
+        member {
+          _id
+          memberNickname
+          memberFirstName
+          memberLastName
+          memberAvatar
+        }
+      }
+      metaCounter {
+        total
+      }
+      summary {
+        ratingAvg
+        reviewsCount
+        rating1Count
+        rating2Count
+        rating3Count
+        rating4Count
+        rating5Count
+      }
+    }
+  }
+`;
+
 export const GET_AGENTS = gql`
   query GetAgents($input: AgentsInquiry!) {
     getAgents(input: $input) {

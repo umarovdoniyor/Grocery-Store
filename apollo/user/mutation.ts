@@ -236,6 +236,93 @@ export const RECORD_VIEW = gql`
   }
 `;
 
+export const CREATE_PRODUCT_REVIEW = gql`
+  mutation CreateProductReview($input: CreateProductReviewInput!) {
+    createProductReview(input: $input) {
+      _id
+      productId
+      memberId
+      orderId
+      rating
+      comment
+      images
+      status
+      moderationReason
+      moderatedBy
+      moderatedAt
+      createdAt
+      updatedAt
+      member {
+        _id
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+      }
+    }
+  }
+`;
+
+export const UPDATE_PRODUCT_REVIEW = gql`
+  mutation UpdateProductReview($input: UpdateProductReviewInput!) {
+    updateProductReview(input: $input) {
+      _id
+      productId
+      memberId
+      orderId
+      rating
+      comment
+      images
+      status
+      moderationReason
+      moderatedBy
+      moderatedAt
+      createdAt
+      updatedAt
+      member {
+        _id
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+      }
+    }
+  }
+`;
+
+export const REMOVE_PRODUCT_REVIEW = gql`
+  mutation RemoveProductReview($reviewId: String!) {
+    removeProductReview(reviewId: $reviewId)
+  }
+`;
+
+export const UPDATE_REVIEW_STATUS_BY_ADMIN = gql`
+  mutation UpdateReviewStatusByAdmin($input: UpdateReviewStatusByAdminInput!) {
+    updateReviewStatusByAdmin(input: $input) {
+      _id
+      productId
+      memberId
+      orderId
+      rating
+      comment
+      images
+      status
+      moderationReason
+      moderatedBy
+      moderatedAt
+      createdAt
+      updatedAt
+      member {
+        _id
+        memberNickname
+        memberFirstName
+        memberLastName
+        memberAvatar
+      }
+    }
+  }
+`;
+
 export const IMAGE_UPLOADER = gql`
   mutation ImageUploader($file: Upload!, $target: String!) {
     imageUploader(file: $file, target: $target)
