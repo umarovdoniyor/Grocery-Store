@@ -53,7 +53,20 @@ const tokenRefreshLink = new TokenRefreshLink({
 /** =============== createIsomorphicLink ===============*/
 /** Purpose: Create appropriate link chain for client or server environment */
 function createIsomorphicLink() {
+  const httpUri =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  // Server-side rendering cannot use browser-only ws/auth logic.
+  if (typeof window === "undefined") {
+    const serverHttpLink = createUploadLink({ uri: httpUri }) as unknown as ApolloLink;
+    return from([serverHttpLink]);
+  }
+
   if (typeof window !== "undefined") {
+    const wsUri = process.env.NEXT_PUBLIC_API_WS || process.env.REACT_APP_API_WS;
+
     // Purpose: Interceptor that adds authentication to all requests
     const authLink = new ApolloLink((operation, forward) => {
       // operation - The GraphQL query/mutation being sent, forward - Function to pass to next link in chain
@@ -63,8 +76,6 @@ function createIsomorphicLink() {
           ...getHeaders() // Add Authorization header
         }
       }));
-      console.warn("requesting.. ", operation);
-
       // Pass operation to next link
       return forward(operation);
 
@@ -83,23 +94,11 @@ function createIsomorphicLink() {
 
     // Purpose: HTTP link for file uploads and standard requests
     const link = createUploadLink({
-      uri: process.env.REACT_APP_API_GRAPHQL_URL
+      uri: httpUri
 
       /**
        * Used for: Uploading property images, user avatars
        */
-    });
-
-    /* WEBSOCKET SUBSCRIPTION LINK */
-    const wsLink = new WebSocketLink({
-      uri: process.env.REACT_APP_API_WS ?? "ws://127.0.0.1:3007",
-      options: {
-        reconnect: false,
-        timeout: 30000,
-        connectionParams: () => {
-          return { headers: getHeaders() };
-        }
-      }
     });
 
     // Purpose: Catch and handle errors from all GraphQL requests
@@ -117,6 +116,25 @@ function createIsomorphicLink() {
       }
     });
 
+    const httpLink = authLink.concat(link);
+
+    // If WS endpoint is not configured yet, run all operations over HTTP.
+    if (!wsUri) {
+      return from([errorLink, tokenRefreshLink, httpLink]);
+    }
+
+    /* WEBSOCKET SUBSCRIPTION LINK */
+    const wsLink = new WebSocketLink({
+      uri: wsUri,
+      options: {
+        reconnect: false,
+        timeout: 30000,
+        connectionParams: () => {
+          return { headers: getHeaders() };
+        }
+      }
+    });
+
     // Purpose: Route requests to WebSocket or HTTP based on operation type
     const splitLink = split(
       ({ query }) => {
@@ -124,7 +142,7 @@ function createIsomorphicLink() {
         return definition.kind === "OperationDefinition" && definition.operation === "subscription"; // Returns true/false
       },
       wsLink, // If true, use WebSocket link
-      authLink.concat(link) // If false, use HTTP link with authentication
+      httpLink // If false, use HTTP link with authentication
     );
 
     return from([errorLink, tokenRefreshLink, splitLink]);
