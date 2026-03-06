@@ -19,6 +19,13 @@ type Props = { product: Product };
 // ================================================================
 
 export default function ProductIntro({ product }: Props) {
+  const basePrice = Number(product.price || 0);
+  const discountPercent = Number(product.discount || 0);
+  const comparePrice =
+    discountPercent > 0 ? basePrice / (1 - Math.min(discountPercent, 99) / 100) : null;
+  const code = product.id || product.slug || "-";
+  const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
+
   return (
     <StyledRoot>
       <Grid container spacing={3} justifyContent="space-around">
@@ -31,26 +38,11 @@ export default function ProductIntro({ product }: Props) {
           <Typography variant="h1">{product.title}</Typography>
 
           <Typography variant="body1">
-            Category: <strong>Bag</strong>
+            Category: <strong>{categoryLabel}</strong>
           </Typography>
 
           <Typography variant="body1">
-            Product Code: <strong>ERE238</strong>
-          </Typography>
-
-          <Typography variant="body1" fontSize={30} fontWeight={700} sx={{ my: 1 }}>
-            $484.00{" "}
-            <Typography
-              component="span"
-              sx={{
-                fontSize: 20,
-                fontWeight: 600,
-                color: "text.secondary",
-                textDecoration: "line-through"
-              }}
-            >
-              $550.00
-            </Typography>
+            Product Code: <strong>{code}</strong>
           </Typography>
 
           {/* PRODUCT BRAND */}
@@ -73,7 +65,21 @@ export default function ProductIntro({ product }: Props) {
           {/* PRICE & STOCK */}
           <div className="price">
             <Typography variant="h2" sx={{ color: "primary.main", mb: 0.5, lineHeight: 1 }}>
-              {currency(product.price)}
+              {currency(basePrice)}
+              {comparePrice && (
+                <Typography
+                  component="span"
+                  sx={{
+                    ml: 1,
+                    fontSize: 18,
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    textDecoration: "line-through"
+                  }}
+                >
+                  {currency(comparePrice)}
+                </Typography>
+              )}
             </Typography>
 
             <p>Stock Available</p>

@@ -15,6 +15,14 @@ type Props = { product: Product };
 // =====================================================
 
 export default function ProductQuickView({ product }: Props) {
+  const basePrice = Number(product.price || 0);
+  const discountPercent = Number(product.discount || 0);
+  const comparePrice =
+    discountPercent > 0 ? basePrice / (1 - Math.min(discountPercent, 99) / 100) : null;
+  const reviewCount = product.reviews?.length || 0;
+  const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
+  const productCode = product.id || product.slug || "-";
+
   return (
     <QuickViewModal>
       <Box position="relative" bgcolor="grey.100">
@@ -27,13 +35,35 @@ export default function ProductQuickView({ product }: Props) {
         </Typography>
 
         <Typography variant="body1" fontSize={22} fontWeight={600}>
-          {currency(product.price)}
+          {currency(basePrice)}
+          {comparePrice && (
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                fontSize: 16,
+                fontWeight: 500,
+                color: "text.secondary",
+                textDecoration: "line-through"
+              }}
+            >
+              {currency(comparePrice)}
+            </Typography>
+          )}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Category: <strong>{categoryLabel}</strong>
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary">
+          Product Code: <strong>{productCode}</strong>
         </Typography>
 
         <Box display="flex" alignItems="center" gap={1} mb={3} mt={2}>
-          <Rating size="small" color="warn" value={4} readOnly />
+          <Rating size="small" color="warn" value={product.rating || 0} readOnly />
           <Typography variant="body1" lineHeight="1" color="text.secondary">
-            (50)
+            ({reviewCount})
           </Typography>
         </Box>
 
@@ -41,6 +71,12 @@ export default function ProductQuickView({ product }: Props) {
           {product?.description ||
             "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus liberpuro ate vol faucibus adipiscing."}
         </Typography>
+
+        {product.shop && (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Sold By: <strong>{product.shop.name}</strong>
+          </Typography>
+        )}
 
         <ButtonGroup product={product} />
       </Box>
