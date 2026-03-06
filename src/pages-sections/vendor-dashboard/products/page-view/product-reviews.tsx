@@ -1,9 +1,22 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Card from "@mui/material/Card";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
+import Alert from "@mui/material/Alert";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
 import TableBody from "@mui/material/TableBody";
+import Typography from "@mui/material/Typography";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import CircularProgress from "@mui/material/CircularProgress";
 import TableContainer from "@mui/material/TableContainer";
 // GLOBAL CUSTOM COMPONENTS
 import OverlayScrollbar from "components/overlay-scrollbar";
@@ -13,8 +26,11 @@ import ReviewRow from "../review-row";
 import PageWrapper from "../../page-wrapper";
 // GLOBAL CUSTOM HOOK
 import useMuiTable from "hooks/useMuiTable";
-// CUSTOM DATA MODEL
-import Review from "models/Review.model";
+import {
+  getReviewsByAdmin,
+  type ProductReview,
+  updateReviewStatusByAdmin
+} from "../../../../../libs/review";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -26,45 +42,206 @@ const tableHeading = [
 ];
 
 // =============================================================================
-type Props = { reviews: Review[] };
+type Props = { reviews?: any[] };
 // =============================================================================
 
-export default function ProductReviewsPageView({ reviews }: Props) {
-  // RESHAPE THE REVIEW LIST BASED TABLE HEAD CELL ID
-  const filteredReviews = reviews.map((item) => ({
-    id: item.id,
-    published: true,
-    comment: item.comment,
-    productId: item.product.id,
-    product: item.product.title,
-    productImage: item.product.thumbnail,
-    customer: `${item.customer.name.firstName} ${item.customer.name.lastName}`
-  }));
+const PLACEHOLDER_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
+type ReviewFilter = "ALL" | "PENDING" | "PUBLISHED" | "HIDDEN" | "REJECTED";
+
+type AdminReviewRow = {
+  id: string;
+  status: string;
+  published: boolean;
+  comment: string;
+  productId: string;
+  product: string;
+  productImage: string;
+  customer: string;
+};
+
+type ModerationTarget = {
+  reviewId: string;
+  status: "PUBLISHED" | "HIDDEN" | "REJECTED";
+};
+
+export default function ProductReviewsPageView(_: Props) {
+  const [statusFilter, setStatusFilter] = useState<ReviewFilter>("ALL");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<AdminReviewRow[]>([]);
+  const [moderationTarget, setModerationTarget] = useState<ModerationTarget | null>(null);
+  const [moderationReason, setModerationReason] = useState("");
+
+  const loadReviews = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    const response = await getReviewsByAdmin({
+      page: 1,
+      limit: 50,
+      search: "",
+      status: statusFilter === "ALL" ? undefined : statusFilter
+    });
+    if (!response.success) {
+      setError(response.error || "Failed to load reviews.");
+      setIsLoading(false);
+      return;
+    }
+
+    const mapped = (response.list || []).map((item: ProductReview) => {
+      const customer =
+        `${item.member?.memberFirstName || ""} ${item.member?.memberLastName || ""}`.trim() ||
+        item.member?.memberNickname ||
+        item.memberId;
+
+      return {
+        id: item._id,
+        status: item.status,
+        published: item.status === "PUBLISHED",
+        comment: item.comment || "",
+        productId: item.productId,
+        product: `Product #${item.productId.slice(-6)}`,
+        productImage: PLACEHOLDER_PRODUCT_IMAGE,
+        customer
+      };
+    });
+
+    setReviews(mapped);
+    setIsLoading(false);
+  }, [statusFilter]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
+
+  const filteredReviews = useMemo(() => {
+    if (statusFilter === "ALL") return reviews;
+    return reviews.filter((item) => item.status === statusFilter);
+  }, [reviews, statusFilter]);
+
+  const openModerationDialog = (reviewId: string, status: "PUBLISHED" | "HIDDEN" | "REJECTED") => {
+    setModerationTarget({ reviewId, status });
+
+    if (status === "PUBLISHED") {
+      setModerationReason("Approved by admin moderation.");
+      return;
+    }
+
+    if (status === "HIDDEN") {
+      setModerationReason("Hidden by admin moderation.");
+      return;
+    }
+
+    setModerationReason("Rejected by admin moderation.");
+  };
+
+  const closeModerationDialog = () => {
+    if (updatingId) return;
+    setModerationTarget(null);
+    setModerationReason("");
+  };
+
+  const handleModerationConfirm = async () => {
+    if (!moderationTarget) return;
+
+    const reason = moderationReason.trim();
+    const { reviewId, status } = moderationTarget;
+
+    setUpdatingId(reviewId);
+    setError(null);
+
+    const response = await updateReviewStatusByAdmin({
+      reviewId,
+      status,
+      reason
+    });
+
+    if (!response.success || !response.review) {
+      setError(response.error || "Failed to update review status.");
+      setUpdatingId(null);
+      return;
+    }
+
+    setReviews((prev) =>
+      prev.map((item) =>
+        item.id === reviewId
+          ? {
+              ...item,
+              status: response.review!.status,
+              published: response.review!.status === "PUBLISHED"
+            }
+          : item
+      )
+    );
+
+    setUpdatingId(null);
+    setModerationTarget(null);
+    setModerationReason("");
+  };
 
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: filteredReviews, defaultSort: "product" });
 
   return (
     <PageWrapper title="Product Reviews">
-      <Card>
-        <OverlayScrollbar>
-          <TableContainer sx={{ minWidth: 1000 }}>
-            <Table>
-              <TableHeader
-                order={order}
-                orderBy={orderBy}
-                heading={tableHeading}
-                onRequestSort={handleRequestSort}
-              />
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-              <TableBody>
-                {filteredList.map((review) => (
-                  <ReviewRow review={review} key={review.id} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </OverlayScrollbar>
+      <Card>
+        <Tabs
+          value={statusFilter}
+          onChange={(_, value: ReviewFilter) => setStatusFilter(value)}
+          sx={{ px: 2, pt: 2 }}
+        >
+          <Tab value="ALL" label="All" />
+          <Tab value="PENDING" label="Pending" />
+          <Tab value="PUBLISHED" label="Published" />
+          <Tab value="HIDDEN" label="Hidden" />
+          <Tab value="REJECTED" label="Rejected" />
+        </Tabs>
+
+        {isLoading ? (
+          <Box
+            sx={{ py: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}
+          >
+            <CircularProgress size={20} />
+            <Typography variant="body2" color="text.secondary">
+              Loading reviews...
+            </Typography>
+          </Box>
+        ) : (
+          <OverlayScrollbar>
+            <TableContainer sx={{ minWidth: 1000 }}>
+              <Table>
+                <TableHeader
+                  order={order}
+                  orderBy={orderBy}
+                  heading={tableHeading}
+                  onRequestSort={handleRequestSort}
+                />
+
+                <TableBody>
+                  {filteredList.map((review) => (
+                    <ReviewRow
+                      review={review}
+                      key={review.id}
+                      isUpdating={updatingId === review.id}
+                      onTogglePublish={(id, checked) =>
+                        openModerationDialog(id, checked ? "PUBLISHED" : "HIDDEN")
+                      }
+                      onHideReview={(id) => openModerationDialog(id, "HIDDEN")}
+                      onRejectReview={(id) => openModerationDialog(id, "REJECTED")}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </OverlayScrollbar>
+        )}
 
         <Stack alignItems="center" my={4}>
           <TablePagination
@@ -73,6 +250,60 @@ export default function ProductReviewsPageView({ reviews }: Props) {
           />
         </Stack>
       </Card>
+
+      <Dialog
+        open={Boolean(moderationTarget)}
+        onClose={closeModerationDialog}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>
+          {moderationTarget?.status === "PUBLISHED"
+            ? "Publish Review"
+            : moderationTarget?.status === "HIDDEN"
+              ? "Hide Review"
+              : "Reject Review"}
+        </DialogTitle>
+
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {moderationTarget?.status === "PUBLISHED"
+              ? "Please provide a moderation reason before publishing this review."
+              : moderationTarget?.status === "HIDDEN"
+                ? "Please provide a moderation reason before hiding this review."
+                : "Please provide a moderation reason before rejecting this review."}
+          </Typography>
+
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            minRows={3}
+            label="Moderation Reason"
+            placeholder="Enter reason"
+            value={moderationReason}
+            onChange={(event) => setModerationReason(event.target.value)}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={closeModerationDialog} disabled={Boolean(updatingId)}>
+            Cancel
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleModerationConfirm}
+            disabled={!moderationReason.trim() || Boolean(updatingId)}
+          >
+            {moderationTarget?.status === "PUBLISHED"
+              ? "Publish"
+              : moderationTarget?.status === "HIDDEN"
+                ? "Hide"
+                : "Reject"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PageWrapper>
   );
 }
