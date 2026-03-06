@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getShopList } from "utils/services/shop-directory";
 // PAGE VIEW COMPONENT
 import { ShopsPageView } from "pages-sections/shops/page-view";
@@ -12,8 +12,23 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export default async function Shops() {
-  const { shops, meta } = await getShopList();
+export default async function Shops({
+  searchParams
+}: {
+  searchParams?: { page?: string } | Promise<{ page?: string }>;
+}) {
+  const params = await Promise.resolve(searchParams ?? {});
+  const rawPage = params?.page;
+  const parsedPage = Number(rawPage || "1");
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+
+  const { shops, meta } = await getShopList(page);
+
+  if (page > meta.totalPages) {
+    const target = meta.totalPages <= 1 ? "/shops" : `/shops?page=${meta.totalPages}`;
+    redirect(target);
+  }
+
   if (!shops) return notFound();
 
   return (

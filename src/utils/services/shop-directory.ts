@@ -10,9 +10,9 @@ import {
   type VendorSummary
 } from "../../../libs/vendor";
 
-const DEFAULT_COVER = "/assets/images/banners/cycle.png";
-const DEFAULT_PROFILE = "/assets/images/faces/propic.png";
-const VENDORS_LIMIT = 100;
+const DEFAULT_COVER = "/assets/images/banners/banner-4.png";
+const DEFAULT_PROFILE = "/assets/images/faces/face-2.jpg";
+const VENDORS_LIMIT = 12;
 
 const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
   if (!value) return fallback;
@@ -101,35 +101,47 @@ const getVendorProducts = cache(async (vendorId: string): Promise<Product[]> => 
   return (response.list || []).map(mapProductToUi);
 });
 
-const getVendorShopsData = cache(async (): Promise<VendorShop[]> => {
+const getVendorShopsData = cache(async (page: number, limit: number) => {
   const vendorsResponse = await getVendors({
-    page: 1,
-    limit: VENDORS_LIMIT,
+    page,
+    limit,
     search: "",
     status: "ACTIVE",
     sortBy: "NEWEST"
   });
 
-  return (vendorsResponse.list || []).map(mapVendorToShop);
+  if (!vendorsResponse.success) {
+    console.error("[shops] Failed to fetch vendors:", vendorsResponse.error);
+    return { shops: [] as VendorShop[], total: 0 };
+  }
+
+  return {
+    shops: (vendorsResponse.list || []).map(mapVendorToShop),
+    total: vendorsResponse.total || 0
+  };
 });
 
-export const getShopList = cache(async () => {
-  const shops = await getVendorShopsData();
-  const totalShops = shops.length;
+export const getShopList = cache(async (page = 1) => {
+  const currentPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  const { shops, total } = await getVendorShopsData(currentPage, VENDORS_LIMIT);
+  const totalShops = total;
+  const totalPages = Math.max(1, Math.ceil(totalShops / VENDORS_LIMIT));
+  const firstIndex = shops.length ? (currentPage - 1) * VENDORS_LIMIT + 1 : 0;
+  const lastIndex = shops.length ? firstIndex + shops.length - 1 : 0;
 
   return {
     shops,
     meta: {
       totalShops,
-      totalPages: 1,
-      firstIndex: totalShops ? 1 : 0,
-      lastIndex: totalShops
+      totalPages,
+      firstIndex,
+      lastIndex
     }
   };
 });
 
 export const getShopSlugs = cache(async () => {
-  const shops = await getVendorShopsData();
+  const { shops } = await getVendorShopsData(1, 50);
   return shops.map((item) => ({ params: { slug: item.slug } }));
 });
 
@@ -144,7 +156,7 @@ export const getProductsBySlug = cache(async (slug: string): Promise<Shop | null
 });
 
 export const getAvailableShops = cache(async () => {
-  const shops = await getVendorShopsData();
+  const { shops } = await getVendorShopsData(1, 3);
 
   return shops.slice(0, 3).map((item) => ({
     name: item.name,
