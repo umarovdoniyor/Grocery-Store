@@ -13,7 +13,7 @@ export const StyledRoot = styled("div", {
   shouldForwardProp: (prop) => prop !== "position"
 })<Position>(({ theme, position }) => ({
   left: 0,
-  zIndex: 98,
+  zIndex: 1600,
   right: "auto",
   borderRadius: 8,
   padding: "0.5rem 0px",

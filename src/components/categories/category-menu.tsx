@@ -9,18 +9,20 @@ const StyledMenuRoot = styled("div", {
 })<{ open: boolean }>(({ open, theme }) => ({
   cursor: "pointer",
   position: "relative",
+  zIndex: open ? 1700 : "auto",
   ".dropdown-icon": {
     transition: "all 250ms ease-in-out",
     transform: `rotate(${open ? (theme.direction === "rtl" ? "-90deg" : "90deg") : "0deg"})`
   },
   ".categories": {
-    zIndex: 100,
+    zIndex: 1701,
     position: "relative",
     transformOrigin: "top",
     transition: "all 250ms ease-in-out",
     transform: open ? "scaleY(1)" : "scaleY(0)",
     visibility: open ? "visible" : "hidden",
-    opacity: open ? 1 : 0
+    opacity: open ? 1 : 0,
+    pointerEvents: open ? "auto" : "none"
   }
 }));
 

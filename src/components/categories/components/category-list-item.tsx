@@ -30,7 +30,7 @@ export const Wrapper = styled("div")(({ theme }) => ({
   },
   ".mega-menu": {
     top: 0,
-    zIndex: 99,
+    zIndex: 1601,
     left: "100%",
     right: "auto",
     display: "none",

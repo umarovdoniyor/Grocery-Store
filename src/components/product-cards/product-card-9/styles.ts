@@ -6,6 +6,7 @@ import { styled } from "@mui/material/styles";
 // STYLED COMPONENT
 export const Wrapper = styled(Card)({
   width: "100%",
+  zIndex: 0,
   overflow: "hidden",
   position: "relative",
   marginBottom: "1.25rem"
@@ -17,6 +18,7 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   flexDirection: "row",
   "& .img-wrapper": {
     width: 150,
+    zIndex: 0,
     flexShrink: 0,
     position: "relative",
     backgroundColor: theme.palette.grey[50]

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import List from "@mui/material/List";
@@ -30,10 +31,37 @@ export default function MegaMenu({ title, menuList }: Props) {
   // get grid size the basis of menu list
   const grid = gridSize(menuList.length);
   const { elementRef, isLeftOverflowing, isRightOverflowing, checkOverflow } = useOverflowDetect();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => setOpen(false);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <Wrapper onMouseOver={checkOverflow}>
-      <div className="menu-title">
+    <Wrapper ref={rootRef} onMouseOver={checkOverflow} active={open ? 1 : 0}>
+      <div
+        className="menu-title"
+        onClick={(event) => {
+          event.stopPropagation();
+          setOpen((prev) => !prev);
+        }}
+      >
         {title}
         <KeyboardArrowDown className="icon" />
       </div>
@@ -43,6 +71,7 @@ export default function MegaMenu({ title, menuList }: Props) {
         className="menu-list"
         left={isLeftOverflowing}
         right={isRightOverflowing}
+        sx={{ display: open ? "block" : "none" }}
       >
         <Card className="card" elevation={5}>
           <Grid container>

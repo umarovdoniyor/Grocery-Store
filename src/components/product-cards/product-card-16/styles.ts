@@ -4,11 +4,14 @@ import { styled } from "@mui/material/styles";
 
 export const StyledRoot = styled("div")(({ theme }) => ({
   borderRadius: 12,
+  zIndex: 0,
   overflow: "hidden",
   border: `1px solid ${theme.palette.divider}`,
+  position: "relative",
   "&:hover .img-wrapper img": { scale: 1.1 },
   "& .img-wrapper": {
     display: "flex",
+    zIndex: 0,
     position: "relative",
     backgroundColor: theme.palette.grey[50],
     img: { transition: "0.3s" }

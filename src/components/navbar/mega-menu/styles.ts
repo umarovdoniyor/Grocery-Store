@@ -2,7 +2,9 @@ import ListItem from "@mui/material/ListItem";
 import { styled } from "@mui/material/styles";
 
 // STYLED COMPONENTS
-export const Wrapper = styled("div")(({ theme }) => ({
+export const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "active"
+})<{ active: number }>(({ theme, active }) => ({
   cursor: "pointer",
   position: "relative",
   transition: "color 150ms ease-in-out",
@@ -18,10 +20,7 @@ export const Wrapper = styled("div")(({ theme }) => ({
       color: theme.palette.grey[500]
     }
   },
-  ":hover": {
-    color: theme.palette.primary.main,
-    "& .menu-list": { display: "block" }
-  },
+  ...(active && { color: theme.palette.primary.main }),
   "& .card": {
     overflow: "hidden",
     marginTop: theme.spacing(1.5)

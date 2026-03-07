@@ -68,7 +68,7 @@ export default function FavoriteButton({ productId }: Props) {
         position: "absolute",
         top: 12,
         right: 12,
-        zIndex: 2,
+        zIndex: 0,
         bgcolor: "background.paper",
         "&:hover": { bgcolor: "background.paper" }
       }}

@@ -58,7 +58,7 @@ export default function FavoriteButton({ productId }: Props) {
       size="small"
       onClick={handleFavorite}
       disabled={loading}
-      sx={{ position: "absolute", top: 15, right: 15, zIndex: 1 }}
+      sx={{ position: "absolute", top: 15, right: 15, zIndex: 0 }}
     >
       {isFavorite ? (
         <Favorite color="primary" fontSize="small" />

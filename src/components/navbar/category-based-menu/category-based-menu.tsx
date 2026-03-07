@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 // CUSTOM COMPONENTS
 import { SubChildList } from "./sub-child-list";
@@ -18,17 +18,44 @@ interface Props {
 
 export function CategoryBasedMenu({ title, menuList }: Props) {
   const [selected, setSelected] = useState(menuList[0].title);
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const list = menuList.reduce<string[]>((prev, curr) => [...prev, curr.title], []);
   const childList = menuList.find((item) => item.title === selected);
 
+  useEffect(() => {
+    const handleScroll = () => setOpen(false);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <Wrapper>
-      <div className="menu-title">
+    <Wrapper ref={rootRef} active={open ? 1 : 0}>
+      <div
+        className="menu-title"
+        onClick={(event) => {
+          event.stopPropagation();
+          setOpen((prev) => !prev);
+        }}
+      >
         {title} <KeyboardArrowDown className="icon" />
       </div>
 
-      <MenusContainer className="menu-list">
+      <MenusContainer className="menu-list" sx={{ display: open ? "block" : "none" }}>
         <StyledCard>
           {/* MAIN CATEGORIES SECTION */}
           <CategoryList>

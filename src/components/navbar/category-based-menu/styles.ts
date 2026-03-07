@@ -3,13 +3,12 @@ import Card from "@mui/material/Card";
 import ListItem from "@mui/material/ListItem";
 import { styled } from "@mui/material/styles";
 
-export const Wrapper = styled("div")(({ theme }) => ({
+export const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "active"
+})<{ active: number }>(({ theme, active }) => ({
   cursor: "pointer",
   transition: "color 150ms ease-in-out",
-  ":hover": {
-    color: theme.palette.primary.main,
-    "& .menu-list": { display: "block" }
-  },
+  ...(active && { color: theme.palette.primary.main }),
   "& .menu-title": {
     fontWeight: 500,
     display: "flex",
