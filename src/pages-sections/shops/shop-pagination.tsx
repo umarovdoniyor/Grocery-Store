@@ -19,7 +19,8 @@ export default function ShopPagination({ totalShops, totalPages, firstIndex, las
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const page = +searchParams.get("page")! || 1;
+  const parsedPage = Number(searchParams.get("page") || "1");
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
   return (
     <FlexBetween flexWrap="wrap" mt={4}>
@@ -32,11 +33,14 @@ export default function ShopPagination({ totalShops, totalPages, firstIndex, las
         count={totalPages}
         variant="outlined"
         color="primary"
-        onChange={(_, page) => {
-          const searchParams = new URLSearchParams();
-          if (page === 1) searchParams.delete("page");
-          else searchParams.set("page", page.toString());
-          router.push(`${pathname}?${searchParams.toString()}`);
+        onChange={(_, nextPage) => {
+          const params = new URLSearchParams(searchParams.toString());
+          if (nextPage === 1) params.delete("page");
+          else params.set("page", nextPage.toString());
+
+          router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname, {
+            scroll: false
+          });
         }}
       />
     </FlexBetween>

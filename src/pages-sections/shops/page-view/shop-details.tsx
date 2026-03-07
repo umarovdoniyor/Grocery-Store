@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import MenuItem from "@mui/material/MenuItem";
@@ -174,7 +175,27 @@ export default function ShopDetailsPageView({
 
       <Grid container>
         <Grid size={{ xs: 12 }}>
-          <ProductsGridView products={shop.products || []} />
+          {(shop.products || []).length > 0 ? (
+            <ProductsGridView products={shop.products || []} />
+          ) : (
+            <Box
+              sx={{
+                py: 8,
+                px: 3,
+                textAlign: "center",
+                borderRadius: 2,
+                border: "1px dashed",
+                borderColor: "divider"
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                No products available yet
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                This vendor has not published any products yet. Please check back soon.
+              </Typography>
+            </Box>
+          )}
 
           <FlexBetween flexWrap="wrap" mt={5}>
             <Typography variant="body1" sx={{ color: "grey.600" }}>

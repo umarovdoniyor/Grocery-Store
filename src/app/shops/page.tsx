@@ -15,17 +15,25 @@ export const metadata: Metadata = {
 export default async function Shops({
   searchParams
 }: {
-  searchParams?: { page?: string } | Promise<{ page?: string }>;
+  searchParams?: { page?: string; q?: string; sort?: string } | Promise<{ page?: string; q?: string; sort?: string }>;
 }) {
   const params = await Promise.resolve(searchParams ?? {});
   const rawPage = params?.page;
   const parsedPage = Number(rawPage || "1");
   const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+  const allowedSorts = new Set(["newest", "oldest", "az", "za", "popular"]);
+  const sort = params?.sort && allowedSorts.has(params.sort) ? params.sort : "newest";
+  const q = (params?.q || "").trim();
 
-  const { shops, meta } = await getShopList(page);
+  const { shops, meta } = await getShopList(page, { q, sort });
 
   if (page > meta.totalPages) {
-    const target = meta.totalPages <= 1 ? "/shops" : `/shops?page=${meta.totalPages}`;
+    const nextParams = new URLSearchParams();
+    if (q) nextParams.set("q", q);
+    if (sort && sort !== "newest") nextParams.set("sort", sort);
+    if (meta.totalPages > 1) nextParams.set("page", String(meta.totalPages));
+
+    const target = nextParams.toString() ? `/shops?${nextParams.toString()}` : "/shops";
     redirect(target);
   }
 
@@ -38,6 +46,7 @@ export default async function Shops({
       totalPages={meta.totalPages}
       firstIndex={meta.firstIndex}
       totalShops={meta.totalShops}
+      selectedSort={sort}
     />
   );
 }

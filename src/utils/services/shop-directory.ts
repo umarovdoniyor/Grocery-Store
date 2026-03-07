@@ -24,6 +24,14 @@ const MAX_VENDOR_LOOKUP_PAGES = 20;
 const MAX_VENDOR_PRODUCT_SEARCH_PAGES = 20;
 const DEFAULT_SHOP_PRODUCTS_LIMIT = 24;
 
+const mapShopSort = (sort?: string): "NEWEST" | "OLDEST" | "NAME_ASC" | "NAME_DESC" | "POPULAR" => {
+  if (sort === "oldest") return "OLDEST";
+  if (sort === "az") return "NAME_ASC";
+  if (sort === "za") return "NAME_DESC";
+  if (sort === "popular") return "POPULAR";
+  return "NEWEST";
+};
+
 const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
   if (!value) return fallback;
   return value;
@@ -315,13 +323,14 @@ const getVendorProducts = async ({
   };
 };
 
-const getVendorShopsData = cache(async (page: number, limit: number) => {
+const getVendorShopsData = cache(
+  async (page: number, limit: number, search = "", sort: string = "newest") => {
   const vendorsResponse = await getVendors({
     page,
     limit,
-    search: "",
+    search,
     status: "ACTIVE",
-    sortBy: "NEWEST"
+    sortBy: mapShopSort(sort)
   });
 
   if (!vendorsResponse.success) {
@@ -466,9 +475,11 @@ const findVendorBySearch = async (term: string): Promise<VendorSummary | null> =
   return null;
 };
 
-export const getShopList = cache(async (page = 1) => {
+export const getShopList = cache(async (page = 1, options?: { q?: string; sort?: string }) => {
   const currentPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
-  const { shops, total } = await getVendorShopsData(currentPage, VENDORS_LIMIT);
+  const query = (options?.q || "").trim();
+  const sort = options?.sort || "newest";
+  const { shops, total } = await getVendorShopsData(currentPage, VENDORS_LIMIT, query, sort);
   const totalShops = total;
   const totalPages = Math.max(1, Math.ceil(totalShops / VENDORS_LIMIT));
   const firstIndex = shops.length ? (currentPage - 1) * VENDORS_LIMIT + 1 : 0;
@@ -486,7 +497,7 @@ export const getShopList = cache(async (page = 1) => {
 });
 
 export const getShopSlugs = cache(async () => {
-  const { shops } = await getVendorShopsData(1, 50);
+  const { shops } = await getVendorShopsData(1, 50, "", "newest");
   return shops.map((item) => ({ params: { slug: item.slug } }));
 });
 
