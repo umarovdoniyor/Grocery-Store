@@ -325,24 +325,25 @@ const getVendorProducts = async ({
 
 const getVendorShopsData = cache(
   async (page: number, limit: number, search = "", sort: string = "newest") => {
-  const vendorsResponse = await getVendors({
-    page,
-    limit,
-    search,
-    status: "ACTIVE",
-    sortBy: mapShopSort(sort)
-  });
+    const vendorsResponse = await getVendors({
+      page,
+      limit,
+      search,
+      status: "ACTIVE",
+      sortBy: mapShopSort(sort)
+    });
 
-  if (!vendorsResponse.success) {
-    console.error("[shops] Failed to fetch vendors:", vendorsResponse.error);
-    return { shops: [] as VendorShop[], total: 0 };
+    if (!vendorsResponse.success) {
+      console.error("[shops] Failed to fetch vendors:", vendorsResponse.error);
+      return { shops: [] as VendorShop[], total: 0 };
+    }
+
+    return {
+      shops: (vendorsResponse.list || []).map(mapVendorToShop),
+      total: vendorsResponse.total || 0
+    };
   }
-
-  return {
-    shops: (vendorsResponse.list || []).map(mapVendorToShop),
-    total: vendorsResponse.total || 0
-  };
-});
+);
 
 const findVendorSlugById = async (vendorId: string): Promise<string | null> => {
   if (!vendorId) return null;

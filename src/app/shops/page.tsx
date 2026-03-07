@@ -15,7 +15,9 @@ export const metadata: Metadata = {
 export default async function Shops({
   searchParams
 }: {
-  searchParams?: { page?: string; q?: string; sort?: string } | Promise<{ page?: string; q?: string; sort?: string }>;
+  searchParams?:
+    | { page?: string; q?: string; sort?: string }
+    | Promise<{ page?: string; q?: string; sort?: string }>;
 }) {
   const params = await Promise.resolve(searchParams ?? {});
   const rawPage = params?.page;
