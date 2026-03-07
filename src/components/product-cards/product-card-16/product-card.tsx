@@ -20,6 +20,7 @@ type Props = { product: Product };
 
 export default function ProductCard16({ product }: Props) {
   const { id, slug, title, thumbnail, price, discount, rating, reviewsCount } = product;
+  const hasReviewData = Number(rating || 0) > 0 || Number(reviewsCount || 0) > 0;
 
   return (
     <StyledRoot>
@@ -39,12 +40,18 @@ export default function ProductCard16({ product }: Props) {
             </Typography>
           </Link>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Rating readOnly value={rating} size="small" precision={0.5} />
+          {hasReviewData ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Rating readOnly value={rating} size="small" precision={0.5} />
+              <Typography variant="body2" color="text.secondary">
+                ({Number(reviewsCount || 0)})
+              </Typography>
+            </div>
+          ) : (
             <Typography variant="body2" color="text.secondary">
-              ({Number(reviewsCount || 0)})
+              No reviews yet
             </Typography>
-          </div>
+          )}
 
           <PriceText>
             {calculateDiscount(price, discount)}
