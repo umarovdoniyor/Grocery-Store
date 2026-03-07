@@ -18,7 +18,9 @@ export default async function ShopDetails({
   params,
   searchParams
 }: SlugParams & {
-  searchParams?: { page?: string; sort?: string } | Promise<{ page?: string; sort?: string }>;
+  searchParams?:
+    | { page?: string; sort?: string; q?: string }
+    | Promise<{ page?: string; sort?: string; q?: string }>;
 }) {
   const allowedSorts = new Set(["newest", "popular", "asc", "desc"]);
   const { slug } = await params;
@@ -26,14 +28,16 @@ export default async function ShopDetails({
   const parsedPage = Number(query?.page || "1");
   const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
   const sort = query?.sort && allowedSorts.has(query.sort) ? query.sort : undefined;
+  const q = (query?.q || "").trim();
 
-  const data = await getProductsBySlug(slug, { page, sort });
+  const data = await getProductsBySlug(slug, { page, sort, q });
 
   if (!data) notFound();
 
   if (page > data.meta.totalPages) {
     const params = new URLSearchParams();
     if (sort) params.set("sort", sort);
+    if (q) params.set("q", q);
     if (data.meta.totalPages > 1) params.set("page", String(data.meta.totalPages));
 
     const nextQuery = params.toString();

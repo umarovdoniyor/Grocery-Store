@@ -21,6 +21,7 @@ const PRODUCT_LOOKUP_LIMIT = 50;
 const MAX_PRODUCT_LOOKUP_PAGES = 20;
 const VENDOR_LOOKUP_PAGE_LIMIT = 100;
 const MAX_VENDOR_LOOKUP_PAGES = 20;
+const MAX_VENDOR_PRODUCT_SEARCH_PAGES = 20;
 const DEFAULT_SHOP_PRODUCTS_LIMIT = 24;
 
 const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
@@ -205,13 +206,87 @@ const getVendorProducts = async ({
   vendorId,
   page,
   limit,
-  sort
+  sort,
+  q
 }: {
   vendorId: string;
   page: number;
   limit: number;
   sort?: string;
+  q?: string;
 }) => {
+  const searchQuery = (q || "").trim().toLowerCase();
+  const mapItemsToProducts = async (items: VendorProductSummary[]) => {
+    const reviewSummaryMap = await getReviewSummaryMap(items.map((item) => item._id));
+    const catalogSummaryMap = await getCatalogSummaryFallbackMap(items);
+
+    return items.map((item) => {
+      const reviewSummary = reviewSummaryMap.get(item._id);
+      const fallbackSummary = catalogSummaryMap.get(item._id);
+      const resolvedSummary = {
+        ratingAvg:
+          Number(reviewSummary?.ratingAvg || 0) > 0
+            ? Number(reviewSummary?.ratingAvg || 0)
+            : Number(fallbackSummary?.ratingAvg || 0),
+        reviewsCount:
+          Number(reviewSummary?.reviewsCount || 0) > 0
+            ? Number(reviewSummary?.reviewsCount || 0)
+            : Number(fallbackSummary?.reviewsCount || 0)
+      };
+
+      return mapProductToUi(item, resolvedSummary);
+    });
+  };
+
+  if (searchQuery) {
+    const allItems: VendorProductSummary[] = [];
+    let availablePages = 1;
+
+    for (let currentPage = 1; currentPage <= availablePages; currentPage += 1) {
+      const response = await getVendorProductsApi({
+        vendorId,
+        inquiry: {
+          page: currentPage,
+          limit,
+          sortBy: mapVendorSort(sort)
+        }
+      });
+
+      if (!response.success) break;
+
+      const list = response.list || [];
+      allItems.push(...list);
+
+      const total = response.total || 0;
+      availablePages = Math.max(1, Math.ceil(total / limit));
+      if (currentPage >= MAX_VENDOR_PRODUCT_SEARCH_PAGES || list.length === 0) break;
+    }
+
+    const filteredItems = applyLocalVendorSort(
+      allItems.filter((item) => (item.title || "").toLowerCase().includes(searchQuery)),
+      sort
+    );
+
+    const totalProducts = filteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
+    const pageStart = (page - 1) * limit;
+    const pageItems = filteredItems.slice(pageStart, pageStart + limit);
+    const products = await mapItemsToProducts(pageItems);
+    const firstIndex = totalProducts === 0 ? 0 : pageStart + 1;
+    const lastIndex = Math.min(page * limit, totalProducts);
+
+    return {
+      products,
+      meta: {
+        totalProducts,
+        totalPages,
+        firstIndex,
+        lastIndex,
+        currentPage: page
+      }
+    };
+  }
+
   const response = await getVendorProductsApi({
     vendorId,
     inquiry: {
@@ -222,24 +297,7 @@ const getVendorProducts = async ({
   });
 
   const sortedItems = applyLocalVendorSort(response.list || [], sort);
-  const reviewSummaryMap = await getReviewSummaryMap(sortedItems.map((item) => item._id));
-  const catalogSummaryMap = await getCatalogSummaryFallbackMap(sortedItems);
-  const products = sortedItems.map((item) => {
-    const reviewSummary = reviewSummaryMap.get(item._id);
-    const fallbackSummary = catalogSummaryMap.get(item._id);
-    const resolvedSummary = {
-      ratingAvg:
-        Number(reviewSummary?.ratingAvg || 0) > 0
-          ? Number(reviewSummary?.ratingAvg || 0)
-          : Number(fallbackSummary?.ratingAvg || 0),
-      reviewsCount:
-        Number(reviewSummary?.reviewsCount || 0) > 0
-          ? Number(reviewSummary?.reviewsCount || 0)
-          : Number(fallbackSummary?.reviewsCount || 0)
-    };
-
-    return mapProductToUi(item, resolvedSummary);
-  });
+  const products = await mapItemsToProducts(sortedItems);
   const totalProducts = response.total || 0;
   const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
   const firstIndex = totalProducts === 0 ? 0 : (page - 1) * limit + 1;
@@ -434,7 +492,7 @@ export const getShopSlugs = cache(async () => {
 
 export const getProductsBySlug = async (
   slug: string,
-  options?: { page?: number; sort?: string; limit?: number }
+  options?: { page?: number; sort?: string; limit?: number; q?: string }
 ): Promise<{
   shop: Shop;
   meta: {
@@ -451,6 +509,7 @@ export const getProductsBySlug = async (
       ? options!.limit!
       : DEFAULT_SHOP_PRODUCTS_LIMIT;
   const sort = options?.sort;
+  const q = options?.q;
 
   let vendorResponse = await getVendorBySlug(slug);
 
@@ -469,7 +528,7 @@ export const getProductsBySlug = async (
         }
       }
 
-      const vendorProducts = await getVendorProducts({ vendorId: shop.id, page, limit, sort });
+      const vendorProducts = await getVendorProducts({ vendorId: shop.id, page, limit, sort, q });
       return {
         shop: { ...shop, products: vendorProducts.products },
         meta: vendorProducts.meta
@@ -483,7 +542,7 @@ export const getProductsBySlug = async (
 
     // Final fallback: render vendor page from products even when vendor profile lookup fails.
     if (!vendorResponse.success || !vendorResponse.vendor) {
-      const vendorProducts = await getVendorProducts({ vendorId: slug, page, limit, sort });
+      const vendorProducts = await getVendorProducts({ vendorId: slug, page, limit, sort, q });
       const products = vendorProducts.products;
 
       if (products.length > 0) {
@@ -530,7 +589,7 @@ export const getProductsBySlug = async (
   if (!vendorResponse.success || !vendorResponse.vendor) return null;
 
   const shop = mapVendorDetailToShop(vendorResponse.vendor);
-  const vendorProducts = await getVendorProducts({ vendorId: shop.id, page, limit, sort });
+  const vendorProducts = await getVendorProducts({ vendorId: shop.id, page, limit, sort, q });
 
   return {
     shop: { ...shop, products: vendorProducts.products },
