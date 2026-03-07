@@ -10,11 +10,14 @@ import {
   type ProductSummary
 } from "../../../libs/product";
 import { getCategoryById } from "../../../libs/category";
+import { getVendors } from "../../../libs/vendor";
 import { getProductReviews, type ProductReview as ProductReviewDto } from "../../../libs/review";
 
 const PRODUCT_LOOKUP_LIMIT = 50;
 const MAX_PRODUCT_LOOKUP_PAGES = 20;
 const PRODUCT_REVIEW_LIMIT = 10;
+const VENDOR_LOOKUP_LIMIT = 100;
+const MAX_VENDOR_LOOKUP_PAGES = 20;
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 
 const toDiscount = (price: number, salePrice?: number) => {
@@ -29,7 +32,9 @@ const normalizeThumbnail = (thumbnail?: string | null): string => {
   return value;
 };
 
-const mapVendorToShop = (vendor?: ProductDetail["vendor"]): Shop | undefined => {
+const mapVendorToShop = (
+  vendor?: (ProductDetail["vendor"] & { slug?: string }) | null
+): Shop | undefined => {
   if (!vendor?._id) return undefined;
 
   const shopName =
@@ -38,7 +43,7 @@ const mapVendorToShop = (vendor?: ProductDetail["vendor"]): Shop | undefined => 
 
   return {
     id: vendor._id,
-    slug: vendor._id,
+    slug: vendor.slug || vendor._id,
     user: {
       id: vendor._id,
       email: "",
@@ -128,6 +133,55 @@ const resolveCategoryNames = async (categoryIds: string[]): Promise<string[]> =>
     .filter((name): name is string => Boolean(name));
 };
 
+const resolveVendorSlug = async (vendorId?: string): Promise<string | undefined> => {
+  if (!vendorId) return undefined;
+
+  const statuses: Array<"ACTIVE" | "INACTIVE" | "SUSPENDED" | undefined> = [
+    "ACTIVE",
+    undefined,
+    "INACTIVE",
+    "SUSPENDED"
+  ];
+
+  for (const status of statuses) {
+    const firstPage = await getVendors({
+      page: 1,
+      limit: VENDOR_LOOKUP_LIMIT,
+      search: "",
+      status,
+      sortBy: "POPULAR"
+    });
+
+    if (!firstPage.success) continue;
+
+    const firstMatch = (firstPage.list || []).find((vendor) => vendor._id === vendorId);
+    if (firstMatch?.slug) return firstMatch.slug;
+
+    const total = firstPage.total || 0;
+    const totalPages = Math.min(
+      Math.max(1, Math.ceil(total / VENDOR_LOOKUP_LIMIT)),
+      MAX_VENDOR_LOOKUP_PAGES
+    );
+
+    for (let page = 2; page <= totalPages; page += 1) {
+      const response = await getVendors({
+        page,
+        limit: VENDOR_LOOKUP_LIMIT,
+        search: "",
+        status,
+        sortBy: "POPULAR"
+      });
+
+      if (!response.success) continue;
+
+      const match = (response.list || []).find((vendor) => vendor._id === vendorId);
+      if (match?.slug) return match.slug;
+    }
+  }
+
+  return undefined;
+};
+
 const mapReviewToUi = (review: ProductReviewDto): Review => {
   const firstName = review.member?.memberFirstName || review.member?.memberNickname || "Customer";
   const lastName = review.member?.memberLastName || "";
@@ -164,7 +218,19 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!detail.product) return null;
 
   const product = mapDetailToProduct(detail.product);
+  const vendorSlug = await resolveVendorSlug(detail.product.vendor?._id);
+  const productWithResolvedShop = product.shop
+    ? {
+        ...product,
+        shop: {
+          ...product.shop,
+          slug: vendorSlug || product.shop.slug
+        }
+      }
+    : product;
   const categories = await resolveCategoryNames(detail.product.categoryIds || []);
+  const fallbackRating = Number(match.ratingAvg || 0);
+  const fallbackReviewsCount = Number(match.reviewsCount || 0);
   const reviewResponse = await getProductReviews({
     productId: match._id,
     page: 1,
@@ -174,17 +240,31 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
   if (!reviewResponse.success) {
     return {
-      ...product,
-      categories: categories.length ? categories : product.categories
+      ...productWithResolvedShop,
+      categories: categories.length ? categories : productWithResolvedShop.categories,
+      rating: fallbackRating,
+      reviewsCount: fallbackReviewsCount
     };
   }
 
+  const mappedReviews = (reviewResponse.list || []).map(mapReviewToUi);
+  const summaryRating = Number(reviewResponse.summary?.ratingAvg || 0);
+  const summaryReviewsCount = Number(reviewResponse.summary?.reviewsCount || 0);
+  const listAverageRating =
+    mappedReviews.length > 0
+      ? mappedReviews.reduce((total, review) => total + Number(review.rating || 0), 0) /
+        mappedReviews.length
+      : 0;
+  const resolvedRating = summaryRating > 0 ? summaryRating : fallbackRating || listAverageRating;
+  const resolvedReviewsCount =
+    summaryReviewsCount > 0 ? summaryReviewsCount : fallbackReviewsCount || mappedReviews.length;
+
   return {
-    ...product,
-    categories: categories.length ? categories : product.categories,
-    rating: Number(reviewResponse.summary?.ratingAvg || 0),
-    reviewsCount: Number(reviewResponse.summary?.reviewsCount || 0),
-    reviews: (reviewResponse.list || []).map(mapReviewToUi)
+    ...productWithResolvedShop,
+    categories: categories.length ? categories : productWithResolvedShop.categories,
+    rating: resolvedRating,
+    reviewsCount: resolvedReviewsCount,
+    reviews: mappedReviews
   };
 }
 
