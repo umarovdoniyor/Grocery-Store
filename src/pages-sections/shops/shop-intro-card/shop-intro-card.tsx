@@ -22,6 +22,21 @@ type Props = { shop: Shop };
 
 export default function ShopIntroCard({ shop }: Props) {
   const { name, phone, address, coverPicture, profilePicture, socialLinks, email } = shop;
+  const trimmedEmail = email?.trim() || "";
+  const trimmedPhone = phone?.trim() || "";
+  const hasContactEmail = Boolean(trimmedEmail);
+  const hasCallablePhone = Boolean(trimmedPhone && trimmedPhone !== "-");
+
+  const emailHref = hasContactEmail
+    ? `mailto:${trimmedEmail}?subject=${encodeURIComponent(`Inquiry about ${name}`)}`
+    : null;
+  const phoneHref = hasCallablePhone ? `tel:${trimmedPhone.replace(/\s+/g, "")}` : null;
+  const contactHref = emailHref || phoneHref;
+  const contactLabel = hasContactEmail
+    ? "Contact Vendor"
+    : hasCallablePhone
+      ? "Call Vendor"
+      : "Contact Vendor";
 
   const socials = [
     { Icon: FacebookFilled, url: socialLinks.facebook },
@@ -96,11 +111,21 @@ export default function ShopIntroCard({ shop }: Props) {
               </FlexBox>
             </div>
 
-            <a href={`mailto:${email}`}>
-              <Button variant="outlined" color="primary" sx={{ my: 1.5 }}>
-                Contact Vendor
+            {contactHref ? (
+              <Button
+                component="a"
+                href={contactHref}
+                variant="outlined"
+                color="primary"
+                sx={{ my: 1.5 }}
+              >
+                {contactLabel}
               </Button>
-            </a>
+            ) : (
+              <Button variant="outlined" color="primary" disabled sx={{ my: 1.5 }}>
+                {contactLabel}
+              </Button>
+            )}
           </FlexBetween>
         </Box>
       </FlexBox>
