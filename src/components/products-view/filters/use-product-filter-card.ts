@@ -33,12 +33,27 @@ export default function useProductFilterCard() {
 
   const handleChangeSearchParams = useCallback(
     (key: string, value: string) => {
-      if (!key || !value) return;
+      if (!key) return;
       const params = new URLSearchParams(searchParams);
-      params.set(key, value);
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+      if (value) params.set(key, value);
+      else params.delete(key);
+
+      params.delete("page");
+
+      const query = params.toString();
+      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
     [router, pathname, searchParams]
+  );
+
+  const handleToggleSearchParam = useCallback(
+    (key: string, value: string) => {
+      if (!key || !value) return;
+      const currentValue = searchParams.get(key) ?? "";
+      handleChangeSearchParams(key, currentValue === value ? "" : value);
+    },
+    [handleChangeSearchParams, searchParams]
   );
 
   const debouncedChangePrice = debounce((values: number[]) => {
@@ -89,6 +104,7 @@ export default function useProductFilterCard() {
     handleChangeColor,
     handleChangeBrand,
     handleChangeSales,
-    handleChangeSearchParams
+    handleChangeSearchParams,
+    handleToggleSearchParam
   };
 }

@@ -34,7 +34,7 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
     handleChangeColor,
     handleChangePrice,
     handleChangeSales,
-    handleChangeSearchParams
+    handleToggleSearchParam
   } = useProductFilterCard();
 
   const selectedShops = (() => {
@@ -178,7 +178,7 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
               <CheckboxLabel
                 key={item}
                 checked={rating === item}
-                onChange={() => handleChangeSearchParams("rating", item.toString())}
+                onChange={() => handleToggleSearchParam("rating", item.toString())}
                 label={<Rating size="small" value={item} color="warn" readOnly />}
               />
             ))}
