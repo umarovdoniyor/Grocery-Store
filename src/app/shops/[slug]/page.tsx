@@ -1,9 +1,8 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 // PAGE VIEW COMPONENT
 import { ShopDetailsPageView } from "pages-sections/shops/page-view";
 import { getProductsBySlug } from "utils/services/shop-directory";
-import { getCatalogFilters } from "utils/services/storefront-catalog";
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
@@ -15,13 +14,40 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export default async function ShopDetails({ params }: SlugParams) {
+export default async function ShopDetails({
+  params,
+  searchParams
+}: SlugParams & {
+  searchParams?: { page?: string; sort?: string } | Promise<{ page?: string; sort?: string }>;
+}) {
+  const allowedSorts = new Set(["newest", "popular", "asc", "desc"]);
   const { slug } = await params;
+  const query = await Promise.resolve(searchParams ?? {});
+  const parsedPage = Number(query?.page || "1");
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+  const sort = query?.sort && allowedSorts.has(query.sort) ? query.sort : undefined;
 
-  const shop = await getProductsBySlug(slug);
-  const filters = await getCatalogFilters();
+  const data = await getProductsBySlug(slug, { page, sort });
 
-  if (!shop) notFound();
+  if (!data) notFound();
 
-  return <ShopDetailsPageView shop={shop} filters={filters} />;
+  if (page > data.meta.totalPages) {
+    const params = new URLSearchParams();
+    if (sort) params.set("sort", sort);
+    if (data.meta.totalPages > 1) params.set("page", String(data.meta.totalPages));
+
+    const nextQuery = params.toString();
+    redirect(nextQuery ? `/shops/${slug}?${nextQuery}` : `/shops/${slug}`);
+  }
+
+  return (
+    <ShopDetailsPageView
+      shop={data.shop}
+      totalProducts={data.meta.totalProducts}
+      pageCount={data.meta.totalPages}
+      firstIndex={data.meta.firstIndex}
+      lastIndex={data.meta.lastIndex}
+      selectedSort={sort || "newest"}
+    />
+  );
 }

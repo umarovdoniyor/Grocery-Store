@@ -1,58 +1,129 @@
 "use client";
 
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
-import IconButton from "@mui/material/IconButton";
-import FilterList from "@mui/icons-material/FilterList";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Pagination from "@mui/material/Pagination";
+import Typography from "@mui/material/Typography";
 // GLOBAL CUSTOM COMPONENTS
-import SideNav from "components/side-nav";
-import ProductFilters from "components/products-view/filters";
 import ProductsGridView from "components/products-view/products-grid-view";
+import { FlexBetween, FlexBox } from "components/flex-box";
 // LOCAL CUSTOM COMPONENTS
 import ShopIntroCard from "../shop-intro-card";
 // CUSTOM DATA MODEL
 import Shop from "models/Shop.model";
-import Filters from "models/Filters";
+
+const SORT_OPTIONS = [
+  { label: "Newest", value: "newest" },
+  { label: "Popular", value: "popular" },
+  { label: "Price Low to High", value: "asc" },
+  { label: "Price High to Low", value: "desc" }
+];
 
 // ============================================================
-type Props = { shop: Shop; filters: Filters };
+type Props = {
+  shop: Shop;
+  pageCount: number;
+  firstIndex: number;
+  lastIndex: number;
+  totalProducts: number;
+  selectedSort: string;
+};
 // ============================================================
 
-export default function ShopDetailsPageView({ shop, filters }: Props) {
+export default function ShopDetailsPageView({
+  shop,
+  pageCount,
+  firstIndex,
+  lastIndex,
+  totalProducts,
+  selectedSort
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const parsedPage = Number(searchParams.get("page") || "1");
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+  const sortValue = SORT_OPTIONS.some((option) => option.value === selectedSort)
+    ? selectedSort
+    : "newest";
+
+  const setQueryParam = (key: string, value?: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (!value) params.delete(key);
+    else params.set(key, value);
+
+    router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname, {
+      scroll: false
+    });
+  };
+
+  const handlePageChange = (_: unknown, nextPage: number) => {
+    setQueryParam("page", nextPage > 1 ? String(nextPage) : undefined);
+  };
+
+  const handleSortChange = (nextSort: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (!nextSort || nextSort === "newest") params.delete("sort");
+    else params.set("sort", nextSort);
+
+    params.delete("page");
+    router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname, {
+      scroll: false
+    });
+  };
+
   return (
     <Container className="mt-2 mb-3">
       {/* SHOP INTRODUCTION AREA */}
       <ShopIntroCard shop={shop} />
 
-      <Grid container spacing={3}>
-        {/* SIDEBAR AREA */}
-        <Grid size={{ md: 3, xs: 12 }} sx={{ display: { md: "block", xs: "none" } }}>
-          <Card className="p-2">
-            <ProductFilters filters={filters} />
-          </Card>
-        </Grid>
+      <FlexBetween flexWrap="wrap" gap={2} mb={3}>
+        <Typography variant="body1" sx={{ color: "grey.600" }}>
+          Showing {firstIndex}-{lastIndex} of {totalProducts} Products
+        </Typography>
 
-        <Grid size={{ md: 9, xs: 12 }}>
-          {/* SMALL DEVICE SIDEBAR AREA */}
-          <Box display={{ md: "none", xs: "block" }}>
-            <SideNav
-              position="left"
-              handler={(close) => (
-                <IconButton onClick={close} sx={{ float: "right" }}>
-                  <FilterList fontSize="small" />
-                </IconButton>
-              )}
-            >
-              <Box px={3} py={2}>
-                <ProductFilters filters={filters} />
-              </Box>
-            </SideNav>
-          </Box>
+        <FlexBox alignItems="center" gap={1}>
+          <Typography variant="body1" sx={{ color: "grey.600" }}>
+            Sort by:
+          </Typography>
 
-          {/* PRODUCT LIST AREA */}
-          <ProductsGridView products={shop.products!} />
+          <TextField
+            select
+            size="small"
+            value={sortValue}
+            onChange={(event) => handleSortChange(event.target.value)}
+            sx={{ minWidth: 180 }}
+          >
+            {SORT_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </FlexBox>
+      </FlexBetween>
+
+      <Grid container>
+        <Grid size={{ xs: 12 }}>
+          <ProductsGridView products={shop.products || []} />
+
+          <FlexBetween flexWrap="wrap" mt={5}>
+            <Typography variant="body1" sx={{ color: "grey.600" }}>
+              Showing {firstIndex}-{lastIndex} of {totalProducts} Products
+            </Typography>
+
+            <Pagination
+              color="primary"
+              variant="outlined"
+              page={page}
+              count={pageCount}
+              onChange={handlePageChange}
+            />
+          </FlexBetween>
         </Grid>
       </Grid>
     </Container>
