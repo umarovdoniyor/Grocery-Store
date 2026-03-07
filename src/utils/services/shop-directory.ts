@@ -15,6 +15,8 @@ const DEFAULT_COVER = "/assets/images/banners/banner-4.png";
 const DEFAULT_PROFILE = "/assets/images/faces/face-2.jpg";
 const VENDORS_LIMIT = 12;
 const CATEGORY_LOOKUP_PRODUCT_LIMIT = 24;
+const VENDOR_LOOKUP_PAGE_LIMIT = 100;
+const MAX_VENDOR_LOOKUP_PAGES = 20;
 
 const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
   if (!value) return fallback;
@@ -123,6 +125,104 @@ const getVendorShopsData = cache(async (page: number, limit: number) => {
   };
 });
 
+const findVendorSlugById = async (vendorId: string): Promise<string | null> => {
+  if (!vendorId) return null;
+
+  const statuses: Array<"ACTIVE" | "INACTIVE" | "SUSPENDED" | undefined> = [
+    "ACTIVE",
+    undefined,
+    "INACTIVE",
+    "SUSPENDED"
+  ];
+
+  for (const status of statuses) {
+    const firstPage = await getVendors({
+      page: 1,
+      limit: VENDOR_LOOKUP_PAGE_LIMIT,
+      search: "",
+      status,
+      sortBy: "NEWEST"
+    });
+
+    if (!firstPage.success) continue;
+
+    const firstMatch = (firstPage.list || []).find((item) => item._id === vendorId);
+    if (firstMatch?.slug) return firstMatch.slug;
+
+    const total = firstPage.total || 0;
+    const totalPages = Math.min(
+      Math.max(1, Math.ceil(total / VENDOR_LOOKUP_PAGE_LIMIT)),
+      MAX_VENDOR_LOOKUP_PAGES
+    );
+
+    for (let page = 2; page <= totalPages; page += 1) {
+      const response = await getVendors({
+        page,
+        limit: VENDOR_LOOKUP_PAGE_LIMIT,
+        search: "",
+        status,
+        sortBy: "NEWEST"
+      });
+
+      if (!response.success) continue;
+
+      const match = (response.list || []).find((item) => item._id === vendorId);
+      if (match?.slug) return match.slug;
+    }
+  }
+
+  return null;
+};
+
+const findVendorById = async (vendorId: string): Promise<VendorSummary | null> => {
+  if (!vendorId) return null;
+
+  const statuses: Array<"ACTIVE" | "INACTIVE" | "SUSPENDED" | undefined> = [
+    "ACTIVE",
+    undefined,
+    "INACTIVE",
+    "SUSPENDED"
+  ];
+
+  for (const status of statuses) {
+    const firstPage = await getVendors({
+      page: 1,
+      limit: VENDOR_LOOKUP_PAGE_LIMIT,
+      search: "",
+      status,
+      sortBy: "NEWEST"
+    });
+
+    if (!firstPage.success) continue;
+
+    const firstMatch = (firstPage.list || []).find((item) => item._id === vendorId);
+    if (firstMatch) return firstMatch;
+
+    const total = firstPage.total || 0;
+    const totalPages = Math.min(
+      Math.max(1, Math.ceil(total / VENDOR_LOOKUP_PAGE_LIMIT)),
+      MAX_VENDOR_LOOKUP_PAGES
+    );
+
+    for (let page = 2; page <= totalPages; page += 1) {
+      const response = await getVendors({
+        page,
+        limit: VENDOR_LOOKUP_PAGE_LIMIT,
+        search: "",
+        status,
+        sortBy: "NEWEST"
+      });
+
+      if (!response.success) continue;
+
+      const match = (response.list || []).find((item) => item._id === vendorId);
+      if (match) return match;
+    }
+  }
+
+  return null;
+};
+
 export const getShopList = cache(async (page = 1) => {
   const currentPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
   const { shops, total } = await getVendorShopsData(currentPage, VENDORS_LIMIT);
@@ -147,15 +247,70 @@ export const getShopSlugs = cache(async () => {
   return shops.map((item) => ({ params: { slug: item.slug } }));
 });
 
-export const getProductsBySlug = cache(async (slug: string): Promise<Shop | null> => {
-  const vendorResponse = await getVendorBySlug(slug);
+export const getProductsBySlug = async (slug: string): Promise<Shop | null> => {
+  let vendorResponse = await getVendorBySlug(slug);
+
+  // Backward compatibility: some links may still use vendorId instead of vendor slug.
+  if ((!vendorResponse.success || !vendorResponse.vendor) && /^[a-f0-9]{24}$/i.test(slug)) {
+    // First try direct vendor-id lookup so ID routes still render even if slug resolution misses.
+    const vendorById = await findVendorById(slug);
+    if (vendorById) {
+      const shop = mapVendorToShop(vendorById);
+      const products = await getVendorProducts(shop.id);
+      return { ...shop, products };
+    }
+
+    const resolvedSlug = await findVendorSlugById(slug);
+    if (resolvedSlug) {
+      vendorResponse = await getVendorBySlug(resolvedSlug);
+    }
+
+    // Final fallback: render vendor page from products even when vendor profile lookup fails.
+    if (!vendorResponse.success || !vendorResponse.vendor) {
+      const products = await getVendorProducts(slug);
+
+      if (products.length > 0) {
+        const fallbackName = products[0]?.title ? `Vendor ${slug.slice(-6)}` : "Vendor Store";
+
+        return {
+          id: slug,
+          slug,
+          user: {
+            id: slug,
+            email: "",
+            phone: "-",
+            avatar: DEFAULT_PROFILE,
+            password: "",
+            dateOfBirth: "",
+            verified: false,
+            name: { firstName: fallbackName, lastName: "" }
+          },
+          email: "",
+          name: fallbackName,
+          phone: "-",
+          address: "Address not provided",
+          verified: false,
+          coverPicture: DEFAULT_COVER,
+          profilePicture: DEFAULT_PROFILE,
+          socialLinks: {
+            facebook: null,
+            youtube: null,
+            twitter: null,
+            instagram: null
+          },
+          products
+        };
+      }
+    }
+  }
+
   if (!vendorResponse.success || !vendorResponse.vendor) return null;
 
   const shop = mapVendorDetailToShop(vendorResponse.vendor);
   const products = await getVendorProducts(shop.id);
 
   return { ...shop, products };
-});
+};
 
 export const getAvailableShops = cache(async () => {
   const { shops } = await getVendorShopsData(1, 3);
