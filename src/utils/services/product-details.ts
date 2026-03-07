@@ -10,7 +10,7 @@ import {
   type ProductSummary
 } from "../../../libs/product";
 import { getCategoryById } from "../../../libs/category";
-import { getVendors } from "../../../libs/vendor";
+import { getVendors, type VendorSummary } from "../../../libs/vendor";
 import { getProductReviews, type ProductReview as ProductReviewDto } from "../../../libs/review";
 
 const PRODUCT_LOOKUP_LIMIT = 50;
@@ -133,7 +133,10 @@ const resolveCategoryNames = async (categoryIds: string[]): Promise<string[]> =>
     .filter((name): name is string => Boolean(name));
 };
 
-const resolveVendorSlug = async (vendorId?: string): Promise<string | undefined> => {
+const resolveVendorSummaryById = async (
+  vendorId?: string,
+  hints?: Array<string | undefined>
+): Promise<VendorSummary | undefined> => {
   if (!vendorId) return undefined;
 
   const statuses: Array<"ACTIVE" | "INACTIVE" | "SUSPENDED" | undefined> = [
@@ -144,6 +147,19 @@ const resolveVendorSlug = async (vendorId?: string): Promise<string | undefined>
   ];
 
   for (const status of statuses) {
+    const byIdSearch = await getVendors({
+      page: 1,
+      limit: 20,
+      search: vendorId,
+      status,
+      sortBy: "POPULAR"
+    });
+
+    if (byIdSearch.success && byIdSearch.list?.length) {
+      const exact = byIdSearch.list.find((vendor) => vendor._id === vendorId);
+      if (exact) return exact;
+    }
+
     const firstPage = await getVendors({
       page: 1,
       limit: VENDOR_LOOKUP_LIMIT,
@@ -155,7 +171,7 @@ const resolveVendorSlug = async (vendorId?: string): Promise<string | undefined>
     if (!firstPage.success) continue;
 
     const firstMatch = (firstPage.list || []).find((vendor) => vendor._id === vendorId);
-    if (firstMatch?.slug) return firstMatch.slug;
+    if (firstMatch) return firstMatch;
 
     const total = firstPage.total || 0;
     const totalPages = Math.min(
@@ -175,7 +191,31 @@ const resolveVendorSlug = async (vendorId?: string): Promise<string | undefined>
       if (!response.success) continue;
 
       const match = (response.list || []).find((vendor) => vendor._id === vendorId);
-      if (match?.slug) return match.slug;
+      if (match) return match;
+    }
+  }
+
+  const searchTerms = (hints || []).map((term) => (term || "").trim()).filter(Boolean);
+
+  for (const term of searchTerms) {
+    for (const status of statuses) {
+      const response = await getVendors({
+        page: 1,
+        limit: 20,
+        search: term,
+        status,
+        sortBy: "POPULAR"
+      });
+
+      if (!response.success || !response.list?.length) continue;
+
+      const exactId = response.list.find((vendor) => vendor._id === vendorId);
+      if (exactId) return exactId;
+
+      const exactSlug = response.list.find((vendor) => vendor.slug === term);
+      if (exactSlug) return exactSlug;
+
+      return response.list[0];
     }
   }
 
@@ -218,13 +258,22 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!detail.product) return null;
 
   const product = mapDetailToProduct(detail.product);
-  const vendorSlug = await resolveVendorSlug(detail.product.vendor?._id);
+  const vendorSummary = await resolveVendorSummaryById(detail.product.vendor?._id, [
+    detail.product.vendor?.memberNickname,
+    `${detail.product.vendor?.memberFirstName || ""} ${detail.product.vendor?.memberLastName || ""}`,
+    detail.product.vendor?._id
+  ]);
   const productWithResolvedShop = product.shop
     ? {
         ...product,
         shop: {
           ...product.shop,
-          slug: vendorSlug || product.shop.slug
+          slug: vendorSummary?.slug || product.shop.slug,
+          name: vendorSummary?.storeName || product.shop.name,
+          phone: vendorSummary?.memberPhone || product.shop.phone,
+          address: vendorSummary?.memberAddress || product.shop.address,
+          profilePicture: vendorSummary?.memberImage || product.shop.profilePicture,
+          coverPicture: vendorSummary?.coverImage || product.shop.coverPicture
         }
       }
     : product;
