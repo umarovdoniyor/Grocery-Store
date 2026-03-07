@@ -56,6 +56,7 @@ const mapProduct = (item: ProductSummary): Product => {
     price,
     discount,
     rating: Number(item.ratingAvg || 0),
+    reviewsCount: Number(item.reviewsCount || 0),
     categories: [],
     status: item.status,
     published: item.status === "PUBLISHED"

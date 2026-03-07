@@ -7,6 +7,8 @@ type Props = { tags: string[] };
 // ==============================================================
 
 export default function ProductTags({ tags }: Props) {
+  if (!tags.length) return null;
+
   return (
     <TagRoot>
       {tags.map((item) => (

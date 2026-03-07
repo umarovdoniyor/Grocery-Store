@@ -7,6 +7,7 @@ export default interface Product {
   price: number;
   title: string;
   rating: number;
+  reviewsCount?: number;
   discount: number;
   thumbnail: string;
   description?: string;

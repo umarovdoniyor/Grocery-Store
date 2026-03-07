@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-// MUI
+import { useEffect, useState, type MouseEvent } from "react";
 import IconButton from "@mui/material/IconButton";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import { addToWishlist, getWishlistStatus, removeFromWishlist } from "../../../../../libs/wishlist";
+import { addToWishlist, getWishlistStatus, removeFromWishlist } from "../../../../libs/wishlist";
 import { useAuth } from "contexts/AuthContext";
 
 type Props = {
@@ -37,7 +36,10 @@ export default function FavoriteButton({ productId }: Props) {
     };
   }, [isAuthenticated, productId]);
 
-  const handleFavorite = async () => {
+  const handleFavorite = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (loading || !isAuthenticated || !productId) return;
 
     setLoading(true);
@@ -57,8 +59,19 @@ export default function FavoriteButton({ productId }: Props) {
     <IconButton
       size="small"
       onClick={handleFavorite}
+      onMouseDown={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
       disabled={loading}
-      sx={{ position: "absolute", top: 15, right: 15, zIndex: 1 }}
+      sx={{
+        position: "absolute",
+        top: 12,
+        right: 12,
+        zIndex: 2,
+        bgcolor: "background.paper",
+        "&:hover": { bgcolor: "background.paper" }
+      }}
     >
       {isFavorite ? (
         <Favorite color="primary" fontSize="small" />

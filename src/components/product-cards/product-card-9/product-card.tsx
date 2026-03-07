@@ -19,12 +19,12 @@ type Props = { product: Product };
 // ===========================================================
 
 export default function ProductCard9({ product }: Props) {
-  const { thumbnail, title, price, discount, rating, slug } = product;
+  const { id, thumbnail, title, price, discount, rating, slug, categories, reviewsCount } = product;
 
   return (
     <Wrapper>
       {/* PRODUCT FAVORITE BUTTON */}
-      <FavoriteButton />
+      <FavoriteButton productId={id} />
 
       <ContentWrapper>
         <div className="img-wrapper">
@@ -38,7 +38,7 @@ export default function ProductCard9({ product }: Props) {
         <div className="content">
           <div>
             {/* PRODUCT TAG LIST */}
-            <ProductTags tags={["Bike", "Motor", "Ducati"]} />
+            <ProductTags tags={(categories || []).slice(0, 3)} />
 
             {/* PRODUCT TITLE / NAME */}
             <Link href={`/products/${slug}`}>
@@ -48,7 +48,12 @@ export default function ProductCard9({ product }: Props) {
             </Link>
 
             {/* PRODUCT RATING / REVIEW  */}
-            <Rating size="small" value={rating} color="warn" readOnly />
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Rating size="small" value={rating} color="warn" readOnly />
+              <Typography variant="body2" color="text.secondary">
+                ({Number(reviewsCount || 0)})
+              </Typography>
+            </div>
 
             {/* PRODUCT PRICE */}
             <ProductPrice price={price} discount={discount} />

@@ -77,7 +77,7 @@ export default function ProductSearchPageView({
                 Searching for “{query}”
               </Typography>
               <Typography variant="body1" sx={{ color: "grey.600" }}>
-                {products.length} results found
+                {totalProducts} results found
               </Typography>
             </div>
           ) : (
@@ -147,10 +147,30 @@ export default function ProductSearchPageView({
 
           {/* PRODUCT VIEW AREA */}
           <Grid size={{ xl: 10, md: 9, xs: 12 }}>
-            {view === "grid" ? (
-              <ProductsGridView products={products} />
+            {products.length ? (
+              view === "grid" ? (
+                <ProductsGridView products={products} />
+              ) : (
+                <ProductsListView products={products} />
+              )
             ) : (
-              <ProductsListView products={products} />
+              <Box
+                sx={{
+                  py: 8,
+                  px: 3,
+                  textAlign: "center",
+                  borderRadius: 2,
+                  border: "1px dashed",
+                  borderColor: "divider"
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  No products found
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Try adjusting your filters or search keyword.
+                </Typography>
+              </Box>
             )}
 
             <FlexBetween flexWrap="wrap" mt={6}>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // MUI
 import Box from "@mui/material/Box";
@@ -8,12 +7,9 @@ import Rating from "@mui/material/Rating";
 import Slider from "@mui/material/Slider";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Collapse from "@mui/material/Collapse";
 import TextField from "@mui/material/TextField";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
-// GLOBAL CUSTOM COMPONENTS
-import AccordionHeader from "components/accordion";
 import { FlexBetween, FlexBox } from "components/flex-box";
 // LOCAL CUSTOM COMPONENTS
 import CheckboxLabel from "./checkbox-label";
@@ -23,7 +19,7 @@ import useProductFilterCard from "./use-product-filter-card";
 import Filters from "models/Filters";
 
 export default function ProductFilters({ filters }: { filters: Filters }) {
-  const { brands: BRANDS, categories: CATEGORIES, others: OTHERS, colors: COLORS } = filters;
+  const { brands: BRANDS, others: OTHERS, colors: COLORS } = filters;
 
   const router = useRouter();
   const pathname = usePathname();
@@ -35,15 +31,12 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
     rating,
     colors,
     prices,
-    collapsed,
-    setCollapsed,
     handleChangeColor,
     handleChangePrice,
     handleChangeSales,
     handleChangeSearchParams
   } = useProductFilterCard();
 
-  const selectedCategory = searchParams.get("category") || "";
   const selectedShops = (() => {
     try {
       const parsed = JSON.parse(searchParams.get("brands") || "[]");
@@ -53,22 +46,6 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
     }
   })();
   const hasShopFilter = selectedShops.length > 0;
-
-  const handleChangeCategory = (value?: string) => {
-    const params = new URLSearchParams(searchParams);
-
-    if (!value) {
-      params.delete("category");
-    } else {
-      params.set("category", value);
-    }
-
-    // Reset pagination when changing category to avoid stale page indexes.
-    params.delete("page");
-
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  };
 
   const handleClearFilters = () => {
     router.push(pathname);
@@ -105,60 +82,6 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
     <div>
       {!hasShopFilter && (
         <>
-          {/* CATEGORY VARIANT FILTER */}
-          <Typography variant="h6" sx={{ mb: 1.25 }}>
-            Categories
-          </Typography>
-
-          {CATEGORIES.map((item) =>
-            item.children ? (
-              <Fragment key={item.title}>
-                <AccordionHeader
-                  open={collapsed}
-                  onClick={() => setCollapsed((state) => !state)}
-                  sx={{ padding: ".5rem 0", cursor: "pointer", color: "grey.600" }}
-                >
-                  <Typography component="span">{item.title}</Typography>
-                </AccordionHeader>
-
-                <Collapse in={collapsed}>
-                  {item.children.map((name) => (
-                    <Typography
-                      variant="body1"
-                      key={name}
-                      sx={{
-                        py: 0.75,
-                        pl: "22px",
-                        fontSize: 14,
-                        cursor: "pointer",
-                        color: "grey.600"
-                      }}
-                    >
-                      {name}
-                    </Typography>
-                  ))}
-                </Collapse>
-              </Fragment>
-            ) : (
-              <Typography
-                variant="body1"
-                key={item.value || item.title}
-                onClick={() => handleChangeCategory(item.value)}
-                sx={{
-                  py: 0.75,
-                  fontSize: 14,
-                  cursor: "pointer",
-                  color: selectedCategory === item.value ? "primary.main" : "grey.600",
-                  fontWeight: selectedCategory === item.value ? 600 : 400
-                }}
-              >
-                {item.title}
-              </Typography>
-            )
-          )}
-
-          <Box component={Divider} my={3} />
-
           {/* PRICE VARIANT FILTER */}
           <Typography variant="h6" sx={{ mb: 2 }}>
             Price Range
@@ -220,8 +143,8 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
 
       {hasShopFilter && (
         <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
-          Shop mode is active. Category, price, sale, rating, and color filters are hidden because
-          the selected shop endpoint does not support them.
+          Shop mode is active. Price, sale, rating, and color filters are hidden because the
+          selected shop endpoint does not support them.
         </Typography>
       )}
 

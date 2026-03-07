@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 // MUI
 import Add from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
@@ -17,21 +16,20 @@ type Props = { product: Product };
 export default function AddToCartButton({ product }: Props) {
   const { thumbnail, title, price, id, slug } = product;
 
-  const { dispatch } = useCart();
-
-  const router = useRouter();
+  const { state, dispatch } = useCart();
   const [isLoading, setLoading] = useState(false);
 
   const handleAddToCart = () => {
     setLoading(true);
 
-    setTimeout(() => {
-      dispatch({
-        type: "CHANGE_CART_AMOUNT",
-        payload: { id, slug, price, title, thumbnail, qty: 1 }
-      });
-      setLoading(false);
-    }, 500);
+    const currentQty = state.cart.find((item) => item.id === id)?.qty || 0;
+
+    dispatch({
+      type: "CHANGE_CART_AMOUNT",
+      payload: { id, slug, price, title, thumbnail, qty: currentQty + 1 }
+    });
+
+    setLoading(false);
   };
 
   return (
