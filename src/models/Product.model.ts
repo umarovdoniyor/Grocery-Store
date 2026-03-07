@@ -14,11 +14,13 @@ export default interface Product {
   id: string;
   shop?: Shop;
   brand?: string;
+  sku?: string;
   size?: string[];
   status?: string;
   colors?: string[];
   images: string[];
   categories: any[];
+  categoryIds?: string[];
   reviews?: Review[];
   published?: boolean;
 }

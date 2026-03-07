@@ -13,13 +13,12 @@ import {
 } from "components/footer";
 import Sticky from "components/sticky";
 import { NavigationList } from "components/navbar";
-import { CategoryList } from "components/categories";
 import { MobileMenu } from "components/mobile-navbar";
-import { SecondaryHeader } from "components/secondary-header";
 import { MobileNavigationBar } from "components/mobile-navigation";
-import { SearchInput1, SearchInput2 } from "components/search-box";
+import { SearchInput2 } from "components/search-box";
 import { Topbar, TopbarLanguageSelector, TopbarSocialLinks } from "components/topbar";
 import { Header, HeaderCart, HeaderAccount, MobileHeader, HeaderSearch } from "components/header";
+import LayoutSecondaryHeader from "./layout-secondary-header";
 // CUSTOM DATA MODEL
 import LayoutModel from "models/Layout.model";
 
@@ -79,15 +78,7 @@ export default function ShopLayout1({ children, data }: Props) {
         </Header>
       </Sticky>
 
-      <SecondaryHeader elevation={0}>
-        <SecondaryHeader.Left>
-          <CategoryList categories={header.categoryMenus} />
-        </SecondaryHeader.Left>
-
-        <SecondaryHeader.Right>
-          <SearchInput1 categories={header.categories} />
-        </SecondaryHeader.Right>
-      </SecondaryHeader>
+      <LayoutSecondaryHeader header={header} />
 
       {children}
 

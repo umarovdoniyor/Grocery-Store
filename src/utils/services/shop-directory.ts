@@ -1,6 +1,7 @@
 import { cache } from "react";
 import type Shop from "models/Shop.model";
 import type Product from "models/Product.model";
+import { getProductById, getProducts } from "../../../libs/product";
 import {
   getVendorBySlug,
   getVendorProducts as getVendorProductsApi,
@@ -13,6 +14,7 @@ import {
 const DEFAULT_COVER = "/assets/images/banners/banner-4.png";
 const DEFAULT_PROFILE = "/assets/images/faces/face-2.jpg";
 const VENDORS_LIMIT = 12;
+const CATEGORY_LOOKUP_PRODUCT_LIMIT = 24;
 
 const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
   if (!value) return fallback;
@@ -164,3 +166,58 @@ export const getAvailableShops = cache(async () => {
     url: `/shops/${item.slug}`
   }));
 });
+
+export const getAvailableShopsByCategory = cache(
+  async (categoryId: string, excludedVendorId?: string) => {
+    if (!categoryId) return [];
+
+    const productsResponse = await getProducts({
+      page: 1,
+      limit: CATEGORY_LOOKUP_PRODUCT_LIMIT,
+      categoryIds: [categoryId],
+      sortBy: "POPULAR"
+    });
+
+    if (!productsResponse.success || !productsResponse.list?.length) return [];
+
+    const detailResults = await Promise.allSettled(
+      productsResponse.list.map((product) => getProductById(product._id))
+    );
+
+    const vendorIds = new Set<string>();
+
+    detailResults.forEach((result) => {
+      if (result.status !== "fulfilled") return;
+
+      const vendorId = result.value.product?.vendor?._id;
+      if (!vendorId) return;
+      if (excludedVendorId && vendorId === excludedVendorId) return;
+
+      vendorIds.add(vendorId);
+    });
+
+    if (vendorIds.size === 0) return [];
+
+    const vendorsResponse = await getVendors({
+      page: 1,
+      limit: 50,
+      search: "",
+      status: "ACTIVE",
+      sortBy: "POPULAR"
+    });
+
+    if (!vendorsResponse.success || !vendorsResponse.list?.length) return [];
+
+    const vendorMap = new Map(vendorsResponse.list.map((vendor) => [vendor._id, vendor]));
+
+    return Array.from(vendorIds)
+      .map((vendorId) => vendorMap.get(vendorId))
+      .filter((vendor): vendor is NonNullable<typeof vendor> => Boolean(vendor))
+      .slice(0, 4)
+      .map((vendor) => ({
+        name: vendor.storeName,
+        imgUrl: safeImage(vendor.memberImage, DEFAULT_PROFILE),
+        url: `/shops/${vendor.slug}`
+      }));
+  }
+);

@@ -30,11 +30,13 @@ const validationSchema = yup.object().shape({
 
 type Props = {
   productId: string;
+  onReviewChanged?: () => void | Promise<void>;
 };
 
-export default function ReviewForm({ productId }: Props) {
+export default function ReviewForm({ productId, onReviewChanged }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [showEligibilityHelp, setShowEligibilityHelp] = useState(false);
   const [existingReviewId, setExistingReviewId] = useState<string | null>(null);
   const [isLoadingExisting, setIsLoadingExisting] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -95,6 +97,7 @@ export default function ReviewForm({ productId }: Props) {
   const handleSubmitForm = handleSubmit(async (values) => {
     setSubmitError(null);
     setSubmitSuccess(null);
+    setShowEligibilityHelp(false);
 
     if (!isLoggedIn) {
       setSubmitError("Please log in to write a review.");
@@ -115,8 +118,9 @@ export default function ReviewForm({ productId }: Props) {
       const rawError = response.error || "Failed to submit review.";
       if (rawError.includes("Only verified buyers can review this product")) {
         setSubmitError(
-          "Only verified buyers can review this product. Your order may be in an ineligible status (for example: canceled)."
+          "You can review this product after a completed delivery. It looks like this order is not eligible yet."
         );
+        setShowEligibilityHelp(true);
       } else {
         setSubmitError(rawError);
       }
@@ -132,6 +136,8 @@ export default function ReviewForm({ productId }: Props) {
         ? "Review updated. It may appear after moderation."
         : "Review submitted. It may appear after moderation."
     );
+
+    await onReviewChanged?.();
   });
 
   const handleRemoveReview = async () => {
@@ -152,6 +158,7 @@ export default function ReviewForm({ productId }: Props) {
     setExistingReviewId(null);
     reset({ rating: 0, comment: "" });
     setSubmitSuccess("Your review has been removed.");
+    await onReviewChanged?.();
     setIsRemoving(false);
   };
 
@@ -249,6 +256,13 @@ export default function ReviewForm({ productId }: Props) {
       {submitError && (
         <Typography variant="body2" color="error.main" sx={{ mt: 1.5 }}>
           {submitError}
+        </Typography>
+      )}
+
+      {showEligibilityHelp && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Check your order status in <Link href="/orders">My Orders</Link>. Reviews are enabled for
+          delivered purchases.
         </Typography>
       )}
 

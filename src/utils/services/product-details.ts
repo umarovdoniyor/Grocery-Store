@@ -9,15 +9,24 @@ import {
   type ProductDetail,
   type ProductSummary
 } from "../../../libs/product";
+import { getCategoryById } from "../../../libs/category";
 import { getProductReviews, type ProductReview as ProductReviewDto } from "../../../libs/review";
 
 const PRODUCT_LOOKUP_LIMIT = 50;
 const MAX_PRODUCT_LOOKUP_PAGES = 20;
 const PRODUCT_REVIEW_LIMIT = 10;
+const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 
 const toDiscount = (price: number, salePrice?: number) => {
   if (!salePrice || price <= salePrice || price <= 0) return 0;
   return Math.round(((price - salePrice) / price) * 100);
+};
+
+const normalizeThumbnail = (thumbnail?: string | null): string => {
+  const value = (thumbnail || "").trim();
+  if (!value) return DEFAULT_THUMBNAIL;
+  if (value.includes("example.com")) return DEFAULT_THUMBNAIL;
+  return value;
 };
 
 const mapVendorToShop = (vendor?: ProductDetail["vendor"]): Shop | undefined => {
@@ -57,16 +66,18 @@ const mapVendorToShop = (vendor?: ProductDetail["vendor"]): Shop | undefined => 
 const mapSummaryToProduct = (item: ProductSummary): Product => {
   const price = Number(item.price || 0);
   const salePrice = typeof item.salePrice === "number" ? item.salePrice : undefined;
+  const thumbnail = normalizeThumbnail(item.thumbnail);
 
   return {
     id: item._id,
     slug: item.slug,
     title: item.title,
-    thumbnail: item.thumbnail,
-    images: [item.thumbnail],
+    thumbnail,
+    images: [thumbnail],
     price,
     discount: toDiscount(price, salePrice),
-    rating: 0,
+    rating: Number(item.ratingAvg || 0),
+    reviewsCount: Number(item.reviewsCount || 0),
     reviews: [],
     categories: [],
     status: item.status,
@@ -77,24 +88,44 @@ const mapSummaryToProduct = (item: ProductSummary): Product => {
 const mapDetailToProduct = (item: ProductDetail): Product => {
   const price = Number(item.salePrice ?? item.price ?? 0);
   const basePrice = Number(item.price || 0);
+  const thumbnail = normalizeThumbnail(item.thumbnail);
+  const normalizedImages =
+    item.images?.length > 0 ? item.images.map((image) => normalizeThumbnail(image)) : [thumbnail];
 
   return {
     id: item._id,
     slug: item.slug,
     title: item.title,
-    thumbnail: item.thumbnail,
-    images: item.images?.length ? item.images : [item.thumbnail],
+    thumbnail,
+    images: normalizedImages,
     price,
     discount: toDiscount(basePrice, item.salePrice),
     rating: 0,
     reviews: [],
     brand: item.brand,
+    sku: item.sku,
     description: item.description,
     categories: item.categoryIds || [],
+    categoryIds: item.categoryIds || [],
     status: item.status,
     published: item.status === "PUBLISHED",
     shop: mapVendorToShop(item.vendor)
   };
+};
+
+const resolveCategoryNames = async (categoryIds: string[]): Promise<string[]> => {
+  const ids = (categoryIds || []).filter(Boolean);
+  if (ids.length === 0) return [];
+
+  const results = await Promise.allSettled(ids.map((id) => getCategoryById(id)));
+
+  return results
+    .map((result) => {
+      if (result.status !== "fulfilled") return null;
+      if (!result.value.success || !result.value.category?.name) return null;
+      return result.value.category.name;
+    })
+    .filter((name): name is string => Boolean(name));
 };
 
 const mapReviewToUi = (review: ProductReviewDto): Review => {
@@ -133,6 +164,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!detail.product) return null;
 
   const product = mapDetailToProduct(detail.product);
+  const categories = await resolveCategoryNames(detail.product.categoryIds || []);
   const reviewResponse = await getProductReviews({
     productId: match._id,
     page: 1,
@@ -141,12 +173,17 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   });
 
   if (!reviewResponse.success) {
-    return product;
+    return {
+      ...product,
+      categories: categories.length ? categories : product.categories
+    };
   }
 
   return {
     ...product,
+    categories: categories.length ? categories : product.categories,
     rating: Number(reviewResponse.summary?.ratingAvg || 0),
+    reviewsCount: Number(reviewResponse.summary?.reviewsCount || 0),
     reviews: (reviewResponse.list || []).map(mapReviewToUi)
   };
 }

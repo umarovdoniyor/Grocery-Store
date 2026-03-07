@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 // LOCAL CUSTOM COMPONENTS
 import AddToCart from "./add-to-cart";
 import ProductGallery from "./product-gallery";
-import ProductVariantSelector from "./product-variant-selector";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
 // STYLED COMPONENTS
@@ -23,8 +22,9 @@ export default function ProductIntro({ product }: Props) {
   const discountPercent = Number(product.discount || 0);
   const comparePrice =
     discountPercent > 0 ? basePrice / (1 - Math.min(discountPercent, 99) / 100) : null;
-  const code = product.id || product.slug || "-";
+  const code = product.sku || product.slug || product.id || "-";
   const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
+  const reviewCount = product.reviewsCount ?? product.reviews?.length ?? 0;
 
   return (
     <StyledRoot>
@@ -56,11 +56,8 @@ export default function ProductIntro({ product }: Props) {
           <div className="rating">
             <span>Rated:</span>
             <Rating readOnly color="warn" size="small" value={product.rating} />
-            <Typography variant="h6">({product.reviews?.length || 0})</Typography>
+            <Typography variant="h6">({reviewCount})</Typography>
           </div>
-
-          {/* PRODUCT VARIANTS */}
-          <ProductVariantSelector />
 
           {/* PRICE & STOCK */}
           <div className="price">

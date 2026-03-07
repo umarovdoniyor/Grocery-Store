@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 // PAGE VIEW COMPONENT
 import { ProductDetailsPageView } from "pages-sections/product-details/page-view";
-import {
-  getFrequentlyBoughtProducts,
-  getProductBySlug,
-  getRelatedProductsBySlug
-} from "utils/services/product-details";
+import { getProductBySlug, getRelatedProductsBySlug } from "utils/services/product-details";
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
@@ -25,19 +21,12 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 
 export default async function ProductDetails({ params }: SlugParams) {
   const { slug } = await params;
-  const [product, relatedProducts, frequentlyBought] = await Promise.all([
+  const [product, relatedProducts] = await Promise.all([
     getProductBySlug(slug),
-    getRelatedProductsBySlug(slug),
-    getFrequentlyBoughtProducts()
+    getRelatedProductsBySlug(slug)
   ]);
 
   if (!product) notFound();
 
-  return (
-    <ProductDetailsPageView
-      product={product}
-      relatedProducts={relatedProducts}
-      frequentlyBought={frequentlyBought}
-    />
-  );
+  return <ProductDetailsPageView product={product} relatedProducts={relatedProducts} />;
 }
