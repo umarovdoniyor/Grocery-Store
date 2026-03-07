@@ -105,6 +105,8 @@ export const GET_PRODUCTS = gql`
         title
         slug
         thumbnail
+        ratingAvg
+        reviewsCount
         price
         salePrice
         stockQty

@@ -16,6 +16,7 @@ interface Props {
   searchParams: Promise<{
     q: string;
     sale: string;
+    sales: string;
     page: string;
     sort: string;
     prices: string;
@@ -28,11 +29,12 @@ interface Props {
 // ==============================================================
 
 export default async function ProductSearch({ searchParams }: Props) {
-  const { q, page, sort, sale, prices, colors, brands, rating, category } = await searchParams;
+  const { q, page, sort, sale, sales, prices, colors, brands, rating, category } =
+    await searchParams;
 
   const [filters, data] = await Promise.all([
     getCatalogFilters(),
-    getCatalogProducts({ q, page, sort, sale, prices, colors, brands, rating, category })
+    getCatalogProducts({ q, page, sort, sale, sales, prices, colors, brands, rating, category })
   ]);
 
   return (

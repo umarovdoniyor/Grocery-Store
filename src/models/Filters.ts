@@ -5,6 +5,7 @@ interface Item {
 
 interface Category {
   title: string;
+  value?: string;
   children?: string[];
 }
 

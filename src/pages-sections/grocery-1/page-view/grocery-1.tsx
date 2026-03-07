@@ -12,25 +12,45 @@ import Section2 from "../section-2";
 import Section3 from "../section-3";
 import Section4 from "../section-4";
 import Section5 from "../section-5";
+import Home from "icons/Home";
+import User2 from "icons/User2";
+import CategoryOutlined from "icons/CategoryOutline";
+import ShoppingBagOutlined from "icons/ShoppingBagOutlined";
 import {
   getGroceryProducts,
   getPopularProducts,
   getTrendingProducts,
   getGrocery1Navigation
 } from "utils/services/grocery-home";
-import { mobileNavigationTwo } from "data/layout-data";
+import { getLayoutData } from "utils/services/layout-data";
 
 // =====================================================
 type Props = { selected?: string };
 // =====================================================
 
 export default async function GroceryOnePageView({ selected }: Props) {
-  const [products, popularProducts, trendingProducts, grocery1NavList] = await Promise.all([
-    getGroceryProducts(selected),
-    getPopularProducts(),
-    getTrendingProducts(),
-    getGrocery1Navigation()
-  ]);
+  const [products, popularProducts, trendingProducts, grocery1NavList, layoutData] =
+    await Promise.all([
+      getGroceryProducts(selected),
+      getPopularProducts(),
+      getTrendingProducts(),
+      getGrocery1Navigation(),
+      getLayoutData()
+    ]);
+
+  const mobileIconMap = {
+    Home,
+    CategoryOutlined,
+    ShoppingBagOutlined,
+    User2
+  };
+
+  const mobileNavigation = (layoutData.mobileNavigation.version2 || [])
+    .map((item) => ({
+      ...item,
+      Icon: mobileIconMap[item.icon as keyof typeof mobileIconMap]
+    }))
+    .filter((item) => Boolean(item.Icon));
 
   // SIDE NAVBAR COMPONENT
   const SideNav = <SideNavbar navList={grocery1NavList} />;
@@ -64,7 +84,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
         <Section5 />
 
         {/* FOOTER AREA */}
-        <Footer2 />
+        <Footer2 footer={layoutData.footer} />
       </StickyWrapper>
 
       {/* POPUP NEWSLETTER FORM */}
@@ -73,7 +93,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
       {/* SETTINGS IS USED ONLY FOR DEMO, YOU CAN REMOVE THIS */}
       <Setting />
 
-      <MobileNavigationBar2 navigation={mobileNavigationTwo}>{SideNav}</MobileNavigationBar2>
+      <MobileNavigationBar2 navigation={mobileNavigation}>{SideNav}</MobileNavigationBar2>
     </Fragment>
   );
 }

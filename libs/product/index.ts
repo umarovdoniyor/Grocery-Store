@@ -115,6 +115,7 @@ export interface CatalogProductsInquiryInput {
   search?: string;
   categoryIds?: string[];
   brand?: string | null;
+  minRating?: number;
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
@@ -164,6 +165,8 @@ export interface ProductSummary {
   title: string;
   slug: string;
   thumbnail: string;
+  ratingAvg?: number;
+  reviewsCount?: number;
   price: number;
   salePrice?: number;
   stockQty: number;
