@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, Resolver, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 // MUI
@@ -22,8 +22,17 @@ const validationSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("Email is required"),
   contact: yup.string().required("Contact is required"),
   address: yup.string().defined(),
-  birthOfDate: yup.date().required("Birth date is required")
+  birthOfDate: yup.date().nullable().notRequired()
 });
+
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: string;
+  address: string;
+  birthOfDate: Date | null;
+};
 
 // ==============================================================
 type Props = { user: User };
@@ -33,18 +42,18 @@ export default function ProfileEditForm({ user }: Props) {
   const router = useRouter();
   const { updateMemberProfile } = useAuth();
 
-  const initialValues = {
+  const initialValues: FormValues = {
     email: user?.email || "",
     contact: user?.phone || "",
     address: user?.address || "",
     lastName: user?.name?.lastName || "",
     firstName: user?.name?.firstName || "",
-    birthOfDate: user?.dateOfBirth ? new Date(user.dateOfBirth) : new Date()
+    birthOfDate: user?.dateOfBirth ? new Date(user.dateOfBirth) : null
   };
 
-  const methods = useForm({
+  const methods = useForm<FormValues>({
     defaultValues: initialValues,
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(validationSchema) as Resolver<FormValues>
   });
 
   const {
@@ -58,6 +67,8 @@ export default function ProfileEditForm({ user }: Props) {
       const { success, error } = await updateMemberProfile({
         firstName: values.firstName,
         lastName: values.lastName,
+        email: values.email.trim().toLowerCase(),
+        dob: values.birthOfDate ? values.birthOfDate.toISOString() : undefined,
         phone: values.contact,
         address: values.address
       });
@@ -85,15 +96,7 @@ export default function ProfileEditForm({ user }: Props) {
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField
-            size="medium"
-            fullWidth
-            name="email"
-            type="email"
-            label="Email"
-            disabled
-            helperText="Email changes are not available from profile settings"
-          />
+          <TextField size="medium" fullWidth name="email" type="email" label="Email" />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
@@ -112,7 +115,6 @@ export default function ProfileEditForm({ user }: Props) {
               <DatePicker
                 {...field}
                 label="Birth Date"
-                disabled
                 enableAccessibleFieldDOMStructure={false}
                 slots={{ textField: MuiTextField }}
                 slotProps={{
@@ -121,7 +123,7 @@ export default function ProfileEditForm({ user }: Props) {
                     size: "medium",
                     fullWidth: true,
                     error: Boolean(error),
-                    helperText: error?.message || "Birth date updates are currently unavailable"
+                    helperText: error?.message || ""
                   }
                 }}
               />

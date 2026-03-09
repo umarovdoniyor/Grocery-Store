@@ -17,6 +17,7 @@ export const SIGN_UP = gql`
         memberLastName
         memberAvatar
         memberAddress
+          memberDob
         memberType
         memberStatus
         isEmailVerified
@@ -42,6 +43,7 @@ export const LOGIN = gql`
         memberLastName
         memberAvatar
         memberAddress
+          memberDob
         memberType
         memberStatus
         isEmailVerified
@@ -65,6 +67,7 @@ export const UPDATE_MEMBER = gql`
       memberLastName
       memberAvatar
       memberAddress
+        memberDob
       memberType
       memberStatus
       isEmailVerified
@@ -87,6 +90,7 @@ export const CHANGE_MEMBER_PASSWORD = gql`
       memberLastName
       memberAvatar
       memberAddress
+        memberDob
       memberType
       memberStatus
       isEmailVerified

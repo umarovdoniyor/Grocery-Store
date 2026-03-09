@@ -210,6 +210,7 @@ export const updateUserInfo = (jwtToken: any, member?: any) => {
     memberLastName: member?.memberLastName || claims.memberLastName || "",
     memberAvatar: member?.memberAvatar || claims.memberAvatar || "",
     memberAddress: member?.memberAddress || claims.memberAddress || "",
+    memberDob: member?.memberDob || claims.memberDob || "",
     isEmailVerified: member?.isEmailVerified || claims.isEmailVerified || false,
     isPhoneVerified: member?.isPhoneVerified || claims.isPhoneVerified || false
   });
@@ -246,6 +247,7 @@ const deleteUserInfo = () => {
     memberLastName: "",
     memberAvatar: "",
     memberAddress: "",
+    memberDob: "",
     isEmailVerified: false,
     isPhoneVerified: false
   });

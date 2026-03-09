@@ -18,6 +18,7 @@ export interface CustomJwtPayload {
   memberLastName?: string;
   memberAvatar?: string;
   memberAddress?: string;
+  memberDob?: string;
   isEmailVerified?: boolean;
   isPhoneVerified?: boolean;
   createdAt?: string;

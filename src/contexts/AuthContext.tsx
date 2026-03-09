@@ -56,6 +56,8 @@ interface RegisterData {
 interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
+  email?: string;
+  dob?: string;
   phone?: string;
   address?: string;
   avatar?: string;
@@ -141,7 +143,7 @@ const mapMemberToUser = (member: any): User => ({
   avatar: resolveMemberAvatarUrl(member?.memberAvatar),
   address: member?.memberAddress || "",
   password: "",
-  dateOfBirth: member?.memberBirthDate || member?.birthDate || member?.createdAt || "",
+  dateOfBirth: member?.memberDob || member?.memberBirthDate || member?.birthDate || "",
   verified: Boolean(member?.isEmailVerified || member?.isPhoneVerified),
   role: mapMemberTypeToRole(member?.memberType),
   name: {
@@ -210,6 +212,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           memberLastName: "",
           memberAvatar: "",
           memberAddress: "",
+          memberDob: "",
           isEmailVerified: false,
           isPhoneVerified: false
         });
@@ -319,6 +322,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (profileData.firstName) input.memberFirstName = profileData.firstName;
       if (profileData.lastName) input.memberLastName = profileData.lastName;
+      if (profileData.email) input.memberEmail = profileData.email;
+      if (profileData.dob) input.memberDob = profileData.dob;
       if (profileData.phone) input.memberPhone = profileData.phone;
       if (profileData.address) input.memberAddress = profileData.address;
       if (profileData.avatar) input.memberAvatar = profileData.avatar;

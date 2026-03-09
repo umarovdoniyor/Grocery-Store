@@ -14,6 +14,7 @@ export const userVar = makeVar<CustomJwtPayload>({
   memberLastName: "",
   memberAvatar: "",
   memberAddress: "",
+  memberDob: "",
   isEmailVerified: false,
   isPhoneVerified: false
 });
