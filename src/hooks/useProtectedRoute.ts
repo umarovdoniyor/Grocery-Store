@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "contexts/AuthContext";
 import { UserRole } from "models/User.model";
 
@@ -18,15 +18,31 @@ const ROLE_LANDING_PATH: Record<UserRole, string> = {
 
 export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { requiredRole, redirectTo = "/login" } = options;
+
+  const buildAuthRedirect = () => {
+    const currentQuery = searchParams.toString();
+    const currentPath = currentQuery ? `${pathname}?${currentQuery}` : pathname;
+    const safeCurrentPath = currentPath.startsWith("/") ? currentPath : "/";
+    const separator = redirectTo.includes("?") ? "&" : "?";
+
+    if (redirectTo.includes("next=")) return redirectTo;
+    if (redirectTo.startsWith("/login") || redirectTo.startsWith("/register")) {
+      return `${redirectTo}${separator}next=${encodeURIComponent(safeCurrentPath)}`;
+    }
+
+    return redirectTo;
+  };
 
   useEffect(() => {
     if (isLoading) return;
 
     // Not authenticated - redirect to login
     if (!isAuthenticated) {
-      router.replace(redirectTo);
+      router.replace(buildAuthRedirect());
       return;
     }
 
@@ -40,7 +56,7 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
         router.replace(landingPath);
       }
     }
-  }, [isAuthenticated, isLoading, user, requiredRole, redirectTo, router]);
+  }, [isAuthenticated, isLoading, user, requiredRole, redirectTo, router, pathname, searchParams]);
 
   return { user, isAuthenticated, isLoading };
 }

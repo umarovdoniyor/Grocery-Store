@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
@@ -23,9 +23,15 @@ import { useAuth } from "contexts/AuthContext";
 
 // REGISTER FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+  name: yup.string().trim().min(2, "Name must be at least 2 characters").required("Name is required"),
   email: yup.string().email("Invalid Email Address").required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[A-Z]/, "Password must include at least one uppercase letter")
+    .matches(/[a-z]/, "Password must include at least one lowercase letter")
+    .matches(/[0-9]/, "Password must include at least one number")
+    .required("Password is required"),
   re_password: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
@@ -42,9 +48,11 @@ const validationSchema = yup.object().shape({
 
 export default function RegisterPageView() {
   const router = useRouter();
-  const { register: registerUser } = useAuth();
+  const searchParams = useSearchParams();
+  const { register: registerUser, isAuthenticated, isLoading } = useAuth();
   const { visiblePassword, togglePasswordVisible } = usePasswordVisible();
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const inputProps = {
     endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />
@@ -65,22 +73,42 @@ export default function RegisterPageView() {
 
   const {
     handleSubmit,
+    setError: setFieldError,
     formState: { isSubmitting }
   } = methods;
 
+  const nextParam = searchParams.get("next");
+  const redirectPath = nextParam?.startsWith("/") ? nextParam : "/";
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (isAuthenticated) router.replace(redirectPath);
+  }, [isAuthenticated, isLoading, redirectPath, router]);
+
   const handleSubmitForm = handleSubmit(async (values) => {
     setError(null);
+    setSuccessMessage(null);
     const result = await registerUser({
-      name: values.name,
-      email: values.email,
+      name: values.name.trim(),
+      email: values.email.trim().toLowerCase(),
       password: values.password,
       role: "customer"
     });
 
     if (result.success) {
-      router.push("/");
+      setSuccessMessage("Account created successfully. Redirecting...");
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      router.push(redirectPath);
     } else {
-      setError(result.error || "Registration failed");
+      const message = result.error || "Registration failed";
+      setError(message);
+
+      if (/already exists|duplicate|taken/i.test(message)) {
+        setFieldError("email", {
+          type: "server",
+          message: "An account with this email already exists"
+        });
+      }
     }
   });
 
@@ -89,6 +117,12 @@ export default function RegisterPageView() {
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {successMessage}
         </Alert>
       )}
 
@@ -104,7 +138,7 @@ export default function RegisterPageView() {
           name="email"
           size="medium"
           type="email"
-          placeholder="exmple@mail.com"
+          placeholder="example@mail.com"
         />
       </div>
 

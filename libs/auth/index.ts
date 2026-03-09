@@ -6,6 +6,25 @@ import { CustomJwtPayload } from "../types/customJwtPayload";
 import { sweetMixinErrorAlert } from "../sweetAlert";
 import { LOGIN, SIGN_UP } from "../../apollo/user/mutation";
 
+const getAuthErrorMessage = (error: any, fallback: string) => {
+  const graphQLError = error?.graphQLErrors?.[0];
+  const networkError = error?.networkError;
+  const message =
+    graphQLError?.message ||
+    networkError?.result?.errors?.[0]?.message ||
+    error?.message ||
+    fallback;
+
+  if (/password/i.test(message)) return "Please check your password and try again.";
+  if (/blocked|suspend/i.test(message)) return "Your account is currently unavailable.";
+  if (/already exists|duplicate|taken/i.test(message)) return "An account with this email already exists.";
+  if (/invalid credentials|unauthorized/i.test(message)) {
+    return "Invalid email or password.";
+  }
+
+  return message;
+};
+
 /** =============== getJwtToken ===============*/
 /** Purpose: Retrieve JWT token from browser's localStorage */
 export function getJwtToken(): any {
@@ -37,7 +56,7 @@ export const logIn = async (identifier: string, password: string): Promise<void>
     // 3. Handle errors during login process
     console.warn("login err", err);
     logOut(); // Clear any existing user data on error
-    throw new Error("Login Err");
+    throw err instanceof Error ? err : new Error("Login failed");
   }
 };
 
@@ -69,17 +88,9 @@ const requestJwtToken = async ({
   } catch (err: any) {
     // 4. Handle errors from server
     console.log("request token err", err.graphQLErrors);
-    if (err.graphQLErrors && err.graphQLErrors.length > 0) {
-      const message = err.graphQLErrors[0].message;
-      if (message.includes("password")) {
-        await sweetMixinErrorAlert("Please check your password again");
-      } else if (message.includes("blocked")) {
-        await sweetMixinErrorAlert("User has been blocked!");
-      } else {
-        await sweetMixinErrorAlert(message);
-      }
-    }
-    throw new Error("token error");
+    const message = getAuthErrorMessage(err, "Login failed");
+    await sweetMixinErrorAlert(message);
+    throw new Error(message);
   }
 };
 
@@ -113,7 +124,7 @@ export const signUp = async (
     // 3. Handle errors during signup process
     console.warn("signup err", err);
     logOut(); // Clear any existing user data on error
-    throw new Error("Signup Err");
+    throw err instanceof Error ? err : new Error("Registration failed");
   }
 };
 
@@ -161,11 +172,9 @@ const requestSignUpJwtToken = async ({
     return { jwtToken: accessToken, member };
   } catch (err: any) {
     console.log("request token err", err.graphQLErrors);
-    if (err.graphQLErrors && err.graphQLErrors.length > 0) {
-      const message = err.graphQLErrors[0].message;
-      await sweetMixinErrorAlert(message);
-    }
-    throw new Error("token error");
+    const message = getAuthErrorMessage(err, "Registration failed");
+    await sweetMixinErrorAlert(message);
+    throw new Error(message);
   }
 };
 
