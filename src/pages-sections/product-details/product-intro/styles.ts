@@ -12,6 +12,12 @@ export const StyledRoot = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     gap: theme.spacing(1),
+    marginBottom: theme.spacing(0.75)
+  },
+  "& .views": {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(0.75),
     marginBottom: theme.spacing(2)
   },
   "& .price": {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
+import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
 // LOCAL CUSTOM COMPONENTS
 import AddToCart from "./add-to-cart";
 import ProductGallery from "./product-gallery";
@@ -25,6 +26,11 @@ export default function ProductIntro({ product }: Props) {
   const code = product.sku || product.slug || product.id || "-";
   const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
   const reviewCount = product.reviewsCount ?? product.reviews?.length ?? 0;
+  const viewCount = Number(product.views || 0);
+  const formattedViewCount = new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 1
+  }).format(viewCount);
 
   return (
     <StyledRoot>
@@ -57,6 +63,13 @@ export default function ProductIntro({ product }: Props) {
             <span>Rated:</span>
             <Rating readOnly color="warn" size="small" value={product.rating} />
             <Typography variant="h6">({reviewCount})</Typography>
+          </div>
+
+          <div className="views">
+            <RemoveRedEyeOutlined sx={{ fontSize: 18, color: "text.secondary" }} />
+            <Typography variant="body2" color="text.secondary">
+              {formattedViewCount} views
+            </Typography>
           </div>
 
           {/* PRICE & STOCK */}

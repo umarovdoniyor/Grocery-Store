@@ -56,6 +56,9 @@ const mapProductToUi = (
     discount,
     rating: Number(reviewSummary?.ratingAvg || 0),
     reviewsCount: Number(reviewSummary?.reviewsCount || 0),
+    likes: Number(item.likes || 0),
+    meLiked: Boolean((item as VendorProductSummary & { meLiked?: boolean }).meLiked),
+    views: Number(item.views || 0),
     categories: [],
     status: item.status,
     published: item.status === "PUBLISHED"
