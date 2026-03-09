@@ -60,7 +60,10 @@ const toProductModel = (item: ProductSummary): Product => {
     images: [item.thumbnail || DEFAULT_THUMBNAIL],
     price,
     discount,
-    rating: 0,
+    rating: Number(item.ratingAvg || 0),
+    reviewsCount: Number(item.reviewsCount || 0),
+    likes: Number(item.likes || 0),
+    views: Number(item.views || 0),
     categories: [],
     status: item.status,
     published: item.status === "PUBLISHED"

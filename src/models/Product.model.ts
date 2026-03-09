@@ -8,6 +8,10 @@ export default interface Product {
   title: string;
   rating: number;
   reviewsCount?: number;
+  likes?: number;
+  views?: number;
+  meLiked?: boolean;
+  meViewed?: boolean;
   discount: number;
   thumbnail: string;
   description?: string;

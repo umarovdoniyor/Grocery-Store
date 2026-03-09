@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 // MUI
 import Typography from "@mui/material/Typography";
@@ -10,25 +10,87 @@ import RemoveRedEye from "@mui/icons-material/RemoveRedEye";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 // GLOBAL CUSTOM HOOKS
 import useCart from "hooks/useCart";
+import { useAuth } from "contexts/AuthContext";
+import { recordView, toggleLike } from "../../../../libs/product";
 // STYLED COMPONENT
 import { HoverWrapper } from "./styles";
 // CUSTOM DATA MODEL
 import Product from "models/Product.model";
 
 // ==============================================================
-type Props = { product: Product };
+type Props = { product: Product; onLikesChange?: (likes: number) => void };
 // ==============================================================
 
-export default function HoverActions({ product }: Props) {
-  const { id, title, price, thumbnail, slug } = product;
+export default function HoverActions({ product, onLikesChange }: Props) {
+  const { id, title, price, thumbnail, slug, meLiked } = product;
 
   const { dispatch } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const router = useRouter();
-  const [isFavorite, setFavorite] = useState(false);
+  const [isFavorite, setFavorite] = useState(Boolean(meLiked));
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const [viewLoading, setViewLoading] = useState(false);
 
-  const handleFavorite = () => {
-    setFavorite((state) => !state);
+  useEffect(() => {
+    if (!id) return;
+
+    try {
+      const stored = JSON.parse(localStorage.getItem("liked-product-ids") || "[]");
+      const likedIds = Array.isArray(stored) ? stored : [];
+      setFavorite(Boolean(meLiked) || likedIds.includes(id));
+    } catch {
+      setFavorite(Boolean(meLiked));
+    }
+  }, [id, meLiked]);
+
+  const persistLikedState = (liked: boolean) => {
+    if (!id) return;
+
+    try {
+      const stored = JSON.parse(localStorage.getItem("liked-product-ids") || "[]");
+      const likedIds = new Set(Array.isArray(stored) ? stored : []);
+
+      if (liked) likedIds.add(id);
+      else likedIds.delete(id);
+
+      localStorage.setItem("liked-product-ids", JSON.stringify(Array.from(likedIds)));
+    } catch {
+      // Ignore localStorage parsing errors and keep UI state functional.
+    }
+  };
+
+  const handleFavorite = async (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!id || favoriteLoading || !isAuthenticated) return;
+
+    setFavoriteLoading(true);
+    const result = await toggleLike({ likeGroup: "PRODUCT", likeRefId: id });
+
+    if (result.success) {
+      const nextLiked =
+        typeof result.like?.liked === "boolean" ? result.like.liked : !Boolean(isFavorite);
+      setFavorite(nextLiked);
+      persistLikedState(nextLiked);
+      onLikesChange?.(Number(result.like?.totalLikes || 0));
+    }
+
+    setFavoriteLoading(false);
+  };
+
+  const handleView = async (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!viewLoading && id) {
+      setViewLoading(true);
+      await recordView({ viewGroup: "PRODUCT", viewRefId: id });
+      setViewLoading(false);
+    }
+
+    router.push(`/products/${slug}/view`, { scroll: false });
   };
 
   const handleAddToCart = () => {
@@ -40,17 +102,18 @@ export default function HoverActions({ product }: Props) {
 
   return (
     <HoverWrapper className="controller">
-      <span onClick={() => router.push(`/products/${slug}/view`, { scroll: false })}>
+      <span onClick={handleView}>
         <RemoveRedEye />
       </span>
 
       <Typography
         component="span"
         onClick={handleFavorite}
+        aria-disabled={favoriteLoading}
         sx={{ borderLeft: "1px solid", borderRight: "1px solid", borderColor: "divider" }}
       >
         {isFavorite ? (
-          <Favorite color="primary" fontSize="small" />
+          <Favorite fontSize="small" sx={{ color: "error.main" }} />
         ) : (
           <FavoriteBorder fontSize="small" color="disabled" />
         )}
