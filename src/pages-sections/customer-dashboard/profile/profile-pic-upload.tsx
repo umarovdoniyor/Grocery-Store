@@ -1,29 +1,148 @@
 "use client";
 
-import Image from "next/image";
+import { ChangeEvent, useEffect, useState } from "react";
 // MUI
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 import CameraEnhance from "@mui/icons-material/CameraEnhance";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
+import { useAuth } from "contexts/AuthContext";
+import { toPublicImageUrl, uploadMemberAvatar } from "../../../../libs/upload";
+import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../libs/sweetAlert";
+
+const FALLBACK_AVATAR = "/assets/images/faces/propic(9).png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const normalizeMemberAvatarPath = (value: string) => {
+  const normalized = value.replace(/\\/g, "/").trim();
+  if (!normalized) return "";
+
+  if (!normalized.includes("/")) {
+    return `/uploads/member/${normalized}`;
+  }
+
+  return normalized;
+};
+
+const normalizeImageSrc = (value?: string) => {
+  if (!value) return FALLBACK_AVATAR;
+  const normalized = normalizeMemberAvatarPath(value);
+
+  if (
+    normalized.startsWith("blob:") ||
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://")
+  ) {
+    return normalized;
+  }
+
+  const apiBaseUrl = getApiBaseUrl();
+  if (!apiBaseUrl) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBaseUrl);
+};
 
 export default function ProfilePicUpload({ image }: { image: string }) {
+  const { updateMemberProfile, refreshUser } = useAuth();
+  const [preview, setPreview] = useState(normalizeImageSrc(image));
+  const [latestUploadedPath, setLatestUploadedPath] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    const normalizedImage = normalizeImageSrc(image);
+    const normalizedLatestUploaded = normalizeImageSrc(latestUploadedPath);
+
+    // Keep latest uploaded preview until global auth state reflects the same value.
+    if (latestUploadedPath) {
+      if (normalizedImage === normalizedLatestUploaded) {
+        setLatestUploadedPath("");
+        setPreview(normalizedImage);
+        return;
+      }
+
+      setPreview(normalizedLatestUploaded);
+      return;
+    }
+
+    setPreview(normalizedImage);
+  }, [image, latestUploadedPath]);
+
+  const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || uploading) return;
+
+    const localPreviewUrl = URL.createObjectURL(file);
+    setPreview(localPreviewUrl);
+    setUploading(true);
+
+    try {
+      const uploadResult = await uploadMemberAvatar(file);
+
+      if (!uploadResult.success || !uploadResult.path) {
+        setPreview(normalizeImageSrc(image));
+        await sweetMixinErrorAlert(uploadResult.error || "Failed to upload profile image");
+        return;
+      }
+
+      const updateResult = await updateMemberProfile({ avatar: uploadResult.path });
+
+      if (!updateResult.success) {
+        setPreview(normalizeImageSrc(image));
+        await sweetMixinErrorAlert(updateResult.error || "Failed to update profile image");
+        return;
+      }
+
+      setLatestUploadedPath(uploadResult.path);
+      setPreview(normalizeImageSrc(uploadResult.path));
+      await refreshUser();
+
+      await sweetTopSmallSuccessAlert("Profile image updated successfully!");
+    } catch (error: any) {
+      setPreview(normalizeImageSrc(image));
+      await sweetMixinErrorAlert(error?.message || "Failed to update profile image");
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+      URL.revokeObjectURL(localPreviewUrl);
+    }
+  };
+
   return (
     <FlexBox alignItems="flex-end" mb={4}>
-      <Avatar sx={{ height: 60, width: 60 }}>
-        <Image fill alt="user" src={image} sizes="(60px, 60px)" />
-      </Avatar>
+      <Avatar
+        src={preview}
+        alt="user"
+        sx={{ height: 60, width: 60 }}
+      />
 
       <IconButton
         size="small"
         component="label"
         color="secondary"
         htmlFor="profile-image"
+        disabled={uploading}
         sx={{ bgcolor: "grey.300", ml: -2.5 }}
       >
-        <CameraEnhance fontSize="small" />
+        {uploading ? <CircularProgress size={16} /> : <CameraEnhance fontSize="small" />}
       </IconButton>
 
       <Box
@@ -32,7 +151,7 @@ export default function ProfilePicUpload({ image }: { image: string }) {
         accept="image/*"
         component="input"
         id="profile-image"
-        onChange={(e) => console.log(e.target.files)}
+        onChange={handleAvatarChange}
       />
     </FlexBox>
   );

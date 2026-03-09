@@ -85,7 +85,15 @@ export default function ProfileEditForm({ user }: Props) {
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="email" type="email" label="Email" />
+          <TextField
+            size="medium"
+            fullWidth
+            name="email"
+            type="email"
+            label="Email"
+            disabled
+            helperText="Email changes are not available from profile settings"
+          />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
@@ -104,6 +112,7 @@ export default function ProfileEditForm({ user }: Props) {
               <DatePicker
                 {...field}
                 label="Birth Date"
+                disabled
                 enableAccessibleFieldDOMStructure={false}
                 slots={{ textField: MuiTextField }}
                 slotProps={{
@@ -112,7 +121,7 @@ export default function ProfileEditForm({ user }: Props) {
                     size: "medium",
                     fullWidth: true,
                     error: Boolean(error),
-                    helperText: error?.message || ""
+                    helperText: error?.message || "Birth date updates are currently unavailable"
                   }
                 }}
               />

@@ -1,4 +1,3 @@
-import Image from "next/image";
 // MUI
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -8,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { FlexBetween, FlexBox } from "components/flex-box";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
+import { toPublicImageUrl } from "../../../../libs/upload";
 // CUSTOM DATA MODEL
 import User from "models/User.model";
 
@@ -22,11 +22,52 @@ const DEFAULT_ORDER_SUMMARY = [
   { title: "0", subtitle: "Awaiting Delivery" }
 ];
 
+const FALLBACK_AVATAR = "/assets/images/faces/propic(9).png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const normalizeMemberAvatarPath = (value: string) => {
+  const normalized = value.replace(/\\/g, "/").trim();
+  if (!normalized) return "";
+
+  if (!normalized.includes("/")) {
+    return `/uploads/member/${normalized}`;
+  }
+
+  return normalized;
+};
+
+const normalizeImageSrc = (value?: string) => {
+  if (!value) return FALLBACK_AVATAR;
+  const normalized = normalizeMemberAvatarPath(value);
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) return normalized;
+
+  const apiBaseUrl = getApiBaseUrl();
+  if (!apiBaseUrl) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBaseUrl);
+};
+
 export default function UserAnalytics({ user }: Props) {
   const balance = 0;
   const type = `${(user.role || "customer").toUpperCase()} USER`;
   const orderSummary = DEFAULT_ORDER_SUMMARY;
-  const avatarSrc = user.avatar || "/assets/images/faces/propic(9).png";
+  const avatarSrc = normalizeImageSrc(user.avatar);
 
   return (
     <Grid container spacing={3}>
@@ -43,9 +84,7 @@ export default function UserAnalytics({ user }: Props) {
             borderColor: "grey.100"
           }}
         >
-          <Avatar variant="rounded" sx={{ height: 65, width: 65 }}>
-            <Image fill alt={user.name.firstName} src={avatarSrc} sizes="(65px, 65px)" />
-          </Avatar>
+          <Avatar variant="rounded" src={avatarSrc} alt={user.name.firstName} sx={{ height: 65, width: 65 }} />
 
           <FlexBetween flexWrap="wrap" flex={1}>
             <div>

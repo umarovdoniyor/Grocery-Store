@@ -12,13 +12,18 @@ import { initializeApollo } from "../../apollo/client";
 import { GET_MEMBER_PROFILE, ME, GET_MY_VENDOR_APPLICATION } from "../../apollo/user/query";
 import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apollo/user/mutation";
 import { userVar } from "../../apollo/store";
+import { toPublicImageUrl } from "../../libs/upload";
 import User, { UserRole } from "models/User.model";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
-  updateMemberProfile: (data: UpdateProfileData) => Promise<{ success: boolean; error?: string }>;
+  updateMemberProfile: (data: UpdateProfileData) => Promise<{
+    success: boolean;
+    error?: string;
+    avatar?: string;
+  }>;
   changePassword: (data: ChangePasswordData) => Promise<{ success: boolean; error?: string }>;
   applyVendor: (
     data: ApplyVendorData
@@ -28,7 +33,7 @@ interface AuthContextType {
     application?: VendorApplication | null;
     error?: string;
   }>;
-  refreshUser: () => Promise<{ success: boolean; error?: string }>;
+  refreshUser: () => Promise<{ success: boolean; error?: string; avatar?: string }>;
   getMemberProfile: (
     memberId: string
   ) => Promise<{ success: boolean; user?: User; error?: string }>;
@@ -87,11 +92,53 @@ const mapMemberTypeToRole = (memberType?: string): UserRole => {
   return "customer";
 };
 
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const normalizeMemberAvatarPath = (value: string) => {
+  const normalized = value.replace(/\\/g, "/").trim();
+  if (!normalized) return "";
+
+  // Backend can return only filename for member avatar in some environments.
+  if (!normalized.includes("/")) {
+    return `/uploads/member/${normalized}`;
+  }
+
+  return normalized;
+};
+
+const resolveMemberAvatarUrl = (value?: string) => {
+  if (!value) return "";
+  if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("blob:")) {
+    return value;
+  }
+
+  const apiBaseUrl = getApiBaseUrl();
+  const normalizedPath = normalizeMemberAvatarPath(value);
+  if (!apiBaseUrl) return value.startsWith("/") ? value : `/${value}`;
+
+  return toPublicImageUrl(normalizedPath, apiBaseUrl);
+};
+
 const mapMemberToUser = (member: any): User => ({
   id: member?._id || "",
   email: member?.memberEmail || "",
   phone: member?.memberPhone || "",
-  avatar: member?.memberAvatar || "",
+  avatar: resolveMemberAvatarUrl(member?.memberAvatar),
   address: member?.memberAddress || "",
   password: "",
   dateOfBirth: member?.memberBirthDate || member?.birthDate || member?.createdAt || "",
@@ -229,8 +276,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const refreshUser = async () => {
     try {
-      await restoreFromToken();
-      return { success: true };
+      const result = await restoreFromToken();
+      return { success: true, avatar: result?.success ? userVar()?.memberAvatar : undefined };
     } catch (error: any) {
       const message = error?.message || "Failed to refresh user";
       return { success: false, error: message };
@@ -293,7 +340,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 
-      return { success: true };
+      return { success: true, avatar: resolveMemberAvatarUrl(updatedMember.memberAvatar) };
     } catch (error: any) {
       const message = error?.message || "Failed to update profile";
       return { success: false, error: message };
