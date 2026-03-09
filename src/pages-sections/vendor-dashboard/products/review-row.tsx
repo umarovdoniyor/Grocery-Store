@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 // MUI ICON COMPONENT
 import Delete from "@mui/icons-material/Delete";
 import Block from "@mui/icons-material/Block";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 // GLOBAL CUSTOM COMPONENTS
 import BazaarSwitch from "components/BazaarSwitch";
 import FlexBox from "components/flex-box/flex-box";
@@ -27,6 +28,7 @@ type Props = {
   onTogglePublish?: (id: string, checked: boolean) => void;
   onHideReview?: (id: string) => void;
   onRejectReview?: (id: string) => void;
+  onQuickApprove?: (id: string) => void;
 };
 // ========================================================================
 
@@ -35,7 +37,8 @@ export default function ReviewRow({
   isUpdating = false,
   onTogglePublish,
   onHideReview,
-  onRejectReview
+  onRejectReview,
+  onQuickApprove
 }: Props) {
   const { id, customer, product, comment, published, productImage } = review;
 
@@ -68,6 +71,14 @@ export default function ReviewRow({
 
       <StyledTableCell align="center">
         <FlexBox alignItems="center" justifyContent="center" gap={0.5}>
+          <StyledIconButton
+            disabled={isUpdating || published}
+            title="Quick Approve (Test)"
+            onClick={() => onQuickApprove?.(id)}
+          >
+            <CheckCircle />
+          </StyledIconButton>
+
           <StyledIconButton disabled={isUpdating} onClick={() => onHideReview?.(id)}>
             <Delete />
           </StyledIconButton>

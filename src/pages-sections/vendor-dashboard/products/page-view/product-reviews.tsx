@@ -180,6 +180,37 @@ export default function ProductReviewsPageView(_: Props) {
     setModerationReason("");
   };
 
+  const handleQuickApprove = async (reviewId: string) => {
+    setUpdatingId(reviewId);
+    setError(null);
+
+    const response = await updateReviewStatusByAdmin({
+      reviewId,
+      status: "PUBLISHED",
+      reason: "Quick approved for testing."
+    });
+
+    if (!response.success || !response.review) {
+      setError(response.error || "Failed to approve review (test action).");
+      setUpdatingId(null);
+      return;
+    }
+
+    setReviews((prev) =>
+      prev.map((item) =>
+        item.id === reviewId
+          ? {
+              ...item,
+              status: response.review!.status,
+              published: response.review!.status === "PUBLISHED"
+            }
+          : item
+      )
+    );
+
+    setUpdatingId(null);
+  };
+
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: filteredReviews, defaultSort: "product" });
 
@@ -230,6 +261,7 @@ export default function ProductReviewsPageView(_: Props) {
                       review={review}
                       key={review.id}
                       isUpdating={updatingId === review.id}
+                      onQuickApprove={handleQuickApprove}
                       onTogglePublish={(id, checked) =>
                         openModerationDialog(id, checked ? "PUBLISHED" : "HIDDEN")
                       }

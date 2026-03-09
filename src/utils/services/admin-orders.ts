@@ -1,7 +1,12 @@
 import type Order from "models/Order.model";
 import type { OrderStatus } from "models/Order.model";
 import type User from "models/User.model";
-import { getOrderByIdByAdmin, getOrdersByAdmin, OrderByAdmin } from "../../../libs/admin";
+import {
+  getOrderByIdByAdmin,
+  getOrdersByAdmin,
+  OrderByAdmin,
+  updateOrderStatusByAdmin
+} from "../../../libs/admin";
 
 function toUiOrderStatus(status: string): OrderStatus {
   if (status === "DELIVERED") return "Delivered";
@@ -82,6 +87,25 @@ export async function fetchAdminOrderByIdForUi(
 
   if (!response.order) {
     return { order: null };
+  }
+
+  return { order: mapAdminOrderToUi(response.order) };
+}
+
+export async function markAdminOrderDeliveredForUi(
+  orderId: string
+): Promise<{ order: Order | null; error?: string }> {
+  const response = await updateOrderStatusByAdmin({
+    orderId,
+    status: "DELIVERED"
+  });
+
+  if (!response.success) {
+    return { order: null, error: response.error || "Failed to mark order as delivered" };
+  }
+
+  if (!response.order) {
+    return { order: null, error: "Updated order was not returned" };
   }
 
   return { order: mapAdminOrderToUi(response.order) };

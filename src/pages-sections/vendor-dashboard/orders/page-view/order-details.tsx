@@ -13,10 +13,20 @@ import ShippingAddress from "../shipping-address";
 import Order from "models/Order.model";
 
 // ==============================================================
-type Props = { order: Order };
+type Props = {
+  order: Order;
+  isUpdatingStatus?: boolean;
+  onMarkDelivered?: () => void;
+};
 // ==============================================================
 
-export default function OrderDetailsPageView({ order }: Props) {
+export default function OrderDetailsPageView({
+  order,
+  isUpdatingStatus = false,
+  onMarkDelivered
+}: Props) {
+  const canMarkDelivered = order.status !== "Delivered" && order.status !== "Cancelled";
+
   return (
     <PageWrapper title="Order Details">
       <Grid container spacing={3}>
@@ -44,9 +54,20 @@ export default function OrderDetailsPageView({ order }: Props) {
 
         {/* CHANGE BUTTON */}
         <Grid size={12}>
-          <Button variant="contained" color="info">
-            Save Changes
-          </Button>
+          {canMarkDelivered ? (
+            <Button
+              variant="contained"
+              color="success"
+              loading={isUpdatingStatus}
+              onClick={onMarkDelivered}
+            >
+              Mark as Delivered (Test)
+            </Button>
+          ) : (
+            <Button variant="outlined" color="success" disabled>
+              {order.status === "Delivered" ? "Already Delivered" : "Status Locked"}
+            </Button>
+          )}
         </Grid>
       </Grid>
     </PageWrapper>

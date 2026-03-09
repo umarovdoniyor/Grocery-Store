@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import AsyncState from "components/AsyncState";
 import { OrderDetailsPageView } from "pages-sections/vendor-dashboard/orders/page-view";
 import type Order from "models/Order.model";
-import { fetchAdminOrderByIdForUi } from "utils/services/admin-orders";
+import { useSnackbar } from "notistack";
+import { fetchAdminOrderByIdForUi, markAdminOrderDeliveredForUi } from "utils/services/admin-orders";
 
 type Props = { id: string };
 
 export default function OrderDetailsClient({ id }: Props) {
+  const { enqueueSnackbar } = useSnackbar();
   const [order, setOrder] = useState<Order | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,5 +43,27 @@ export default function OrderDetailsClient({ id }: Props) {
     return <AsyncState emptyText="Order not found." />;
   }
 
-  return <OrderDetailsPageView order={order} />;
+  const handleMarkDelivered = async () => {
+    if (!order || isUpdatingStatus) return;
+
+    setIsUpdatingStatus(true);
+    const response = await markAdminOrderDeliveredForUi(order.id);
+    setIsUpdatingStatus(false);
+
+    if (!response.order) {
+      enqueueSnackbar(response.error || "Failed to update order status.", { variant: "error" });
+      return;
+    }
+
+    setOrder(response.order);
+    enqueueSnackbar("Order marked as delivered (test action).", { variant: "success" });
+  };
+
+  return (
+    <OrderDetailsPageView
+      order={order}
+      isUpdatingStatus={isUpdatingStatus}
+      onMarkDelivered={handleMarkDelivered}
+    />
+  );
 }
