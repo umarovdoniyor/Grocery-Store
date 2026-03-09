@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
@@ -150,18 +151,40 @@ export default function ShopsPageView({
 
       {/* ALL SHOP LIST AREA */}
       <Grid container spacing={3}>
-        {shops.map((item) => (
-          <Grid size={{ lg: 4, sm: 6, xs: 12 }} key={item.id}>
-            <ShopCard
-              name={item.name}
-              slug={item.slug}
-              phone={item.phone}
-              address={item.address}
-              coverPicture={item.coverPicture}
-              profilePicture={item.profilePicture}
-            />
+        {shops.length > 0 ? (
+          shops.map((item) => (
+            <Grid size={{ lg: 4, sm: 6, xs: 12 }} key={item.id}>
+              <ShopCard
+                name={item.name}
+                slug={item.slug}
+                phone={item.phone}
+                address={item.address}
+                coverPicture={item.coverPicture}
+                profilePicture={item.profilePicture}
+              />
+            </Grid>
+          ))
+        ) : (
+          <Grid size={{ xs: 12 }}>
+            <Box
+              sx={{
+                py: 8,
+                px: 3,
+                textAlign: "center",
+                borderRadius: 2,
+                border: "1px dashed",
+                borderColor: "divider"
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                No shops found
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Try a different keyword or clear the search to browse all shops.
+              </Typography>
+            </Box>
           </Grid>
-        ))}
+        )}
       </Grid>
 
       {/* PAGINATION AREA */}

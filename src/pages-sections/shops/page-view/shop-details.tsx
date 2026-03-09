@@ -189,10 +189,12 @@ export default function ShopDetailsPageView({
               }}
             >
               <Typography variant="h6" sx={{ mb: 1 }}>
-                No products available yet
+                {searchValue ? "No matching products found" : "No products available yet"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                This vendor has not published any products yet. Please check back soon.
+                {searchValue
+                  ? "Try a different keyword or clear the search to see all products from this shop."
+                  : "This vendor has not published any products yet. Please check back soon."}
               </Typography>
             </Box>
           )}
