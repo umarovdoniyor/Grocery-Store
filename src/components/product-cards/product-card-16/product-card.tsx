@@ -17,6 +17,7 @@ import DiscountChip from "../discount-chip";
 import { calculateDiscount, currency } from "lib";
 import { useAuth } from "contexts/AuthContext";
 import { toggleLike } from "../../../../libs/product";
+import { addToWishlist, removeFromWishlist } from "../../../../libs/wishlist";
 // STYLED COMPONENTS
 import { PriceText, StyledRoot } from "./styles";
 // CUSTOM DATA MODEL
@@ -101,6 +102,10 @@ export default function ProductCard16({ product }: Props) {
       setFavorite(nextLiked);
       persistLikedState(nextLiked);
       setLikesCount(Number(result.like?.totalLikes || 0));
+
+      // Keep wishlist membership aligned with heart state.
+      if (nextLiked) await addToWishlist(id);
+      else await removeFromWishlist(id);
     }
 
     setFavoriteLoading(false);

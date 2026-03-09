@@ -84,7 +84,12 @@ export default function UserAnalytics({ user }: Props) {
             borderColor: "grey.100"
           }}
         >
-          <Avatar variant="rounded" src={avatarSrc} alt={user.name.firstName} sx={{ height: 65, width: 65 }} />
+          <Avatar
+            variant="rounded"
+            src={avatarSrc}
+            alt={user.name.firstName}
+            sx={{ height: 65, width: 65 }}
+          />
 
           <FlexBetween flexWrap="wrap" flex={1}>
             <div>

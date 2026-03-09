@@ -23,7 +23,11 @@ import { useAuth } from "contexts/AuthContext";
 
 // REGISTER FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
-  name: yup.string().trim().min(2, "Name must be at least 2 characters").required("Name is required"),
+  name: yup
+    .string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .required("Name is required"),
   email: yup.string().email("Invalid Email Address").required("Email is required"),
   password: yup
     .string()

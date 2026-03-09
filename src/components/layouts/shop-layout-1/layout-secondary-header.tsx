@@ -15,8 +15,9 @@ export default function LayoutSecondaryHeader({ header }: Props) {
 
   const hideOnProductDetails = pathname.startsWith("/products/") && pathname !== "/products/search";
   const hideOnShops = pathname.startsWith("/shops");
+  const hideOnProfile = pathname.startsWith("/profile");
 
-  if (hideOnProductDetails || hideOnShops) return null;
+  if (hideOnProductDetails || hideOnShops || hideOnProfile) return null;
 
   return (
     <SecondaryHeader elevation={0}>

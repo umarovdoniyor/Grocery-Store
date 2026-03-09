@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -5,30 +8,115 @@ import Typography from "@mui/material/Typography";
 import NavItem from "./nav-item";
 // STYLED COMPONENTS
 import { MainContainer } from "./styles";
+import { initializeApollo } from "../../../../apollo/client";
+import { GET_MY_ORDERS, GET_MY_WISHLIST } from "../../../../apollo/user/query";
+import { useAuth } from "contexts/AuthContext";
+import { getCustomerAddressList, getCustomerPayments } from "utils/services/customer-dashboard";
 
-const MENUS = [
+const BASE_MENUS = [
   {
     title: "DASHBOARD",
     list: [
-      { count: 5, icon: "Packages", href: "/orders", title: "Orders" },
-      { count: 19, icon: "HeartLine", href: "/wish-list", title: "Wishlist" },
-      { count: 1, icon: "Headset", href: "/support-tickets", title: "Support Tickets" }
+      { icon: "Packages", href: "/orders", title: "Orders", countKey: "orders" },
+      { icon: "HeartLine", href: "/wish-list", title: "Wishlist", countKey: "wishlist" },
+      { icon: "Headset", href: "/support-tickets", title: "Support Tickets" }
     ]
   },
   {
     title: "ACCOUNT SETTINGS",
     list: [
       { icon: "User3", href: "/profile", title: "Profile Info" },
-      { count: 16, icon: "Location", href: "/address", title: "Addresses" },
-      { count: 4, icon: "CreditCard", href: "/payment-methods", title: "Payment Methods" }
+      { icon: "Location", href: "/address", title: "Addresses", countKey: "addresses" },
+      {
+        icon: "CreditCard",
+        href: "/payment-methods",
+        title: "Payment Methods",
+        countKey: "paymentMethods"
+      }
     ]
   }
 ];
 
+type CountKey = "orders" | "wishlist" | "addresses" | "paymentMethods";
+type DashboardCounts = Partial<Record<CountKey, number>>;
+
 export function Navigation() {
+  const { user, isAuthenticated } = useAuth();
+  const [counts, setCounts] = useState<DashboardCounts>({});
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCounts({});
+      return;
+    }
+
+    let active = true;
+
+    const loadCounts = async () => {
+      const apolloClient = await initializeApollo();
+
+      const [ordersResult, wishlistResult] = await Promise.allSettled([
+        apolloClient.query({
+          query: GET_MY_ORDERS,
+          variables: { input: { page: 1, limit: 1 } },
+          fetchPolicy: "network-only"
+        }),
+        apolloClient.query({
+          query: GET_MY_WISHLIST,
+          variables: { input: { page: 1, limit: 1 } },
+          fetchPolicy: "network-only"
+        })
+      ]);
+
+      if (!active) return;
+
+      const ordersCount =
+        ordersResult.status === "fulfilled"
+          ? Number(ordersResult.value.data?.getMyOrders?.metaCounter?.total || 0)
+          : 0;
+      const wishlistCount =
+        wishlistResult.status === "fulfilled"
+          ? Number(wishlistResult.value.data?.getMyWishlist?.metaCounter?.total || 0)
+          : 0;
+
+      const addressCount = user ? getCustomerAddressList(user, 1).addressList.length : 0;
+      const paymentCount = getCustomerPayments(1).payments.length;
+
+      setCounts({
+        orders: ordersCount,
+        wishlist: wishlistCount,
+        addresses: addressCount,
+        paymentMethods: paymentCount
+      });
+    };
+
+    loadCounts().catch(() => {
+      if (!active) return;
+      const addressCount = user ? getCustomerAddressList(user, 1).addressList.length : 0;
+      const paymentCount = getCustomerPayments(1).payments.length;
+      setCounts({ addresses: addressCount, paymentMethods: paymentCount });
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated, user]);
+
+  const menus = useMemo(
+    () =>
+      BASE_MENUS.map((section) => ({
+        ...section,
+        list: section.list.map((item) => ({
+          ...item,
+          count: item.countKey ? counts[item.countKey as CountKey] : undefined
+        }))
+      })),
+    [counts]
+  );
+
   return (
     <MainContainer>
-      {MENUS.map((item) => (
+      {menus.map((item) => (
         <Box mt={2} key={item.title}>
           <Typography
             fontSize={12}

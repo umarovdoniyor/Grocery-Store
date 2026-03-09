@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { WishListPageView } from "pages-sections/customer-dashboard/wish-list";
-import { getCustomerWishlistProducts } from "utils/services/customer-dashboard";
+import WishListClient from "./wish-list-client";
 
 export const metadata: Metadata = {
   title: "Wish List - Bazaar Next.js E-commerce Template",
@@ -17,12 +16,5 @@ interface Props {
 
 export default async function WishList({ searchParams }: Props) {
   const { page } = await searchParams;
-  const currentPage = Number.parseInt(page || "1", 10) || 1;
-  const data = await getCustomerWishlistProducts(currentPage);
-
-  if (!data.success || !data.products || data.products.length === 0) {
-    return <div>Data not found</div>;
-  }
-
-  return <WishListPageView products={data.products} totalPages={data.totalPages || 1} />;
+  return <WishListClient page={page} />;
 }

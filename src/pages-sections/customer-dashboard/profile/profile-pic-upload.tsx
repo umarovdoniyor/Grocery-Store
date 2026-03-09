@@ -128,11 +128,7 @@ export default function ProfilePicUpload({ image }: { image: string }) {
 
   return (
     <FlexBox alignItems="flex-end" mb={4}>
-      <Avatar
-        src={preview}
-        alt="user"
-        sx={{ height: 60, width: 60 }}
-      />
+      <Avatar src={preview} alt="user" sx={{ height: 60, width: 60 }} />
 
       <IconButton
         size="small"

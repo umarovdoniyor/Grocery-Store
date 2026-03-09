@@ -12,6 +12,7 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import useCart from "hooks/useCart";
 import { useAuth } from "contexts/AuthContext";
 import { recordView, toggleLike } from "../../../../libs/product";
+import { addToWishlist, removeFromWishlist } from "../../../../libs/wishlist";
 // STYLED COMPONENT
 import { HoverWrapper } from "./styles";
 // CUSTOM DATA MODEL
@@ -75,6 +76,10 @@ export default function HoverActions({ product, onLikesChange }: Props) {
       setFavorite(nextLiked);
       persistLikedState(nextLiked);
       onLikesChange?.(Number(result.like?.totalLikes || 0));
+
+      // Keep wishlist membership aligned with heart state.
+      if (nextLiked) await addToWishlist(id);
+      else await removeFromWishlist(id);
     }
 
     setFavoriteLoading(false);

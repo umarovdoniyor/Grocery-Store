@@ -17,7 +17,8 @@ const getAuthErrorMessage = (error: any, fallback: string) => {
 
   if (/password/i.test(message)) return "Please check your password and try again.";
   if (/blocked|suspend/i.test(message)) return "Your account is currently unavailable.";
-  if (/already exists|duplicate|taken/i.test(message)) return "An account with this email already exists.";
+  if (/already exists|duplicate|taken/i.test(message))
+    return "An account with this email already exists.";
   if (/invalid credentials|unauthorized/i.test(message)) {
     return "Invalid email or password.";
   }
