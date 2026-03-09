@@ -31,9 +31,10 @@ const validationSchema = yup.object().shape({
 type Props = {
   productId: string;
   onReviewChanged?: () => void | Promise<void>;
+  onSubmitted?: () => void | Promise<void>;
 };
 
-export default function ReviewForm({ productId, onReviewChanged }: Props) {
+export default function ReviewForm({ productId, onReviewChanged, onSubmitted }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [showEligibilityHelp, setShowEligibilityHelp] = useState(false);
@@ -133,10 +134,11 @@ export default function ReviewForm({ productId, onReviewChanged }: Props) {
 
     setSubmitSuccess(
       existingReviewId
-        ? "Review updated. It may appear after moderation."
-        : "Review submitted. It may appear after moderation."
+        ? "Review updated and is pending approval."
+        : "Review submitted and is pending approval."
     );
 
+    await onSubmitted?.();
     await onReviewChanged?.();
   });
 

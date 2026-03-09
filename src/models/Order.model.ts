@@ -1,6 +1,8 @@
 import User from "./User.model";
 
 interface Item {
+  product_id?: string;
+  order_id?: string;
   product_img: string;
   product_name: string;
   product_price: number;

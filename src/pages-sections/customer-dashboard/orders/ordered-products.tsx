@@ -1,16 +1,25 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { format } from "date-fns/format";
 // MUI
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import { useSnackbar } from "notistack";
 // GLOBAL CUSTOM COMPONENTS
 import { FlexBetween, FlexBox } from "components/flex-box";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
 // CUSTOM DATA MODEL
 import Order from "models/Order.model";
+import ReviewForm from "pages-sections/product-details/product-reviews/review-form";
 
 // ==============================================================
 type Props = { order: Order };
@@ -18,6 +27,16 @@ type Props = { order: Order };
 
 export default function OrderedProducts({ order }: Props) {
   const { id, createdAt, items, deliveredAt } = order;
+  const { enqueueSnackbar } = useSnackbar();
+  const [selectedReviewItem, setSelectedReviewItem] = useState<{
+    productId: string;
+    productName: string;
+  } | null>(null);
+
+  const handleReviewSubmitted = () => {
+    setSelectedReviewItem(null);
+    enqueueSnackbar("Review submitted and is pending approval.", { variant: "success" });
+  };
 
   return (
     <Card
@@ -38,8 +57,11 @@ export default function OrderedProducts({ order }: Props) {
         />
       </FlexBetween>
 
-      {items.map((item, ind) => (
-        <FlexBetween px={2} py={1} flexWrap="wrap" key={ind} gap={1}>
+      {items.map((item, ind) => {
+        const canReview = Boolean(item.product_id);
+
+        return (
+          <FlexBetween px={2} py={1} flexWrap="wrap" key={`${item.product_id || ind}`} gap={1}>
           <FlexBox gap={2} alignItems="center">
             <Avatar variant="rounded" sx={{ height: 60, width: 60, backgroundColor: "grey.50" }}>
               <Image fill alt={item.product_name} src={item.product_img} sizes="(60px, 60px)" />
@@ -62,11 +84,49 @@ export default function OrderedProducts({ order }: Props) {
             </Typography>
           )}
 
-          <Button variant="text" color="primary">
+          <Button
+            variant="text"
+            color="primary"
+            disabled={!canReview}
+            onClick={() =>
+              canReview &&
+              setSelectedReviewItem({
+                productId: item.product_id || "",
+                productName: item.product_name
+              })
+            }
+          >
             Write a Review
           </Button>
         </FlexBetween>
-      ))}
+        );
+      })}
+
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={Boolean(selectedReviewItem)}
+        onClose={() => setSelectedReviewItem(null)}
+      >
+        <DialogTitle>
+          {selectedReviewItem ? `Write a Review: ${selectedReviewItem.productName}` : "Write a Review"}
+        </DialogTitle>
+
+        <DialogContent>
+          {selectedReviewItem && (
+            <ReviewForm
+              productId={selectedReviewItem.productId}
+              onSubmitted={handleReviewSubmitted}
+            />
+          )}
+        </DialogContent>
+
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setSelectedReviewItem(null)}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }

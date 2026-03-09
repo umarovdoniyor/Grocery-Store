@@ -7,8 +7,18 @@ const mapStatus = (status?: string): Order["status"] => {
 
   if (status === "DELIVERED") return "Delivered";
   if (status === "CANCELED" || status === "CANCELLED") return "Cancelled";
-  if (status === "PENDING_PAYMENT" || status === "PAID" || status === "CONFIRMED") {
+
+  if (
+    status === "PENDING_PAYMENT" ||
+    status === "PAID" ||
+    status === "CONFIRMED" ||
+    status === "NEW"
+  ) {
     return "Pending";
+  }
+
+  if (status === "PACKING" || status === "SHIPPED" || status === "IN_TRANSIT") {
+    return "Processing";
   }
 
   return "Processing";
@@ -43,6 +53,8 @@ const mapOrder = (order: any): Order => {
     },
     tax: Number(order?.taxAmount || 0),
     items: (order?.items || []).map((item: any) => ({
+      product_id: item?.productId || "",
+      order_id: item?.orderId || order?._id || "",
       product_img:
         item?.productSnapshotThumbnail ||
         "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png",

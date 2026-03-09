@@ -8,6 +8,7 @@ import Card from "@mui/material/Card";
 import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
 import Done from "@mui/icons-material/Done";
+import Close from "@mui/icons-material/Close";
 // CUSTOM ICON COMPONENTS
 import Delivery from "icons/Delivery";
 import PackageBox from "icons/PackageBox";
@@ -82,9 +83,14 @@ interface Props {
 
 const STEP_ICONS = [PackageBox, TruckFilled, Delivery];
 const ORDER_STATUS_LIST = ["Pending", "Processing", "Delivered"];
+const CANCELLED_STEP_ICONS = [PackageBox, TruckFilled, Close];
+const CANCELLED_STATUS_LIST = ["Pending", "Processing", "Cancelled"];
 
 export default function OrderProgress({ status, deliveredAt, isDelivered }: Props) {
-  const statusIndex = ORDER_STATUS_LIST.indexOf(status);
+  const isCancelled = status === "Cancelled";
+  const activeIcons = isCancelled ? CANCELLED_STEP_ICONS : STEP_ICONS;
+  const activeStatusList = isCancelled ? CANCELLED_STATUS_LIST : ORDER_STATUS_LIST;
+  const statusIndex = activeStatusList.indexOf(status);
 
   return (
     <Card
@@ -97,7 +103,7 @@ export default function OrderProgress({ status, deliveredAt, isDelivered }: Prop
       }}
     >
       <StyledFlexbox>
-        {STEP_ICONS.map((Icon, ind) => (
+        {activeIcons.map((Icon, ind) => (
           <Fragment key={`step-${ind}`}>
             <Box position="relative">
               <StyledStatusAvatar
@@ -107,14 +113,18 @@ export default function OrderProgress({ status, deliveredAt, isDelivered }: Prop
                 <Icon color="inherit" fontSize="large" />
               </StyledStatusAvatar>
 
-              {ind < statusIndex && (
+              {((isCancelled && ind === statusIndex) || ind < statusIndex) && (
                 <StyledAvatar alt="completed-step">
-                  <Done color="inherit" />
+                  {isCancelled && ind === statusIndex ? (
+                    <Close color="inherit" />
+                  ) : (
+                    <Done color="inherit" />
+                  )}
                 </StyledAvatar>
               )}
             </Box>
 
-            {ind < STEP_ICONS.length - 1 && (
+            {ind < activeIcons.length - 1 && (
               <Box className="line" bgcolor={ind < statusIndex ? "primary.main" : "grey.100"} />
             )}
           </Fragment>
