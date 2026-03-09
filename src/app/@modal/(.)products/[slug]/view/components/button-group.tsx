@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Button from "@mui/material/Button";
 
 import useCart from "hooks/useCart";
@@ -9,20 +8,22 @@ import IconLink from "components/icon-link";
 import Product from "models/Product.model";
 
 export default function ButtonGroup({ product }: { product: Product }) {
-  const [isLoading, setLoading] = useState(false);
-  const { dispatch } = useCart();
+  const { state, dispatch } = useCart();
 
   const handleAddToCart = () => {
-    setLoading(true);
+    const currentQty = state.cart.find((item) => item.id === product.id)?.qty || 0;
 
-    setTimeout(() => {
-      dispatch({
-        type: "CHANGE_CART_AMOUNT",
-        payload: { ...product, qty: 1 }
-      });
-
-      setLoading(false);
-    }, 500);
+    dispatch({
+      type: "CHANGE_CART_AMOUNT",
+      payload: {
+        id: product.id,
+        slug: product.slug,
+        price: product.price,
+        title: product.title,
+        thumbnail: product.thumbnail,
+        qty: currentQty + 1
+      }
+    });
   };
 
   return (
@@ -32,7 +33,7 @@ export default function ButtonGroup({ product }: { product: Product }) {
         size="large"
         color="primary"
         variant="contained"
-        loading={isLoading}
+        aria-label="Add product to cart"
         onClick={handleAddToCart}
       >
         Add to Cart

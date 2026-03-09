@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
+import Link from "next/link";
 
 import ButtonGroup from "./button-group";
 import ImageCarousel from "./image-carousel";
@@ -19,9 +20,9 @@ export default function ProductQuickView({ product }: Props) {
   const discountPercent = Number(product.discount || 0);
   const comparePrice =
     discountPercent > 0 ? basePrice / (1 - Math.min(discountPercent, 99) / 100) : null;
-  const reviewCount = product.reviews?.length || 0;
+  const reviewCount = product.reviewsCount ?? product.reviews?.length ?? 0;
   const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
-  const productCode = product.id || product.slug || "-";
+  const productCode = product.sku || product.slug || product.id || "-";
 
   return (
     <QuickViewModal>
@@ -74,7 +75,10 @@ export default function ProductQuickView({ product }: Props) {
 
         {product.shop && (
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Sold By: <strong>{product.shop.name}</strong>
+            Sold By:{" "}
+            <Link href={`/shops/${product.shop.slug}`} style={{ fontWeight: 700 }}>
+              {product.shop.name}
+            </Link>
           </Typography>
         )}
 
