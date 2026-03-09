@@ -1,7 +1,22 @@
 "use client";
 
-import { createContext, PropsWithChildren, useEffect, useMemo, useReducer } from "react";
-import { getMyCartItems } from "utils/services/cart";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef
+} from "react";
+import { getJwtToken } from "../../libs/auth";
+import {
+  addToCartServer,
+  clearCartServer,
+  getMyCartItems,
+  removeCartItemServer,
+  updateCartItemQtyServer
+} from "utils/services/cart";
 
 // =================================================================================
 type InitialState = { cart: CartItem[] };
@@ -71,7 +86,73 @@ const reducer = (state: InitialState, action: CartActionType) => {
 };
 
 export default function CartProvider({ children }: PropsWithChildren) {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [state, dispatchLocal] = useReducer(reducer, INITIAL_STATE);
+  const latestSyncIdRef = useRef(0);
+
+  const dispatch = useCallback(
+    (action: CartActionType) => {
+      dispatchLocal(action);
+
+      const token = getJwtToken();
+      const isServerSyncAction = action.type === "CHANGE_CART_AMOUNT" || action.type === "CLEAR_CART";
+
+      if (!token || !isServerSyncAction) return;
+
+      const syncId = ++latestSyncIdRef.current;
+
+      const syncWithServer = async () => {
+        let result:
+          | Awaited<ReturnType<typeof addToCartServer>>
+          | Awaited<ReturnType<typeof updateCartItemQtyServer>>
+          | Awaited<ReturnType<typeof removeCartItemServer>>
+          | Awaited<ReturnType<typeof clearCartServer>>
+          | null = null;
+
+        if (action.type === "CLEAR_CART") {
+          result = await clearCartServer();
+        } else if (action.type === "CHANGE_CART_AMOUNT" && action.payload) {
+          const payload = action.payload;
+          const existsInCurrentState = state.cart.some((item) => item.id === payload.id);
+
+          if (payload.qty < 1) {
+            result = await removeCartItemServer({ productId: payload.id });
+          } else if (existsInCurrentState) {
+            result = await updateCartItemQtyServer({
+              productId: payload.id,
+              quantity: payload.qty
+            });
+          } else {
+            result = await addToCartServer({
+              productId: payload.id,
+              quantity: payload.qty
+            });
+          }
+        }
+
+        // Ignore out-of-order responses when users click quickly.
+        if (!result || syncId !== latestSyncIdRef.current) return;
+
+        if (result.success) {
+          dispatchLocal({
+            type: "HYDRATE_CART",
+            payloads: result.items || []
+          });
+          return;
+        }
+
+        const fallback = await getMyCartItems();
+        if (!fallback.success || syncId !== latestSyncIdRef.current) return;
+
+        dispatchLocal({
+          type: "HYDRATE_CART",
+          payloads: fallback.items || []
+        });
+      };
+
+      void syncWithServer();
+    },
+    [state.cart]
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -79,7 +160,7 @@ export default function CartProvider({ children }: PropsWithChildren) {
     getMyCartItems().then((result) => {
       if (!mounted || !result.success) return;
 
-      dispatch({
+      dispatchLocal({
         type: "HYDRATE_CART",
         payloads: result.items || []
       });

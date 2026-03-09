@@ -4,25 +4,30 @@ import { useEffect, useMemo, useState } from "react";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 // LOCAL CUSTOM COMPONENT
 import PaymentItem from "./payment-item";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
 import useCart from "hooks/useCart";
-import { getCheckoutSummaryServer, type CheckoutSummaryData } from "utils/services/checkout-flow";
+import {
+  getCheckoutSnapshotServer,
+  type CheckoutSnapshotResult,
+  type CheckoutSummaryData
+} from "utils/services/checkout-flow";
 
 export default function PaymentSummary() {
   const { state } = useCart();
-  const [serverSummary, setServerSummary] = useState<CheckoutSummaryData | null>(null);
+  const [snapshot, setSnapshot] = useState<CheckoutSnapshotResult | null>(null);
 
   const localSubtotal = state.cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 
   useEffect(() => {
     let mounted = true;
 
-    getCheckoutSummaryServer().then((res) => {
-      if (!mounted || !res.success || !res.summary) return;
-      setServerSummary(res.summary);
+    getCheckoutSnapshotServer().then((res) => {
+      if (!mounted || !res.success || !res.snapshot) return;
+      setSnapshot(res.snapshot);
     });
 
     return () => {
@@ -31,6 +36,8 @@ export default function PaymentSummary() {
   }, []);
 
   const totals = useMemo(() => {
+    const serverSummary: CheckoutSummaryData | undefined = snapshot?.summary;
+
     if (serverSummary) {
       return {
         subtotal: serverSummary.subtotal,
@@ -48,7 +55,7 @@ export default function PaymentSummary() {
       discount: 0,
       total: localSubtotal
     };
-  }, [localSubtotal, serverSummary]);
+  }, [localSubtotal, snapshot]);
 
   return (
     <Card
@@ -70,6 +77,12 @@ export default function PaymentSummary() {
       <Typography variant="h4" textAlign="right">
         {currency(totals.total)}
       </Typography>
+
+      {snapshot && !snapshot.isValid && snapshot.issues.length > 0 && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          {snapshot.issues[0].message}
+        </Alert>
+      )}
     </Card>
   );
 }

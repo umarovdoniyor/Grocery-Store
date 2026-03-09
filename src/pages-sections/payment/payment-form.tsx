@@ -13,25 +13,38 @@ import FlexBox from "components/flex-box/flex-box";
 // LOCAL CUSTOM COMPONENTS
 import FormLabel from "./form-label";
 import CreditCardForm from "./credit-card-form";
-import { validateCheckoutServer } from "utils/services/checkout-flow";
+import useCart from "hooks/useCart";
+import {
+  createOrderFromCartServer,
+  type CheckoutPaymentMethod,
+  type CheckoutShippingDraft,
+  validateCheckoutServer
+} from "utils/services/checkout-flow";
 
 export default function PaymentForm() {
   const router = useRouter();
+  const { dispatch } = useCart();
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
   const [error, setError] = useState<string | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
 
-  const paymentMethodLabel = useMemo(() => {
-    if (paymentMethod === "paypal") return "PayPal";
+  const paymentMethodCode = useMemo<CheckoutPaymentMethod>(() => {
+    if (paymentMethod === "paypal") return "PAYPAL";
     if (paymentMethod === "cod") return "COD";
     return "CARD";
   }, [paymentMethod]);
+
+  const paymentMethodLabel = useMemo(() => {
+    if (paymentMethodCode === "PAYPAL") return "PayPal";
+    if (paymentMethodCode === "COD") return "COD";
+    return "CARD";
+  }, [paymentMethodCode]);
 
   const handleChangeTo = useCallback((e: React.SyntheticEvent<Element, Event>) => {
     setPaymentMethod((e.target as HTMLInputElement).name);
   }, []);
 
-  const handleReview = useCallback(async () => {
+  const handlePlaceOrder = useCallback(async () => {
     setIsReviewing(true);
     setError(null);
 
@@ -44,8 +57,56 @@ export default function PaymentForm() {
       return;
     }
 
-    router.push(`/order-confirmation?method=${paymentMethodLabel}`);
-  }, [paymentMethodLabel, router]);
+    if (!validation.success) {
+      setError(validation.error || "Unable to validate order request. Please try again.");
+      setIsReviewing(false);
+      return;
+    }
+
+    const shippingRaw =
+      typeof window !== "undefined" ? window.sessionStorage.getItem("checkout_shipping") : null;
+
+    let shipping: CheckoutShippingDraft | null = null;
+    if (shippingRaw) {
+      try {
+        shipping = JSON.parse(shippingRaw) as CheckoutShippingDraft;
+      } catch {
+        shipping = null;
+      }
+    }
+
+    if (!shipping?.shipping_name || !shipping?.shipping_contact || !shipping?.shipping_address1) {
+      setError("Shipping information is missing. Please go back to checkout.");
+      setIsReviewing(false);
+      return;
+    }
+
+    const orderRes = await createOrderFromCartServer({
+      paymentMethod: paymentMethodCode,
+      shipping
+    });
+
+    if (!orderRes.success || !orderRes.data) {
+      setError(orderRes.error || "Failed to create order. Please try again.");
+      setIsReviewing(false);
+      return;
+    }
+
+    // Keep client cart in sync immediately after successful server order creation.
+    dispatch({ type: "HYDRATE_CART", payloads: [] });
+
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem("checkout_shipping");
+    }
+
+    const params = new URLSearchParams({
+      method: paymentMethodLabel,
+      orderNo: orderRes.data.orderNo,
+      orderId: orderRes.data.id
+    });
+
+    router.push(`/order-confirmation?${params.toString()}`);
+  }, [dispatch, paymentMethodCode, paymentMethodLabel, router]);
 
   return (
     <Fragment>
@@ -126,9 +187,9 @@ export default function PaymentForm() {
           color="primary"
           variant="contained"
           loading={isReviewing}
-          onClick={handleReview}
+          onClick={handlePlaceOrder}
         >
-          Review
+          Place Order
         </Button>
       </Stack>
     </Fragment>

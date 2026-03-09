@@ -11,6 +11,8 @@ import { Wrapper, StyledButton } from "./styles";
 export default function OrderConfirmationPageView() {
   const searchParams = useSearchParams();
   const paymentMethod = searchParams.get("method");
+  const orderNo = searchParams.get("orderNo");
+  const orderId = searchParams.get("orderId");
 
   return (
     <Container className="mt-2 mb-5">
@@ -37,7 +39,7 @@ export default function OrderConfirmationPageView() {
         </Typography>
 
         <Typography fontSize={16} variant="body1" color="text.secondary">
-          Your order number is <strong>#1234567890</strong>.
+          Your order number is <strong>{orderNo ? `#${orderNo}` : "pending assignment"}</strong>.
         </Typography>
 
         {paymentMethod && (
@@ -52,9 +54,9 @@ export default function OrderConfirmationPageView() {
           variant="contained"
           className="button-link"
           LinkComponent={Link}
-          href="/market-1"
+          href={orderId ? `/orders/${orderId}` : "/products"}
         >
-          Browse products
+          {orderId ? "View order details" : "Browse products"}
         </StyledButton>
       </Wrapper>
     </Container>

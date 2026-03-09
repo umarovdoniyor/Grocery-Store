@@ -8,13 +8,16 @@ import * as yup from "yup";
 import clsx from "clsx";
 // MUI
 import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 // GLOBAL CUSTOM COMPONENTS
 import { FormProvider, TextField, Autocomplete, Checkbox } from "components/form-hook";
 // DUMMY CUSTOM DATA
 import countryList from "data/countryList";
+import { validateCheckoutServer } from "utils/services/checkout-flow";
 // STYLED COMPONENT
 import { ButtonWrapper, CardRoot, FormWrapper } from "./styles";
+import { useState } from "react";
 
 // uncomment these fields below for from validation
 const validationSchema = yup.object().shape({
@@ -37,6 +40,7 @@ type FormValues = yup.InferType<typeof validationSchema>;
 
 export default function CheckoutForm() {
   const router = useRouter();
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const initialValues: FormValues = {
     shipping_zip: "",
@@ -70,10 +74,26 @@ export default function CheckoutForm() {
     name: "same_as_shipping"
   });
 
-  const handleSubmitForm = handleSubmit((values) => {
+  const handleSubmitForm = handleSubmit(async (values) => {
+    setCheckoutError(null);
+
+    const validationRes = await validateCheckoutServer();
+
+    if (!validationRes.success || !validationRes.validation) {
+      setCheckoutError(validationRes.error || "Unable to validate cart for checkout.");
+      return;
+    }
+
+    if (!validationRes.validation.isValid) {
+      const firstIssue = validationRes.validation.issues?.[0]?.message;
+      setCheckoutError(firstIssue || "Cart validation failed. Please update your cart.");
+      return;
+    }
+
     if (typeof window !== "undefined") {
       window.sessionStorage.setItem("checkout_shipping", JSON.stringify(values));
     }
+
     router.push("/payment");
   });
 
@@ -150,6 +170,12 @@ export default function CheckoutForm() {
       </CardRoot>
 
       <ButtonWrapper>
+        {checkoutError && (
+          <Alert severity="error" sx={{ mb: 2, width: "100%" }}>
+            {checkoutError}
+          </Alert>
+        )}
+
         <Button
           size="large"
           fullWidth
