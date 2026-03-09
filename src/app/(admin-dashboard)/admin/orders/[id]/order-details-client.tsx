@@ -5,7 +5,10 @@ import AsyncState from "components/AsyncState";
 import { OrderDetailsPageView } from "pages-sections/vendor-dashboard/orders/page-view";
 import type Order from "models/Order.model";
 import { useSnackbar } from "notistack";
-import { fetchAdminOrderByIdForUi, markAdminOrderDeliveredForUi } from "utils/services/admin-orders";
+import {
+  fetchAdminOrderByIdForUi,
+  markAdminOrderDeliveredForUi
+} from "utils/services/admin-orders";
 
 type Props = { id: string };
 

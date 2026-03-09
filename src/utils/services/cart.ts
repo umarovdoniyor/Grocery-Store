@@ -23,8 +23,7 @@ const toSlug = (value: string) =>
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 
-const DEFAULT_THUMBNAIL =
-  "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
+const DEFAULT_THUMBNAIL = "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
 
 const mapCartItems = (items: any[] = []): CartItemView[] =>
   items.map((item: any) => ({

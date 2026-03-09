@@ -94,7 +94,8 @@ export default function CartProvider({ children }: PropsWithChildren) {
       dispatchLocal(action);
 
       const token = getJwtToken();
-      const isServerSyncAction = action.type === "CHANGE_CART_AMOUNT" || action.type === "CLEAR_CART";
+      const isServerSyncAction =
+        action.type === "CHANGE_CART_AMOUNT" || action.type === "CLEAR_CART";
 
       if (!token || !isServerSyncAction) return;
 

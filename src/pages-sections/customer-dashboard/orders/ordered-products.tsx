@@ -62,43 +62,43 @@ export default function OrderedProducts({ order }: Props) {
 
         return (
           <FlexBetween px={2} py={1} flexWrap="wrap" key={`${item.product_id || ind}`} gap={1}>
-          <FlexBox gap={2} alignItems="center">
-            <Avatar variant="rounded" sx={{ height: 60, width: 60, backgroundColor: "grey.50" }}>
-              <Image fill alt={item.product_name} src={item.product_img} sizes="(60px, 60px)" />
-            </Avatar>
+            <FlexBox gap={2} alignItems="center">
+              <Avatar variant="rounded" sx={{ height: 60, width: 60, backgroundColor: "grey.50" }}>
+                <Image fill alt={item.product_name} src={item.product_img} sizes="(60px, 60px)" />
+              </Avatar>
 
-            <div>
-              <Typography noWrap variant="h6">
-                {item.product_name}
+              <div>
+                <Typography noWrap variant="h6">
+                  {item.product_name}
+                </Typography>
+
+                <Typography lineHeight={2} variant="body1" color="text.secondary">
+                  {currency(item.product_price)} x {item.product_quantity}
+                </Typography>
+              </div>
+            </FlexBox>
+
+            {item.variant && (
+              <Typography noWrap variant="body1" color="text.secondary">
+                Product properties: {item.variant}
               </Typography>
+            )}
 
-              <Typography lineHeight={2} variant="body1" color="text.secondary">
-                {currency(item.product_price)} x {item.product_quantity}
-              </Typography>
-            </div>
-          </FlexBox>
-
-          {item.variant && (
-            <Typography noWrap variant="body1" color="text.secondary">
-              Product properties: {item.variant}
-            </Typography>
-          )}
-
-          <Button
-            variant="text"
-            color="primary"
-            disabled={!canReview}
-            onClick={() =>
-              canReview &&
-              setSelectedReviewItem({
-                productId: item.product_id || "",
-                productName: item.product_name
-              })
-            }
-          >
-            Write a Review
-          </Button>
-        </FlexBetween>
+            <Button
+              variant="text"
+              color="primary"
+              disabled={!canReview}
+              onClick={() =>
+                canReview &&
+                setSelectedReviewItem({
+                  productId: item.product_id || "",
+                  productName: item.product_name
+                })
+              }
+            >
+              Write a Review
+            </Button>
+          </FlexBetween>
         );
       })}
 
@@ -109,7 +109,9 @@ export default function OrderedProducts({ order }: Props) {
         onClose={() => setSelectedReviewItem(null)}
       >
         <DialogTitle>
-          {selectedReviewItem ? `Write a Review: ${selectedReviewItem.productName}` : "Write a Review"}
+          {selectedReviewItem
+            ? `Write a Review: ${selectedReviewItem.productName}`
+            : "Write a Review"}
         </DialogTitle>
 
         <DialogContent>

@@ -93,7 +93,7 @@ export function getCustomerAddressList(user?: User | null, page = 1) {
 
 export function getCustomerAddressById(user: User | null | undefined, id: string): Address | null {
   const list = buildAddressList(user);
-  return list.find((item) => item.id === id) || list[0] || null;
+  return list.find((item) => item.id === id) || null;
 }
 
 export function getCustomerPayments(page = 1): { payments: Payment[]; totalPages: number } {

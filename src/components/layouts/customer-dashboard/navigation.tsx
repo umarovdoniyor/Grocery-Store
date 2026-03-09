@@ -41,7 +41,7 @@ type CountKey = "orders" | "wishlist" | "addresses" | "paymentMethods";
 type DashboardCounts = Partial<Record<CountKey, number>>;
 
 export function Navigation() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [counts, setCounts] = useState<DashboardCounts>({});
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export function Navigation() {
       ))}
 
       <Box px={4} mt={6} pb={2}>
-        <Button disableElevation variant="outlined" color="primary" fullWidth>
+        <Button disableElevation variant="outlined" color="primary" fullWidth onClick={logout}>
           Logout
         </Button>
       </Box>
