@@ -14,9 +14,9 @@ export default function ProtectedRoute({
   requiredRole,
   redirectTo
 }: ProtectedRouteProps) {
-  const { isLoading } = useProtectedRoute({ requiredRole, redirectTo });
+  const { isLoading, canAccess } = useProtectedRoute({ requiredRole, redirectTo });
 
-  if (isLoading) return null;
+  if (isLoading || !canAccess) return null;
 
   return <>{children}</>;
 }

@@ -81,8 +81,32 @@ export default function RegisterPageView() {
     formState: { isSubmitting }
   } = methods;
 
+  const sanitizeNextPath = (value?: string | null) => {
+    if (!value) return "/";
+
+    let candidate = value.trim();
+    for (let i = 0; i < 3; i += 1) {
+      if (!/%[0-9A-Fa-f]{2}/.test(candidate)) break;
+      try {
+        const decoded = decodeURIComponent(candidate);
+        if (decoded === candidate) break;
+        candidate = decoded;
+      } catch {
+        break;
+      }
+    }
+
+    if (!candidate.startsWith("/") || candidate.startsWith("//")) return "/";
+    const pathOnly = candidate.split("?")[0];
+    if (pathOnly === "/login" || pathOnly === "/register" || pathOnly === "/reset-password") {
+      return "/";
+    }
+
+    return candidate;
+  };
+
   const nextParam = searchParams.get("next");
-  const redirectPath = nextParam?.startsWith("/") ? nextParam : "/";
+  const redirectPath = sanitizeNextPath(nextParam);
 
   useEffect(() => {
     if (isLoading) return;

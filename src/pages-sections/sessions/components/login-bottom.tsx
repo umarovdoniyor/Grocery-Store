@@ -9,7 +9,33 @@ import BoxLink from "./box-link";
 export default function LoginBottom() {
   const searchParams = useSearchParams();
   const nextParam = searchParams.get("next");
-  const encodedNext = nextParam && nextParam.startsWith("/") ? encodeURIComponent(nextParam) : "";
+
+  const sanitizeNextPath = (value?: string | null) => {
+    if (!value) return "";
+
+    let candidate = value.trim();
+    for (let i = 0; i < 3; i += 1) {
+      if (!/%[0-9A-Fa-f]{2}/.test(candidate)) break;
+      try {
+        const decoded = decodeURIComponent(candidate);
+        if (decoded === candidate) break;
+        candidate = decoded;
+      } catch {
+        break;
+      }
+    }
+
+    if (!candidate.startsWith("/") || candidate.startsWith("//")) return "";
+    const pathOnly = candidate.split("?")[0];
+    if (pathOnly === "/login" || pathOnly === "/register" || pathOnly === "/reset-password") {
+      return "";
+    }
+
+    return candidate;
+  };
+
+  const safeNextPath = sanitizeNextPath(nextParam);
+  const encodedNext = safeNextPath ? encodeURIComponent(safeNextPath) : "";
   const registerHref = encodedNext ? `/register?next=${encodedNext}` : "/register";
   const resetHref = encodedNext ? `/reset-password?next=${encodedNext}` : "/reset-password";
 

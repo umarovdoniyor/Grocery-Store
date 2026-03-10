@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "contexts/AuthContext";
 import { UserRole } from "models/User.model";
@@ -16,17 +16,59 @@ const ROLE_LANDING_PATH: Record<UserRole, string> = {
   admin: "/admin/orders"
 };
 
+const AUTH_PATHS = new Set(["/login", "/register", "/reset-password"]);
+
+const toSafeNextPath = (value: string) => {
+  let candidate = value.trim();
+
+  // Decode a few layers in case next was double-encoded.
+  for (let i = 0; i < 3; i += 1) {
+    if (!/%[0-9A-Fa-f]{2}/.test(candidate)) break;
+    try {
+      const decoded = decodeURIComponent(candidate);
+      if (decoded === candidate) break;
+      candidate = decoded;
+    } catch {
+      break;
+    }
+  }
+
+  if (!candidate.startsWith("/") || candidate.startsWith("//")) return "/";
+
+  const pathOnly = candidate.split("?")[0];
+  if (AUTH_PATHS.has(pathOnly)) return "/";
+
+  return candidate;
+};
+
 export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { requiredRole, redirectTo = "/login" } = options;
+  const allowedRoles = useMemo(
+    () =>
+      Array.isArray(requiredRole)
+        ? requiredRole
+        : requiredRole
+          ? [requiredRole]
+          : [],
+    [requiredRole]
+  );
+  const currentUserRole = user?.role ?? "customer";
+  const hasRequiredRole =
+    !requiredRole || (Boolean(user) && allowedRoles.includes(currentUserRole));
+  const canAccess = !isLoading && isAuthenticated && hasRequiredRole;
 
-  const buildAuthRedirect = () => {
+  const buildAuthRedirect = useCallback(() => {
+    if (AUTH_PATHS.has(pathname)) {
+      return redirectTo;
+    }
+
     const currentQuery = searchParams.toString();
     const currentPath = currentQuery ? `${pathname}?${currentQuery}` : pathname;
-    const safeCurrentPath = currentPath.startsWith("/") ? currentPath : "/";
+    const safeCurrentPath = toSafeNextPath(currentPath);
     const separator = redirectTo.includes("?") ? "&" : "?";
 
     if (redirectTo.includes("next=")) return redirectTo;
@@ -35,7 +77,7 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
     }
 
     return redirectTo;
-  };
+  }, [pathname, redirectTo, searchParams]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -48,15 +90,21 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
 
     // Check role if required
     if (requiredRole && user) {
-      const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-      const currentUserRole = user.role ?? "customer";
-
       if (!allowedRoles.includes(currentUserRole)) {
         const landingPath = ROLE_LANDING_PATH[currentUserRole] || "/";
         router.replace(landingPath);
       }
     }
-  }, [isAuthenticated, isLoading, user, requiredRole, redirectTo, router, pathname, searchParams]);
+  }, [
+    allowedRoles,
+    buildAuthRedirect,
+    currentUserRole,
+    isAuthenticated,
+    isLoading,
+    requiredRole,
+    router,
+    user
+  ]);
 
-  return { user, isAuthenticated, isLoading };
+  return { user, isAuthenticated, isLoading, canAccess };
 }
