@@ -23,6 +23,15 @@ export const ME = gql`
       lastLoginAt
       createdAt
       updatedAt
+      vendorProfile {
+        _id
+        storeName
+        storeDescription
+        coverImageUrl
+        category
+        minimumOrderQty
+        status
+      }
     }
   }
 `;
@@ -62,6 +71,56 @@ export const GET_MY_VENDOR_APPLICATION = gql`
       rejectionReason
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const GET_MY_VENDOR_PROFILE = gql`
+  query GetMyVendorProfile {
+    getMyVendorProfile {
+      _id
+      memberId
+      storeName
+      storeDescription
+      coverImageUrl
+      category
+      minimumOrderQty
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_VENDOR_DASHBOARD_SUMMARY = gql`
+  query GetVendorDashboardSummary {
+    getVendorDashboardSummary {
+      products {
+        total
+        published
+        draft
+        lowStock
+      }
+      orders {
+        total
+        pending
+        processing
+        delivered
+        cancelled
+      }
+      reviews {
+        total
+        averageRating
+        oneStar
+        twoStar
+        threeStar
+        fourStar
+        fiveStar
+      }
+      revenue {
+        gross
+        currency
+      }
     }
   }
 `;

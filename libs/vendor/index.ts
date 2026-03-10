@@ -1,5 +1,13 @@
 import { initializeApollo } from "../../apollo/client";
-import { GET_VENDOR_BY_SLUG, GET_VENDOR_PRODUCTS, GET_VENDORS } from "../../apollo/user/query";
+import { UPDATE_MY_VENDOR_PROFILE } from "../../apollo/user/mutation";
+import { UPDATE_MY_VENDOR_ORDER_ITEM_STATUS } from "../../apollo/user/mutation";
+import {
+  GET_VENDOR_DASHBOARD_SUMMARY,
+  GET_MY_VENDOR_PROFILE,
+  GET_VENDOR_BY_SLUG,
+  GET_VENDOR_PRODUCTS,
+  GET_VENDORS
+} from "../../apollo/user/query";
 
 export type VendorStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
 export type VendorSortBy = "NEWEST" | "OLDEST" | "NAME_ASC" | "NAME_DESC" | "POPULAR";
@@ -32,6 +40,42 @@ export interface VendorDetail extends VendorSummary {
   memberEmail?: string | null;
 }
 
+export interface MyVendorProfile {
+  _id: string;
+  memberId: string;
+  storeName: string;
+  storeDescription?: string | null;
+  coverImageUrl?: string | null;
+  category?: string | null;
+  minimumOrderQty?: number | null;
+  status: VendorStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateMyVendorProfileInput {
+  storeName?: string;
+  storeDescription?: string;
+  coverImageUrl?: string;
+  category?: string;
+  minimumOrderQty?: number;
+}
+
+export type VendorOrderItemStatus = "PACKING" | "SHIPPED" | "DELIVERED";
+
+export interface UpdateMyVendorOrderItemStatusInput {
+  orderId: string;
+  itemId: string;
+  status: VendorOrderItemStatus;
+}
+
+export interface UpdatedVendorOrderItemStatus {
+  orderId: string;
+  itemId: string;
+  status: VendorOrderItemStatus;
+  updatedAt: string;
+}
+
 export interface VendorProductsInquiryInput {
   page: number;
   limit: number;
@@ -50,6 +94,35 @@ export interface VendorProductSummary {
   likes: number;
   views: number;
   createdAt: string;
+}
+
+export interface VendorDashboardSummary {
+  products: {
+    total: number;
+    published: number;
+    draft: number;
+    lowStock: number;
+  };
+  orders: {
+    total: number;
+    pending: number;
+    processing: number;
+    delivered: number;
+    cancelled: number;
+  };
+  reviews: {
+    total: number;
+    averageRating: number;
+    oneStar: number;
+    twoStar: number;
+    threeStar: number;
+    fourStar: number;
+    fiveStar: number;
+  };
+  revenue: {
+    gross: number;
+    currency: string;
+  };
 }
 
 export async function getVendors(input: VendorsInquiryInput): Promise<{
@@ -127,6 +200,103 @@ export async function getVendorProducts(input: {
     return { success: true, list, total };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch vendor products";
+    return { success: false, error: message };
+  }
+}
+
+export async function getMyVendorProfile(): Promise<{
+  success: boolean;
+  profile?: MyVendorProfile | null;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_MY_VENDOR_PROFILE,
+      fetchPolicy: "network-only"
+    });
+
+    return { success: true, profile: data?.getMyVendorProfile || null };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch my vendor profile";
+    return { success: false, error: message };
+  }
+}
+
+export async function getVendorDashboardSummary(): Promise<{
+  success: boolean;
+  summary?: VendorDashboardSummary;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_VENDOR_DASHBOARD_SUMMARY,
+      fetchPolicy: "network-only"
+    });
+
+    const summary = data?.getVendorDashboardSummary;
+    if (!summary) {
+      return { success: false, error: "Failed to fetch vendor dashboard summary" };
+    }
+
+    return { success: true, summary };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch vendor dashboard summary";
+    return { success: false, error: message };
+  }
+}
+
+export async function updateMyVendorProfile(input: UpdateMyVendorProfileInput): Promise<{
+  success: boolean;
+  profile?: MyVendorProfile;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: UPDATE_MY_VENDOR_PROFILE,
+      variables: { input }
+    });
+
+    const profile = data?.updateMyVendorProfile;
+    if (!profile) {
+      return { success: false, error: "Failed to update vendor profile" };
+    }
+
+    return { success: true, profile };
+  } catch (error: any) {
+    const message = error?.message || "Failed to update vendor profile";
+    return { success: false, error: message };
+  }
+}
+
+export async function updateMyVendorOrderItemStatus(
+  input: UpdateMyVendorOrderItemStatusInput
+): Promise<{
+  success: boolean;
+  result?: UpdatedVendorOrderItemStatus;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.mutate({
+      mutation: UPDATE_MY_VENDOR_ORDER_ITEM_STATUS,
+      variables: { input }
+    });
+
+    const result = data?.updateMyVendorOrderItemStatus;
+    if (!result) {
+      return { success: false, error: "Failed to update vendor order item status" };
+    }
+
+    return { success: true, result };
+  } catch (error: any) {
+    const message = error?.message || "Failed to update vendor order item status";
     return { success: false, error: message };
   }
 }

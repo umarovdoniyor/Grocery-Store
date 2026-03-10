@@ -4,6 +4,9 @@ export interface VendorProfile {
   storeName: string;
   storeDescription: string;
   businessLicense: string;
+  coverImageUrl?: string;
+  category?: string;
+  minimumOrderQty?: number;
   taxId?: string;
 }
 

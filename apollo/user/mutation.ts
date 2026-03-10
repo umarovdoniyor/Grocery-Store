@@ -134,6 +134,34 @@ export const REVIEW_VENDOR_APPLICATION = gql`
   }
 `;
 
+export const UPDATE_MY_VENDOR_PROFILE = gql`
+  mutation UpdateMyVendorProfile($input: UpdateMyVendorProfileInput!) {
+    updateMyVendorProfile(input: $input) {
+      _id
+      memberId
+      storeName
+      storeDescription
+      coverImageUrl
+      category
+      minimumOrderQty
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_MY_VENDOR_ORDER_ITEM_STATUS = gql`
+  mutation UpdateMyVendorOrderItemStatus($input: UpdateMyVendorOrderItemStatusInput!) {
+    updateMyVendorOrderItemStatus(input: $input) {
+      orderId
+      itemId
+      status
+      updatedAt
+    }
+  }
+`;
+
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct($input: CreateProductInput!) {
     createProduct(input: $input) {
