@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 // MUI
 import Box from "@mui/material/Box";
@@ -7,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import { useAuth } from "contexts/AuthContext";
 
 // STYLED COMPONENT
 const Divider = styled("div")(({ theme }) => ({
@@ -16,9 +18,18 @@ const Divider = styled("div")(({ theme }) => ({
 
 export default function AccountPopover() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { user, logout } = useAuth();
   const open = Boolean(anchorEl);
 
   const handleClose = () => setAnchorEl(null);
+
+  const fullName = [user?.name?.firstName, user?.name?.lastName].filter(Boolean).join(" ").trim();
+  const displayName = fullName || user?.email || "User";
+  const displayRole = user?.role ? `${user.role[0].toUpperCase()}${user.role.slice(1)}` : "Member";
+
+  const profilePath = user?.role === "admin" ? "/admin/customers" : "/profile";
+  const settingsPath = user?.role === "vendor" ? "/vendor/account-settings" : "/profile";
+  const ordersPath = user?.role === "admin" ? "/admin/orders" : "/orders";
 
   return (
     <div>
@@ -74,18 +85,24 @@ export default function AccountPopover() {
         }}
       >
         <Box px={2} pt={1}>
-          <Typography variant="h6">Gage Paquette</Typography>
+          <Typography variant="h6">{displayName}</Typography>
           <Typography variant="body1" sx={{ fontSize: 12, color: "grey.500" }}>
-            Admin
+            {displayRole}
           </Typography>
         </Box>
 
         <Divider />
-        <MenuItem>Profile</MenuItem>
-        <MenuItem>My Orders</MenuItem>
-        <MenuItem>Settings</MenuItem>
+        <MenuItem LinkComponent={Link} href={profilePath}>
+          Profile
+        </MenuItem>
+        <MenuItem LinkComponent={Link} href={ordersPath}>
+          {user?.role === "admin" ? "Manage Orders" : "My Orders"}
+        </MenuItem>
+        <MenuItem LinkComponent={Link} href={settingsPath}>
+          Settings
+        </MenuItem>
         <Divider />
-        <MenuItem>Logout</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </div>
   );

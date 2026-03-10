@@ -6,8 +6,9 @@ import OverlayScrollbar from "components/overlay-scrollbar";
 import SidebarAccordion from "./sidebar-accordion";
 // LOCAL CUSTOM HOOKS
 import { useLayout } from "../dashboard-layout-context";
+import { useAuth } from "contexts/AuthContext";
 // SIDEBAR NAVIGATION LIST
-import { navigation } from "../dashboard-navigation";
+import { getDashboardNavigation } from "../dashboard-navigation";
 // STYLED COMPONENTS
 import {
   ListLabel,
@@ -21,8 +22,10 @@ import {
 
 export default function MultiLevelMenu() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const { COMPACT, TOP_HEADER_AREA, handleCloseMobileSidebar } = useLayout();
+  const navigation = getDashboardNavigation(user?.role);
 
   // HANDLE ACTIVE CURRENT PAGE
   const activeRoute = (path: string) => (pathname === path ? 1 : 0);
