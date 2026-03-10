@@ -4,7 +4,23 @@ import Avatar from "@mui/material/Avatar";
 // LOCAL CUSTOM COMPONENT
 import UploadButton from "./upload-button";
 
-export default function CoverPicSection() {
+type Props = {
+  avatarSrc: string;
+  coverSrc: string;
+  onAvatarUpload: (file: File) => void | Promise<void>;
+  onCoverUpload: (file: File) => void | Promise<void>;
+  uploadingAvatar?: boolean;
+  uploadingCover?: boolean;
+};
+
+export default function CoverPicSection({
+  avatarSrc,
+  coverSrc,
+  onAvatarUpload,
+  onCoverUpload,
+  uploadingAvatar = false,
+  uploadingCover = false
+}: Props) {
   return (
     <Box
       mb={3}
@@ -12,17 +28,24 @@ export default function CoverPicSection() {
       overflow="hidden"
       borderRadius="10px"
       position="relative"
-      style={{ background: "url(/assets/images/banners/banner-10.png) center/cover" }}
+      style={{ background: `url(${coverSrc}) center/cover` }}
     >
       <Box position="absolute" bottom={20} left={24}>
         <Badge
           overlap="circular"
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          badgeContent={<UploadButton id="profile-image" style={{ bgcolor: "grey.300" }} />}
+          badgeContent={
+            <UploadButton
+              id="profile-image"
+              style={{ bgcolor: "grey.300" }}
+              onFileChange={onAvatarUpload}
+              loading={uploadingAvatar}
+            />
+          }
         >
           <Avatar
             alt="user"
-            src="/assets/images/faces/propic(9).png"
+            src={avatarSrc}
             sx={{
               width: 80,
               height: 80,
@@ -34,7 +57,12 @@ export default function CoverPicSection() {
       </Box>
 
       <Box position="absolute" top={20} right={20}>
-        <UploadButton id="cover-image" />
+        <UploadButton
+          id="cover-image"
+          onFileChange={onCoverUpload}
+          loading={uploadingCover}
+          style={{ bgcolor: "grey.100" }}
+        />
       </Box>
     </Box>
   );

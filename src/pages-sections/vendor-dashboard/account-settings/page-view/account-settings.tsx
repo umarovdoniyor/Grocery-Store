@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 // MUI
+import Alert from "@mui/material/Alert";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -14,25 +16,79 @@ import countryList from "data/countryList";
 // LOCAL CUSTOM COMPONENT
 import PageWrapper from "../../page-wrapper";
 import CoverPicSection from "../cover-pic-section";
+import { useAuth } from "contexts/AuthContext";
+import {
+  toPublicImageUrl,
+  uploadMemberAvatar,
+  uploadVendorImage
+} from "../../../../../libs/upload";
+import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
 
 const validationSchema = yup.object().shape({
-  city: yup.string().required("City is required"),
-  country: yup.mixed().required("Country is required"),
+  city: yup.string().notRequired(),
+  country: yup.mixed().notRequired(),
   contact: yup.string().required("Contact is required"),
   last_name: yup.string().required("Last name is required"),
   first_name: yup.string().required("First name is required"),
   email: yup.string().email("Invalid Email").required("Email is required")
 });
 
+type CountryOption = { label: string; value: string };
+
+const DEFAULT_COVER = "/assets/images/banners/banner-10.png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const toImageSrc = (value?: string | null) => {
+  if (!value) return "";
+  if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("blob:")) {
+    return value;
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return value;
+
+  return toPublicImageUrl(value, apiBase);
+};
+
 export default function AccountSettingsPageView() {
-  const initialValues = {
-    city: "",
-    email: "",
-    contact: "",
-    last_name: "",
-    first_name: "",
-    country: { label: "", value: "" }
-  };
+  const { user, updateMemberProfile } = useAuth();
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [coverImagePath, setCoverImagePath] = useState("");
+  const [shopImageNotice, setShopImageNotice] = useState<string | null>(null);
+
+  const storageKey = useMemo(
+    () => (user?.id ? `vendor-shop-cover-${user.id}` : "vendor-shop-cover"),
+    [user?.id]
+  );
+
+  const initialValues = useMemo(
+    () => ({
+      city: "",
+      email: user?.email || "",
+      contact: user?.phone || "",
+      last_name: user?.name?.lastName || "",
+      first_name: user?.name?.firstName || "",
+      country: { label: "", value: "" } as CountryOption
+    }),
+    [user]
+  );
 
   const methods = useForm({
     defaultValues: initialValues,
@@ -41,19 +97,113 @@ export default function AccountSettingsPageView() {
 
   const {
     handleSubmit,
+    reset,
     formState: { isSubmitting }
   } = methods;
 
+  useEffect(() => {
+    reset(initialValues);
+  }, [initialValues, reset]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedCover = localStorage.getItem(storageKey) || "";
+    setCoverImagePath(storedCover);
+  }, [storageKey]);
+
+  const handleAvatarUpload = async (file: File) => {
+    setUploadingAvatar(true);
+    try {
+      const uploadResult = await uploadMemberAvatar(file);
+
+      if (!uploadResult.success || !uploadResult.path) {
+        await sweetMixinErrorAlert(uploadResult.error || "Failed to upload profile image");
+        return;
+      }
+
+      const updateResult = await updateMemberProfile({ avatar: uploadResult.path });
+      if (!updateResult.success) {
+        await sweetMixinErrorAlert(updateResult.error || "Failed to save profile image");
+        return;
+      }
+
+      await sweetTopSmallSuccessAlert("Profile image updated successfully");
+    } catch (error: any) {
+      await sweetMixinErrorAlert(error?.message || "Failed to upload profile image");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleCoverUpload = async (file: File) => {
+    setUploadingCover(true);
+    setShopImageNotice(null);
+
+    try {
+      const uploadResult = await uploadVendorImage(file);
+
+      if (!uploadResult.success || !uploadResult.path) {
+        await sweetMixinErrorAlert(uploadResult.error || "Failed to upload shop image");
+        return;
+      }
+
+      setCoverImagePath(uploadResult.path);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, uploadResult.path);
+      }
+
+      setShopImageNotice(
+        "Shop image uploaded. It is currently saved locally in browser for preview until shop-profile update API is available."
+      );
+      await sweetTopSmallSuccessAlert("Shop image uploaded");
+    } catch (error: any) {
+      await sweetMixinErrorAlert(error?.message || "Failed to upload shop image");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
   // FORM SUBMIT HANDLER
-  const handleSubmitForm = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2));
+  const handleSubmitForm = handleSubmit(async (values) => {
+    const addressParts = [values.city, values.country?.label].filter(Boolean).join(", ");
+
+    const response = await updateMemberProfile({
+      firstName: values.first_name,
+      lastName: values.last_name,
+      email: values.email.trim().toLowerCase(),
+      phone: values.contact,
+      address: addressParts || undefined
+    });
+
+    if (!response.success) {
+      await sweetMixinErrorAlert(response.error || "Failed to update profile");
+      return;
+    }
+
+    await sweetTopSmallSuccessAlert("Profile details updated successfully");
   });
+
+  const coverSrc = toImageSrc(coverImagePath) || DEFAULT_COVER;
+  const avatarSrc = user?.avatar || "/assets/images/faces/propic(9).png";
 
   return (
     <PageWrapper title="Account Setting">
       <Card className="p-2">
         {/* COVER SECTION */}
-        <CoverPicSection />
+        <CoverPicSection
+          avatarSrc={avatarSrc}
+          coverSrc={coverSrc}
+          onAvatarUpload={handleAvatarUpload}
+          onCoverUpload={handleCoverUpload}
+          uploadingAvatar={uploadingAvatar}
+          uploadingCover={uploadingCover}
+        />
+
+        {shopImageNotice && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {shopImageNotice}
+          </Alert>
+        )}
 
         {/* FORM SECTION */}
         <FormProvider methods={methods} onSubmit={handleSubmitForm}>

@@ -1,13 +1,37 @@
-import { Fragment } from "react";
+import { ChangeEvent, Fragment } from "react";
 import Button from "@mui/material/Button";
 import { SxProps, Theme } from "@mui/material/styles";
 import CameraAlt from "@mui/icons-material/CameraAlt";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // ==============================================================
-type Props = { id: string; style?: SxProps<Theme> };
+type Props = {
+  id: string;
+  style?: SxProps<Theme>;
+  onFileChange?: (file: File) => void | Promise<void>;
+  disabled?: boolean;
+  loading?: boolean;
+};
 // ==============================================================
 
-export default function UploadButton({ id, style = {} }: Props) {
+export default function UploadButton({
+  id,
+  style = {},
+  onFileChange,
+  disabled = false,
+  loading = false
+}: Props) {
+  const handleInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !onFileChange) {
+      event.target.value = "";
+      return;
+    }
+
+    await onFileChange(file);
+    event.target.value = "";
+  };
+
   return (
     <Fragment>
       <label htmlFor={id}>
@@ -15,6 +39,7 @@ export default function UploadButton({ id, style = {} }: Props) {
           size="small"
           component="span"
           color="secondary"
+          disabled={disabled || loading}
           sx={{
             p: "6px",
             height: "auto",
@@ -24,7 +49,7 @@ export default function UploadButton({ id, style = {} }: Props) {
             ":hover": { backgroundColor: "grey.300" }
           }}
         >
-          <CameraAlt fontSize="small" color="info" />
+          {loading ? <CircularProgress size={16} /> : <CameraAlt fontSize="small" color="info" />}
         </Button>
       </label>
 
@@ -33,7 +58,7 @@ export default function UploadButton({ id, style = {} }: Props) {
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => console.log(e.target.files)}
+        onChange={handleInputChange}
         style={{ display: "none" }}
       />
     </Fragment>

@@ -38,6 +38,19 @@ const vendorNavigation = [
     path: "/vendor/dashboard"
   },
   {
+    name: "Orders",
+    icon: duotone.Order,
+    path: "/vendor/orders"
+  },
+  {
+    name: "Products",
+    icon: duotone.Products,
+    children: [
+      { name: "Product List", path: "/vendor/products" },
+      { name: "Create Product", path: "/vendor/products/create" }
+    ]
+  },
+  {
     name: "Reviews",
     icon: duotone.Review,
     path: "/vendor/reviews"
@@ -46,6 +59,11 @@ const vendorNavigation = [
     name: "Account Settings",
     icon: duotone.AccountSetting,
     path: "/vendor/account-settings"
+  },
+  {
+    name: "Shop Settings",
+    icon: duotone.Setting,
+    path: "/vendor/shop-settings"
   }
 ];
 

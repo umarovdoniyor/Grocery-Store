@@ -56,6 +56,7 @@ interface RegisterData {
 interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
+  nickname?: string;
   email?: string;
   dob?: string;
   phone?: string;
@@ -155,6 +156,9 @@ const mapMemberToUser = (member: any): User => ({
         storeName: member.vendorProfile.storeName || "",
         storeDescription: member.vendorProfile.storeDescription || "",
         businessLicense: member.vendorProfile.businessLicense || "",
+        coverImageUrl: member.vendorProfile.coverImageUrl || "",
+        category: member.vendorProfile.category || "",
+        minimumOrderQty: member.vendorProfile.minimumOrderQty || undefined,
         taxId: member.vendorProfile.taxId || ""
       }
     : undefined
@@ -322,6 +326,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (profileData.firstName) input.memberFirstName = profileData.firstName;
       if (profileData.lastName) input.memberLastName = profileData.lastName;
+      if (profileData.nickname !== undefined) input.memberNickname = profileData.nickname;
       if (profileData.email) input.memberEmail = profileData.email;
       if (profileData.dob) input.memberDob = profileData.dob;
       if (profileData.phone) input.memberPhone = profileData.phone;
