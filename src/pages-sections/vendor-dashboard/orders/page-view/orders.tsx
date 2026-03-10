@@ -20,10 +20,18 @@ import Order from "models/Order.model";
 import { tableHeading } from "../table-heading";
 
 // =============================================================================
-type Props = { orders: Order[] };
+type Props = {
+  orders: Order[];
+  basePath?: string;
+  showCreateButton?: boolean;
+};
 // =============================================================================
 
-export default function OrdersPageView({ orders }: Props) {
+export default function OrdersPageView({
+  orders,
+  basePath = "/admin/orders",
+  showCreateButton = true
+}: Props) {
   // RESHAPE THE ORDER LIST BASED TABLE HEAD CELL ID
   const filteredOrders = orders.map((item) => ({
     id: item.id,
@@ -40,9 +48,10 @@ export default function OrdersPageView({ orders }: Props) {
   return (
     <PageWrapper title="Orders">
       <SearchArea
-        url="/admin/orders"
+        url={basePath}
         buttonText="Create Order"
         searchPlaceholder="Search Order..."
+        showButton={showCreateButton}
       />
 
       <Card>
@@ -58,7 +67,7 @@ export default function OrdersPageView({ orders }: Props) {
 
               <TableBody>
                 {filteredList.map((order) => (
-                  <OrderRow order={order} key={order.id} />
+                  <OrderRow order={order} basePath={basePath} key={order.id} />
                 ))}
               </TableBody>
             </Table>

@@ -15,13 +15,15 @@ interface Props {
   url: string;
   buttonText: string;
   searchPlaceholder: string;
+  showButton?: boolean;
 }
 // ===============================================================
 
 export default function SearchArea({
   url = "/",
   buttonText = "Add Product",
-  searchPlaceholder = "Search Product..."
+  searchPlaceholder = "Search Product...",
+  showButton = true
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -36,17 +38,19 @@ export default function SearchArea({
     <FlexBox mb={2} gap={2} justifyContent="space-between" flexWrap="wrap">
       <SearchInput placeholder={searchPlaceholder} onChange={(e) => handleSearch(e.target.value)} />
 
-      <Button
-        href={url}
-        color="info"
-        fullWidth={downSM}
-        variant="contained"
-        startIcon={<Add />}
-        LinkComponent={Link}
-        sx={{ minHeight: 44 }}
-      >
-        {buttonText}
-      </Button>
+      {showButton && (
+        <Button
+          href={url}
+          color="info"
+          fullWidth={downSM}
+          variant="contained"
+          startIcon={<Add />}
+          LinkComponent={Link}
+          sx={{ minHeight: 44 }}
+        >
+          {buttonText}
+        </Button>
+      )}
     </FlexBox>
   );
 }

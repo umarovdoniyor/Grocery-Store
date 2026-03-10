@@ -1,6 +1,7 @@
 import User from "./User.model";
 
 interface Item {
+  item_id?: string;
   product_id?: string;
   order_id?: string;
   product_img: string;
@@ -8,6 +9,7 @@ interface Item {
   product_price: number;
   product_quantity: number;
   variant?: string;
+  status?: string;
 }
 
 export type OrderStatus = "Pending" | "Processing" | "Delivered" | "Cancelled";

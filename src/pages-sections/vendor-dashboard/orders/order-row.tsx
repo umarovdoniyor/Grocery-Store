@@ -9,10 +9,10 @@ import { currency } from "lib";
 import { StatusWrapper, StyledIconButton, StyledTableCell, StyledTableRow } from "../styles";
 
 // ========================================================================
-type Props = { order: any };
+type RowProps = { order: any; basePath?: string };
 // ========================================================================
 
-export default function OrderRow({ order }: Props) {
+export default function OrderRow({ order, basePath = "/admin/orders" }: RowProps) {
   const { amount, id, qty, purchaseDate, billingAddress, status } = order;
 
   return (
@@ -35,7 +35,7 @@ export default function OrderRow({ order }: Props) {
       </StyledTableCell>
 
       <StyledTableCell align="center">
-        <Link href={`/admin/orders/${id}`}>
+        <Link href={`${basePath}/${id}`}>
           <StyledIconButton>
             <RemoveRedEye />
           </StyledIconButton>

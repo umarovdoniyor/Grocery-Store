@@ -3,10 +3,8 @@ import Image from "next/image";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-// MUI ICON COMPONENT
-import Delete from "@mui/icons-material/Delete";
 // GLOBAL CUSTOM COMPONENTS
 import { FlexBetween, FlexBox } from "components/flex-box";
 // CUSTOM UTILS LIBRARY FUNCTION
@@ -15,11 +13,24 @@ import { currency } from "lib";
 import Order from "models/Order.model";
 
 // ==============================================================
-type Props = { product: Order["items"][0] };
+type Status = "PACKING" | "SHIPPED" | "DELIVERED";
+
+type Props = {
+  product: Order["items"][0];
+  updating?: boolean;
+  onUpdateStatus?: (itemId: string, status: Status) => void;
+};
 // ==============================================================
 
-export default function OrderedProduct({ product }: Props) {
-  const { product_img, product_name, product_price, product_quantity } = product || {};
+export default function OrderedProduct({ product, updating = false, onUpdateStatus }: Props) {
+  const { item_id, product_img, product_name, product_price, product_quantity, status } = product || {};
+
+  const statusValue: Status =
+    status === "DELIVERED" || status === "Delivered"
+      ? "DELIVERED"
+      : status === "SHIPPED" || status === "Processing"
+        ? "SHIPPED"
+        : "PACKING";
 
   return (
     <Box my={2} gap={2} display="grid" gridTemplateColumns={{ md: "1fr 1fr", xs: "1fr" }}>
@@ -38,21 +49,32 @@ export default function OrderedProduct({ product }: Props) {
               {currency(product_price)} x
             </Typography>
 
-            <Box maxWidth={60}>
-              <TextField defaultValue={product_quantity} type="number" fullWidth />
-            </Box>
+            <Typography variant="body2" color="text.secondary">
+              Qty: {product_quantity}
+            </Typography>
           </FlexBox>
         </div>
       </FlexBox>
 
       <FlexBetween flexShrink={0}>
-        <Typography variant="body1" sx={{ color: "grey.600" }}>
-          Product properties: Black, L
+        <Typography variant="body2" sx={{ color: "grey.600" }}>
+          Product properties: {product.variant || "-"}
         </Typography>
 
-        <IconButton>
-          <Delete sx={{ color: "grey.600", fontSize: 22 }} />
-        </IconButton>
+        {onUpdateStatus && item_id ? (
+          <TextField
+            select
+            size="small"
+            value={statusValue}
+            disabled={updating}
+            sx={{ minWidth: 170 }}
+            onChange={(event) => onUpdateStatus(item_id, event.target.value as Status)}
+          >
+            <MenuItem value="PACKING">Packing</MenuItem>
+            <MenuItem value="SHIPPED">Shipped</MenuItem>
+            <MenuItem value="DELIVERED">Delivered</MenuItem>
+          </TextField>
+        ) : null}
       </FlexBetween>
     </Box>
   );

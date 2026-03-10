@@ -17,15 +17,20 @@ type Props = {
   order: Order;
   isUpdatingStatus?: boolean;
   onMarkDelivered?: () => void;
+  updatingItemId?: string | null;
+  onUpdateItemStatus?: (itemId: string, status: "PACKING" | "SHIPPED" | "DELIVERED") => void;
 };
 // ==============================================================
 
 export default function OrderDetailsPageView({
   order,
   isUpdatingStatus = false,
-  onMarkDelivered
+  onMarkDelivered,
+  updatingItemId = null,
+  onUpdateItemStatus
 }: Props) {
-  const canMarkDelivered = order.status !== "Delivered" && order.status !== "Cancelled";
+  const canMarkDelivered =
+    Boolean(onMarkDelivered) && order.status !== "Delivered" && order.status !== "Cancelled";
 
   return (
     <PageWrapper title="Order Details">
@@ -37,7 +42,12 @@ export default function OrderDetailsPageView({
 
             {/* ORDERED PRODUCT LIST */}
             {order.items.map((item, index) => (
-              <OrderedProduct product={item} key={index} />
+              <OrderedProduct
+                product={item}
+                key={index}
+                updating={updatingItemId === item.item_id}
+                onUpdateStatus={onUpdateItemStatus}
+              />
             ))}
           </Card>
         </Grid>
@@ -63,11 +73,11 @@ export default function OrderDetailsPageView({
             >
               Mark as Delivered (Test)
             </Button>
-          ) : (
+          ) : onMarkDelivered ? (
             <Button variant="outlined" color="success" disabled>
               {order.status === "Delivered" ? "Already Delivered" : "Status Locked"}
             </Button>
-          )}
+          ) : null}
         </Grid>
       </Grid>
     </PageWrapper>
