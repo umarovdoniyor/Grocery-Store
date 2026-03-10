@@ -1,12 +1,12 @@
 import type Ticket from "models/Ticket.model";
 import { ticketList } from "__server__/__db__/ticket/data";
-import { cardList, recentPurchase, stockOutProducts } from "__server__/__db__/dashboard/data";
 import { payoutRequests as vendorPayoutRequests } from "__server__/__db__/vendor/data";
 import { payouts } from "__server__/__db__/dashboard/payouts";
 import { refundRequest } from "__server__/__db__/dashboard/refundRequests";
 import { earningHistory } from "__server__/__db__/dashboard/earning-history";
 import { getMyProducts } from "../../../libs/product";
 import { getVendorProductReviews } from "../../../libs/review";
+import { getVendorDashboardSummary } from "../../../libs/vendor";
 
 interface VendorReviewRow {
   name: string;
@@ -31,10 +31,91 @@ function formatMetric(value: number) {
 }
 
 export async function getVendorDashboardCards() {
+  const summaryResponse = await getVendorDashboardSummary();
+  if (summaryResponse.success && summaryResponse.summary) {
+    const summary = summaryResponse.summary;
+
+    return [
+      {
+        id: 1,
+        title: "Total Products",
+        color: "primary",
+        amount1: formatMetric(summary.products.total),
+        amount2: summary.products.total,
+        percentage: "0%",
+        status: "up"
+      },
+      {
+        id: 2,
+        title: "Published Products",
+        color: "success",
+        amount1: formatMetric(summary.products.published),
+        amount2: summary.products.published,
+        percentage: "0%",
+        status: "up"
+      },
+      {
+        id: 3,
+        title: "Low Stock Items",
+        color: "warning",
+        amount1: formatMetric(summary.products.lowStock),
+        amount2: summary.products.lowStock,
+        percentage: "0%",
+        status: summary.products.lowStock > 0 ? "down" : "up"
+      },
+      {
+        id: 4,
+        title: `Revenue (${summary.revenue.currency || "USD"})`,
+        color: "info",
+        amount1: formatMetric(summary.revenue.gross),
+        amount2: summary.orders.delivered,
+        percentage: "0%",
+        status: "up"
+      }
+    ];
+  }
+
   const response = await getMyProducts({ page: 1, limit: 200 });
 
   if (!response.success || !response.list) {
-    return cardList;
+    return [
+      {
+        id: 1,
+        title: "Total Products",
+        color: "primary",
+        amount1: "0",
+        amount2: 0,
+        percentage: "0%",
+        status: "up"
+      },
+      {
+        id: 2,
+        title: "Published Products",
+        color: "success",
+        amount1: "0",
+        amount2: 0,
+        percentage: "0%",
+        status: "up"
+      },
+      {
+        id: 3,
+        title: "Low Stock Items",
+        color: "warning",
+        amount1: "0",
+        amount2: 0,
+        percentage: "0%",
+        status: "up"
+      },
+      {
+        id: 4,
+        title: "Product Orders",
+        color: "info",
+        amount1: "0",
+        amount2: 0,
+        percentage: "0%",
+        status: "up"
+      }
+    ];
   }
 
   const products = response.list;
@@ -87,7 +168,7 @@ export async function getVendorStockOutProducts() {
   const response = await getMyProducts({ page: 1, limit: 200 });
 
   if (!response.success || !response.list) {
-    return stockOutProducts;
+    return [];
   }
 
   const mapped = response.list
@@ -100,28 +181,7 @@ export async function getVendorStockOutProducts() {
       amount: item.salePrice || item.price
     }));
 
-  return mapped.length ? mapped : stockOutProducts;
-}
-
-export async function getVendorRecentPurchase() {
-  const response = await getMyProducts({ page: 1, limit: 200 });
-
-  if (!response.success || !response.list) {
-    return recentPurchase;
-  }
-
-  const mapped = response.list
-    .filter((item) => (item.ordersCount || 0) > 0)
-    .sort((a, b) => (b.ordersCount || 0) - (a.ordersCount || 0))
-    .slice(0, 8)
-    .map((item) => ({
-      id: item._id,
-      product: item.title,
-      payment: "Card",
-      amount: (item.salePrice || item.price) * Math.max(item.ordersCount || 1, 1)
-    }));
-
-  return mapped.length ? mapped : recentPurchase;
+  return mapped;
 }
 
 export async function getVendorSupportTickets(): Promise<Ticket[]> {

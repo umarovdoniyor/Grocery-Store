@@ -8,13 +8,6 @@ export interface Card {
   percentage: string;
 }
 
-export interface RecentPurchased {
-  id: string;
-  amount: number;
-  payment: string;
-  product: string;
-}
-
 export interface StockOut {
   stock: string;
   amount: number;

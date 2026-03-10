@@ -1,6 +1,7 @@
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 // GLOBAL CUSTOM COMPONENTS
 import { FlexBetween } from "components/flex-box";
 // LOCAL CUSTOM COMPONENT
@@ -28,7 +29,15 @@ export default async function StockOutProducts() {
         </Button>
       </FlexBetween>
 
-      <DataListTable dataList={stockOutProducts} tableHeading={tableHeading} type="STOCK_OUT" />
+      {stockOutProducts.length === 0 ? (
+        <Box px={3} pb={3}>
+          <Typography variant="body2" color="text.secondary">
+            No low-stock products right now.
+          </Typography>
+        </Box>
+      ) : (
+        <DataListTable dataList={stockOutProducts} tableHeading={tableHeading} />
+      )}
     </Card>
   );
 }
