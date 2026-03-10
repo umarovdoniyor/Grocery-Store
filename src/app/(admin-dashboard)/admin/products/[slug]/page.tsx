@@ -8,11 +8,7 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export default async function ProductEdit({
-  params
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ProductEdit({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   return <EditProductPageView mode="edit" productId={slug} basePath="/admin/products" />;
 }

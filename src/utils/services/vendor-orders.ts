@@ -1,10 +1,7 @@
 import type Order from "models/Order.model";
 import type { OrderStatus } from "models/Order.model";
 import type User from "models/User.model";
-import {
-  updateMyVendorOrderItemStatus,
-  type VendorOrderItemStatus
-} from "../../../libs/vendor";
+import { updateMyVendorOrderItemStatus, type VendorOrderItemStatus } from "../../../libs/vendor";
 import { initializeApollo } from "../../../apollo/client";
 import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
 

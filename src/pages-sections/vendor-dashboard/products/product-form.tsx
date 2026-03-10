@@ -19,7 +19,11 @@ import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import { FormProvider, TextField } from "components/form-hook";
 import { getCategories } from "../../../../libs/category";
-import { toPublicImageUrl, uploadProductGallery, uploadProductThumbnail } from "../../../../libs/upload";
+import {
+  toPublicImageUrl,
+  uploadProductGallery,
+  uploadProductThumbnail
+} from "../../../../libs/upload";
 import {
   createProduct,
   getProductById,
@@ -211,7 +215,9 @@ export default function ProductForm({
     const load = async () => {
       const categoriesRes = await getCategories({ page: 1, limit: 200, status: "ACTIVE" });
       if (mounted && categoriesRes.success) {
-        setCategories((categoriesRes.list || []).map((item) => ({ id: item._id, name: item.name })));
+        setCategories(
+          (categoriesRes.list || []).map((item) => ({ id: item._id, name: item.name }))
+        );
       }
 
       if (mode === "edit" && productId) {

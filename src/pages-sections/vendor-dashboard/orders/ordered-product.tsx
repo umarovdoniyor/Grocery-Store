@@ -23,7 +23,8 @@ type Props = {
 // ==============================================================
 
 export default function OrderedProduct({ product, updating = false, onUpdateStatus }: Props) {
-  const { item_id, product_img, product_name, product_price, product_quantity, status } = product || {};
+  const { item_id, product_img, product_name, product_price, product_quantity, status } =
+    product || {};
 
   const statusValue: Status =
     status === "DELIVERED" || status === "Delivered"

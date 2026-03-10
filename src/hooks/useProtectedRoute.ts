@@ -48,12 +48,7 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { requiredRole, redirectTo = "/login" } = options;
   const allowedRoles = useMemo(
-    () =>
-      Array.isArray(requiredRole)
-        ? requiredRole
-        : requiredRole
-          ? [requiredRole]
-          : [],
+    () => (Array.isArray(requiredRole) ? requiredRole : requiredRole ? [requiredRole] : []),
     [requiredRole]
   );
   const currentUserRole = user?.role ?? "customer";
