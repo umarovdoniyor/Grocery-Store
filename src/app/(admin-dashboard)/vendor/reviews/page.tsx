@@ -10,6 +10,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Reviews() {
-  const reviews = await getVendorReviews();
-  return <ReviewsPageView reviews={reviews} />;
+  const payload = await getVendorReviews();
+  return (
+    <ReviewsPageView
+      reviews={payload.reviews}
+      summary={payload.summary}
+      total={payload.total}
+      error={payload.error}
+    />
+  );
 }

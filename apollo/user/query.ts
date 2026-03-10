@@ -647,6 +647,58 @@ export const GET_REVIEWS_BY_ADMIN = gql`
   }
 `;
 
+export const GET_VENDOR_PRODUCT_REVIEWS = gql`
+  query GetVendorProductReviews($input: VendorProductReviewsInquiryInput!) {
+    getVendorProductReviews(input: $input) {
+      list {
+        _id
+        productId
+        memberId
+        orderId
+        rating
+        comment
+        images
+        status
+        moderationReason
+        moderatedBy
+        moderatedAt
+        createdAt
+        updatedAt
+        member {
+          _id
+          memberNickname
+          memberFirstName
+          memberLastName
+          memberAvatar
+        }
+        product {
+          _id
+          title
+          thumbnail
+          slug
+        }
+      }
+      metaCounter {
+        total
+        page
+        limit
+        totalPages
+        hasNextPage
+        hasPrevPage
+      }
+      summary {
+        ratingAvg
+        reviewsCount
+        rating1Count
+        rating2Count
+        rating3Count
+        rating4Count
+        rating5Count
+      }
+    }
+  }
+`;
+
 export const GET_AGENTS = gql`
   query GetAgents($input: AgentsInquiry!) {
     getAgents(input: $input) {

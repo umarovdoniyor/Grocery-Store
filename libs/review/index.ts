@@ -2,7 +2,8 @@ import { initializeApollo } from "../../apollo/client";
 import {
   GET_MY_PRODUCT_REVIEW,
   GET_PRODUCT_REVIEWS,
-  GET_REVIEWS_BY_ADMIN
+  GET_REVIEWS_BY_ADMIN,
+  GET_VENDOR_PRODUCT_REVIEWS
 } from "../../apollo/user/query";
 import {
   CREATE_PRODUCT_REVIEW,
@@ -58,6 +59,36 @@ export interface ProductReview {
   createdAt: string;
   updatedAt: string;
   member?: ProductReviewMember | null;
+}
+
+export interface VendorReviewProduct {
+  _id: string;
+  title: string;
+  thumbnail?: string | null;
+  slug?: string | null;
+}
+
+export interface VendorProductReview extends ProductReview {
+  product?: VendorReviewProduct | null;
+}
+
+export interface VendorProductReviewsInquiryInput {
+  page: number;
+  limit: number;
+  status?: ProductReviewStatus;
+  search?: string;
+  productId?: string | null;
+  rating?: number | null;
+  sortBy?: ProductReviewSortBy;
+}
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export interface ProductReviewSummary {
@@ -186,6 +217,53 @@ export async function getReviewsByAdmin(input: ReviewsByAdminInquiryInput): Prom
     };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch reviews by admin";
+    return { success: false, error: message };
+  }
+}
+
+export async function getVendorProductReviews(
+  input: VendorProductReviewsInquiryInput
+): Promise<{
+  success: boolean;
+  list?: VendorProductReview[];
+  meta?: PaginationMeta;
+  summary?: ProductReviewSummary;
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_VENDOR_PRODUCT_REVIEWS,
+      variables: { input },
+      fetchPolicy: "network-only"
+    });
+
+    const payload = data?.getVendorProductReviews;
+
+    return {
+      success: true,
+      list: payload?.list || [],
+      meta: {
+        total: Number(payload?.metaCounter?.total || 0),
+        page: Number(payload?.metaCounter?.page || input.page),
+        limit: Number(payload?.metaCounter?.limit || input.limit),
+        totalPages: Number(payload?.metaCounter?.totalPages || 1),
+        hasNextPage: Boolean(payload?.metaCounter?.hasNextPage),
+        hasPrevPage: Boolean(payload?.metaCounter?.hasPrevPage)
+      },
+      summary: {
+        ratingAvg: Number(payload?.summary?.ratingAvg || 0),
+        reviewsCount: Number(payload?.summary?.reviewsCount || 0),
+        rating1Count: Number(payload?.summary?.rating1Count || 0),
+        rating2Count: Number(payload?.summary?.rating2Count || 0),
+        rating3Count: Number(payload?.summary?.rating3Count || 0),
+        rating4Count: Number(payload?.summary?.rating4Count || 0),
+        rating5Count: Number(payload?.summary?.rating5Count || 0)
+      }
+    };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch vendor product reviews";
     return { success: false, error: message };
   }
 }
