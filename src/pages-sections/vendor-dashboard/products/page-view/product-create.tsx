@@ -2,10 +2,18 @@
 import ProductForm from "../product-form";
 import PageWrapper from "../../page-wrapper";
 
-export default function ProductCreatePageView() {
+type Props = {
+  basePath?: string;
+  mode?: "create" | "edit";
+};
+
+export default function ProductCreatePageView({
+  basePath = "/admin/products",
+  mode = "create"
+}: Props) {
   return (
     <PageWrapper title="Add New Product">
-      <ProductForm />
+      <ProductForm mode={mode} basePath={basePath} />
     </PageWrapper>
   );
 }

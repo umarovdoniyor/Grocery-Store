@@ -29,6 +29,7 @@ const tableHeading = [
 // =============================================================================
 type Props = {
   products: ProductRowItem[];
+  basePath?: string;
   updatingProductId?: string | null;
   removingProductId?: string | null;
   onTogglePublished: (product: any) => void;
@@ -38,6 +39,7 @@ type Props = {
 
 export default function ProductsPageView({
   products,
+  basePath = "/admin/products",
   updatingProductId,
   removingProductId,
   onTogglePublished,
@@ -52,7 +54,7 @@ export default function ProductsPageView({
     <PageWrapper title="Product List">
       <SearchArea
         buttonText="Add Product"
-        url="/admin/products/create"
+        url={`${basePath}/create`}
         searchPlaceholder="Search Product..."
       />
 
@@ -72,6 +74,7 @@ export default function ProductsPageView({
                   <ProductRow
                     key={index}
                     product={product}
+                    basePath={basePath}
                     isUpdating={updatingProductId === product.id}
                     isRemoving={removingProductId === product.id}
                     onTogglePublished={onTogglePublished}

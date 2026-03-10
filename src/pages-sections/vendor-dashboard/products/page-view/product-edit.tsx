@@ -2,10 +2,20 @@
 import ProductForm from "../product-form";
 import PageWrapper from "../../page-wrapper";
 
-export default function EditProductPageView() {
+type Props = {
+  productId?: string;
+  basePath?: string;
+  mode?: "create" | "edit";
+};
+
+export default function EditProductPageView({
+  productId,
+  basePath = "/admin/products",
+  mode = "edit"
+}: Props) {
   return (
     <PageWrapper title="Edit Product">
-      <ProductForm />
+      <ProductForm mode={mode} productId={productId} basePath={basePath} />
     </PageWrapper>
   );
 }

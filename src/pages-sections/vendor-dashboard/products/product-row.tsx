@@ -30,6 +30,7 @@ export interface ProductRowItem {
 
 type RowProps = {
   product: ProductRowItem;
+  basePath?: string;
   isUpdating?: boolean;
   isRemoving?: boolean;
   onTogglePublished: (product: ProductRowItem) => void;
@@ -39,6 +40,7 @@ type RowProps = {
 
 export default function ProductRow({
   product,
+  basePath = "/admin/products",
   isUpdating,
   isRemoving,
   onTogglePublished,
@@ -96,7 +98,7 @@ export default function ProductRow({
       </StyledTableCell>
 
       <StyledTableCell align="center">
-        <Link href={`/admin/products/${slug}`}>
+        <Link href={`${basePath}/${slug}`}>
           <StyledIconButton>
             <Edit />
           </StyledIconButton>
