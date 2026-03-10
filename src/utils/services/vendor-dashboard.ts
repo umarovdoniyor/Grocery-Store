@@ -1,9 +1,7 @@
 import type Ticket from "models/Ticket.model";
 import { ticketList } from "__server__/__db__/ticket/data";
 import { cardList, recentPurchase, stockOutProducts } from "__server__/__db__/dashboard/data";
-import {
-  payoutRequests as vendorPayoutRequests
-} from "__server__/__db__/vendor/data";
+import { payoutRequests as vendorPayoutRequests } from "__server__/__db__/vendor/data";
 import { payouts } from "__server__/__db__/dashboard/payouts";
 import { refundRequest } from "__server__/__db__/dashboard/refundRequests";
 import { earningHistory } from "__server__/__db__/dashboard/earning-history";

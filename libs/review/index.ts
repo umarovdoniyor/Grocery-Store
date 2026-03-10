@@ -221,9 +221,7 @@ export async function getReviewsByAdmin(input: ReviewsByAdminInquiryInput): Prom
   }
 }
 
-export async function getVendorProductReviews(
-  input: VendorProductReviewsInquiryInput
-): Promise<{
+export async function getVendorProductReviews(input: VendorProductReviewsInquiryInput): Promise<{
   success: boolean;
   list?: VendorProductReview[];
   meta?: PaginationMeta;

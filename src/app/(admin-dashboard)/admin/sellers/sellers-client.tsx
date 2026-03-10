@@ -68,7 +68,10 @@ export default function SellersClient() {
   };
 
   const handleRejectSeller = (seller: AdminSellerRow) => {
-    const reason = window.prompt("Provide rejection reason", "Application details are insufficient");
+    const reason = window.prompt(
+      "Provide rejection reason",
+      "Application details are insufficient"
+    );
     if (reason === null) return;
 
     const trimmedReason = reason.trim();
