@@ -30,12 +30,18 @@ export default function SellersClient() {
     loadApplications();
   }, []);
 
-  const handleToggleSeller = async (seller: AdminSellerRow) => {
+  const updateSellerStatus = async (
+    seller: AdminSellerRow,
+    status: "APPROVED" | "REJECTED",
+    rejectionReason?: string
+  ) => {
     setUpdatingSellerId(seller.id);
+    setError(null);
 
     const response = await updateAdminVendorApplicationForUi({
       applicationId: seller.id,
-      approved: !seller.published
+      status,
+      rejectionReason
     });
 
     if (!response.success) {
@@ -49,13 +55,29 @@ export default function SellersClient() {
         item.id === seller.id
           ? {
               ...item,
-              published: response.published as boolean,
               status: response.status as string
             }
           : item
       )
     );
     setUpdatingSellerId(null);
+  };
+
+  const handleApproveSeller = (seller: AdminSellerRow) => {
+    updateSellerStatus(seller, "APPROVED");
+  };
+
+  const handleRejectSeller = (seller: AdminSellerRow) => {
+    const reason = window.prompt("Provide rejection reason", "Application details are insufficient");
+    if (reason === null) return;
+
+    const trimmedReason = reason.trim();
+    if (!trimmedReason) {
+      setError("Rejection reason is required");
+      return;
+    }
+
+    updateSellerStatus(seller, "REJECTED", trimmedReason);
   };
 
   if (loading) {
@@ -70,7 +92,8 @@ export default function SellersClient() {
     <SellersPageView
       sellers={sellers}
       updatingSellerId={updatingSellerId}
-      onToggleSeller={handleToggleSeller}
+      onApproveSeller={handleApproveSeller}
+      onRejectSeller={handleRejectSeller}
     />
   );
 }

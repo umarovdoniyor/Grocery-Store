@@ -23,11 +23,17 @@ import { Seller } from "../types";
 type Props = {
   sellers: Seller[];
   updatingSellerId?: string | null;
-  onToggleSeller: (seller: Seller) => void;
+  onApproveSeller: (seller: Seller) => void;
+  onRejectSeller: (seller: Seller) => void;
 };
 // =============================================================================
 
-export default function SellersPageView({ sellers, updatingSellerId, onToggleSeller }: Props) {
+export default function SellersPageView({
+  sellers,
+  updatingSellerId,
+  onApproveSeller,
+  onRejectSeller
+}: Props) {
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: sellers });
 
@@ -35,8 +41,8 @@ export default function SellersPageView({ sellers, updatingSellerId, onToggleSel
     <PageWrapper title="Sellers">
       <SearchArea
         url="/admin/sellers"
-        buttonText="Add New Seller"
-        searchPlaceholder="Search Seller..."
+        buttonText="Vendor Applications"
+        searchPlaceholder="Search application..."
       />
 
       <Card>
@@ -56,7 +62,8 @@ export default function SellersPageView({ sellers, updatingSellerId, onToggleSel
                     seller={seller}
                     key={index}
                     isUpdating={updatingSellerId === seller.id}
-                    onToggleSeller={onToggleSeller}
+                    onApproveSeller={onApproveSeller}
+                    onRejectSeller={onRejectSeller}
                   />
                 ))}
               </TableBody>

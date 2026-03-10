@@ -1,18 +1,12 @@
 import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
-// MUI ICON COMPONENTS
-import Edit from "@mui/icons-material/Edit";
-import Delete from "@mui/icons-material/Delete";
-import RemoveRedEye from "@mui/icons-material/RemoveRedEye";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
-import BazaarSwitch from "components/BazaarSwitch";
-// CUSTOM UTILS LIBRARY FUNCTION
-import { currency } from "lib";
 // STYLED COMPONENTS
-import { StyledIconButton, StyledTableCell, StyledTableRow } from "../styles";
+import { StatusWrapper, StyledTableCell, StyledTableRow } from "../styles";
 // DATA TYPES
 import { Seller } from "./types";
 
@@ -20,12 +14,19 @@ import { Seller } from "./types";
 type Props = {
   seller: Seller;
   isUpdating?: boolean;
-  onToggleSeller: (seller: Seller) => void;
+  onApproveSeller: (seller: Seller) => void;
+  onRejectSeller: (seller: Seller) => void;
 };
 // ========================================================================
 
-export default function SellerRow({ seller, isUpdating, onToggleSeller }: Props) {
-  const { name, phone, image, balance, published, shopName, package: sellerPackage } = seller;
+function formatStatus(status: Seller["status"]) {
+  if (status === "APPROVED") return "Accepted";
+  if (status === "REJECTED") return "Rejected";
+  return "Pending";
+}
+
+export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejectSeller }: Props) {
+  const { name, phone, image, shopName, status, rejectionReason, createdAt, description } = seller;
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
@@ -47,33 +48,51 @@ export default function SellerRow({ seller, isUpdating, onToggleSeller }: Props)
       <StyledTableCell align="left">{shopName}</StyledTableCell>
 
       <StyledTableCell align="left" sx={{ fontWeight: 400 }}>
-        {sellerPackage}
+        <StatusWrapper status={formatStatus(status)}>{formatStatus(status)}</StatusWrapper>
       </StyledTableCell>
 
       <StyledTableCell align="left" sx={{ fontWeight: 400 }}>
-        {currency(balance)}
+        {new Date(createdAt).toLocaleDateString()}
       </StyledTableCell>
 
       <StyledTableCell align="left">
-        {isUpdating ? (
-          <CircularProgress size={18} color="info" />
+        {status === "REJECTED" ? (
+          <Typography variant="caption" color="error.main">
+            {rejectionReason || "Rejected by admin"}
+          </Typography>
         ) : (
-          <BazaarSwitch color="info" checked={published} onChange={() => onToggleSeller(seller)} />
+          <Typography variant="caption" color="text.secondary">
+            {description || "No description provided"}
+          </Typography>
         )}
       </StyledTableCell>
 
       <StyledTableCell align="center">
-        <StyledIconButton>
-          <Edit />
-        </StyledIconButton>
+        {isUpdating ? (
+          <CircularProgress size={18} color="info" />
+        ) : (
+          <FlexBox justifyContent="center" gap={1} flexWrap="wrap">
+            <Button
+              size="small"
+              variant="contained"
+              color="success"
+              disabled={status === "APPROVED"}
+              onClick={() => onApproveSeller(seller)}
+            >
+              Approve
+            </Button>
 
-        <StyledIconButton>
-          <RemoveRedEye />
-        </StyledIconButton>
-
-        <StyledIconButton>
-          <Delete />
-        </StyledIconButton>
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              disabled={status === "REJECTED"}
+              onClick={() => onRejectSeller(seller)}
+            >
+              Reject
+            </Button>
+          </FlexBox>
+        )}
       </StyledTableCell>
     </StyledTableRow>
   );

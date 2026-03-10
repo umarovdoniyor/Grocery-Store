@@ -2,8 +2,8 @@
 export const tableHeading = [
   { id: "name", label: "Seller Name", align: "left" },
   { id: "shopName", label: "Shop Name", align: "left" },
-  { id: "package", label: "Current Package", align: "left" },
-  { id: "balance", label: "Current Balance", align: "left" },
-  { id: "published", label: "Shop Published", align: "left" },
-  { id: "action", label: "Action", align: "center" }
+  { id: "status", label: "Application Status", align: "left" },
+  { id: "createdAt", label: "Submitted", align: "left" },
+  { id: "notes", label: "Notes", align: "left" },
+  { id: "action", label: "Review", align: "center" }
 ];

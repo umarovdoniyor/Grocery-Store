@@ -3,9 +3,10 @@ export interface Seller {
   name: string;
   phone: string;
   image: string;
-  balance: number;
-  package: string;
   shopName: string;
-  published: boolean;
-  status: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  description?: string;
+  businessLicenseUrl?: string;
+  rejectionReason?: string | null;
+  createdAt: string;
 }

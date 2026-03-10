@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -15,18 +15,9 @@ import * as yup from "yup";
 import { TextField, FormProvider } from "components/form-hook";
 // AUTH CONTEXT
 import { useAuth } from "contexts/AuthContext";
+import Link from "next/link";
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required("Full name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  re_password: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Please confirm password"),
   storeName: yup.string().required("Store name is required"),
   storeDescription: yup.string().required("Store description is required"),
   businessLicense: yup.string().required("Business license number is required")
@@ -34,15 +25,17 @@ const validationSchema = yup.object().shape({
 
 export default function BecomeVendorPageView() {
   const router = useRouter();
-  const { register: registerUser } = useAuth();
+  const { user, isAuthenticated, isLoading, applyVendor, getMyVendorApplication, refreshUser } =
+    useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [applicationStatus, setApplicationStatus] = useState<
+    "PENDING" | "APPROVED" | "REJECTED" | null
+  >(null);
+  const [isCheckingApplication, setIsCheckingApplication] = useState(true);
 
   const methods = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      re_password: "",
       storeName: "",
       storeDescription: "",
       businessLicense: ""
@@ -52,27 +45,92 @@ export default function BecomeVendorPageView() {
 
   const {
     handleSubmit,
+    getValues,
+    reset,
     formState: { isSubmitting }
   } = methods;
 
+  const loadApplicationStatus = useCallback(async () => {
+    setIsCheckingApplication(true);
+    const result = await getMyVendorApplication();
+
+    const application = result.application;
+    if (result.success && application) {
+      setApplicationStatus(application.status);
+      reset({
+        storeName: application.storeName || "",
+        storeDescription: application.description || "",
+        businessLicense: application.businessLicenseUrl || ""
+      });
+
+      if (application.status === "APPROVED") {
+        await refreshUser();
+        setSuccess("Application approved. Your account is being upgraded to vendor.");
+      }
+    } else {
+      setApplicationStatus(null);
+    }
+
+    setIsCheckingApplication(false);
+  }, [getMyVendorApplication, refreshUser, reset]);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isAuthenticated) {
+      setIsCheckingApplication(false);
+      return;
+    }
+
+    if (user?.role === "vendor") {
+      router.replace("/vendor/dashboard");
+      return;
+    }
+
+    loadApplicationStatus();
+  }, [isAuthenticated, isLoading, loadApplicationStatus, router, user?.role]);
+
   const handleSubmitForm = handleSubmit(async (values) => {
     setError(null);
-    const result = await registerUser({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      role: "vendor",
+    setSuccess(null);
+
+    const result = await applyVendor({
       storeName: values.storeName,
-      storeDescription: values.storeDescription,
-      businessLicense: values.businessLicense
+      description: values.storeDescription,
+      businessLicenseUrl: values.businessLicense
     });
 
     if (result.success) {
-      router.push("/vendor/dashboard");
+      setApplicationStatus("PENDING");
+      setSuccess("Application submitted successfully. Admin review is pending.");
     } else {
-      setError(result.error || "Vendor registration failed");
+      setError(result.error || "Vendor application failed");
     }
   });
+
+  if (!isLoading && !isAuthenticated) {
+    return (
+      <Box py={4}>
+        <Card sx={{ maxWidth: 700, mx: "auto", p: 4 }}>
+          <Typography variant="h4" fontWeight={700} mb={1}>
+            Become a Vendor
+          </Typography>
+
+          <Alert severity="info" sx={{ mb: 3 }}>
+            Please login first to submit your vendor application.
+          </Alert>
+
+          <Button LinkComponent={Link} href="/login?next=%2Fbecome-vendor" variant="contained">
+            Login to Continue
+          </Button>
+        </Card>
+      </Box>
+    );
+  }
+
+  const submittedStoreName = getValues("storeName");
+  const submittedStoreDescription = getValues("storeDescription");
+  const submittedBusinessLicense = getValues("businessLicense");
 
   return (
     <Box py={4}>
@@ -84,110 +142,128 @@ export default function BecomeVendorPageView() {
           Join our marketplace and start selling your products
         </Typography>
 
-        <FormProvider methods={methods} onSubmit={handleSubmitForm}>
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+
+        {success && (
+          <Alert severity="success" sx={{ mb: 3 }}>
+            {success}
+          </Alert>
+        )}
+
+        {isCheckingApplication && (
+          <Alert severity="info" sx={{ mb: 3 }}>
+            Checking your existing application...
+          </Alert>
+        )}
+
+        {applicationStatus === "PENDING" ? (
+          <Box>
+            <Alert severity="info" sx={{ mb: 3 }}>
+              Your application is under review. We will notify you once it is approved.
             </Alert>
-          )}
 
-          <Typography variant="h6" mb={2}>
-            Personal Information
-          </Typography>
+            <Card variant="outlined" sx={{ p: 2.5, mb: 3 }}>
+              <Typography variant="subtitle1" fontWeight={700} mb={1.5}>
+                Submitted Details
+              </Typography>
 
-          <Grid container spacing={3} mb={3}>
-            <Grid size={12}>
-              <TextField fullWidth name="name" label="Full Name" placeholder="John Doe" />
+              <Typography variant="body2" color="text.secondary" mb={0.75}>
+                <strong>Store Name:</strong> {submittedStoreName || "-"}
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary" mb={0.75}>
+                <strong>Description:</strong> {submittedStoreDescription || "-"}
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary">
+                <strong>License:</strong> {submittedBusinessLicense || "-"}
+              </Typography>
+            </Card>
+
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <Button fullWidth variant="outlined" LinkComponent={Link} href="/profile">
+                  Go to My Account
+                </Button>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <Button fullWidth variant="outlined" LinkComponent={Link} href="/products">
+                  Browse Products
+                </Button>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={loadApplicationStatus}
+                  disabled={isCheckingApplication}
+                >
+                  Refresh Status
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        ) : (
+          <FormProvider methods={methods} onSubmit={handleSubmitForm}>
+            {applicationStatus === "REJECTED" && (
+              <Alert severity="warning" sx={{ mb: 3 }}>
+                Your previous application was rejected. Update details and submit again.
+              </Alert>
+            )}
+
+            <Typography variant="h6" mb={2}>
+              Store Information
+            </Typography>
+
+            <Grid container spacing={3} mb={3}>
+              <Grid size={12}>
+                <TextField
+                  fullWidth
+                  name="storeName"
+                  label="Store Name"
+                  placeholder="My Grocery Store"
+                />
+              </Grid>
+
+              <Grid size={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  name="storeDescription"
+                  label="Store Description"
+                  placeholder="Tell customers about your store..."
+                />
+              </Grid>
+
+              <Grid size={12}>
+                <TextField
+                  fullWidth
+                  name="businessLicense"
+                  label="Business License Number"
+                  placeholder="BL-123456789"
+                />
+              </Grid>
             </Grid>
 
-            <Grid size={12}>
-              <TextField
-                fullWidth
-                name="email"
-                type="email"
-                label="Email Address"
-                placeholder="john@example.com"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                name="password"
-                type="password"
-                label="Password"
-                placeholder="••••••••"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                name="re_password"
-                type="password"
-                label="Confirm Password"
-                placeholder="••••••••"
-              />
-            </Grid>
-          </Grid>
-
-          <Typography variant="h6" mb={2}>
-            Store Information
-          </Typography>
-
-          <Grid container spacing={3} mb={3}>
-            <Grid size={12}>
-              <TextField
-                fullWidth
-                name="storeName"
-                label="Store Name"
-                placeholder="My Grocery Store"
-              />
-            </Grid>
-
-            <Grid size={12}>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                name="storeDescription"
-                label="Store Description"
-                placeholder="Tell customers about your store..."
-              />
-            </Grid>
-
-            <Grid size={12}>
-              <TextField
-                fullWidth
-                name="businessLicense"
-                label="Business License Number"
-                placeholder="BL-123456789"
-              />
-            </Grid>
-          </Grid>
-
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            color="primary"
-            variant="contained"
-            loading={isSubmitting}
-          >
-            Submit Application
-          </Button>
-
-          <Typography variant="body2" color="text.secondary" textAlign="center" mt={2}>
-            Already have an account?{" "}
-            <Box
-              component="a"
-              href="/login"
-              sx={{ color: "primary.main", textDecoration: "none", fontWeight: 600 }}
+            <Button
+              fullWidth
+              size="large"
+              type="submit"
+              color="primary"
+              variant="contained"
+              loading={isSubmitting || isCheckingApplication}
             >
-              Login Here
-            </Box>
-          </Typography>
-        </FormProvider>
+              {applicationStatus === "REJECTED" ? "Resubmit Application" : "Submit Application"}
+            </Button>
+          </FormProvider>
+        )}
       </Card>
     </Box>
   );

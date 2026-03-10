@@ -6,12 +6,12 @@ import Analytics from "../analytics";
 import WelcomeCard from "../welcome-card";
 import RecentPurchase from "../recent-purchase";
 import StockOutProducts from "../stock-out-products";
-import { getAdminDashboardCards } from "utils/services/admin-dashboard";
+import { getVendorDashboardCards } from "utils/services/vendor-dashboard";
 // DATA TYPES
 import { Card } from "../types";
 
 export default async function DashboardPageView() {
-  const cardList: Card[] = await getAdminDashboardCards();
+  const cardList: Card[] = await getVendorDashboardCards();
 
   return (
     <div className="pt-2 pb-2">

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import FlexBetween from "components/flex-box/flex-between";
 // LOCAL CUSTOM COMPONENT
 import DataListTable from "./table";
-import { getAdminRecentPurchase } from "utils/services/admin-dashboard";
+import { getVendorRecentPurchase } from "utils/services/vendor-dashboard";
 // DATA TYPES
 import { RecentPurchased } from "./types";
 
@@ -18,7 +18,7 @@ const tableHeading = [
 ];
 
 export default async function RecentPurchase() {
-  const recentPurchase: RecentPurchased[] = await getAdminRecentPurchase();
+  const recentPurchase: RecentPurchased[] = await getVendorRecentPurchase();
 
   return (
     <Card>

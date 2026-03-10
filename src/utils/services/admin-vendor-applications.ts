@@ -9,11 +9,12 @@ export interface AdminSellerRow {
   name: string;
   phone: string;
   image: string;
-  balance: number;
-  package: string;
   shopName: string;
-  published: boolean;
-  status: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  description?: string;
+  businessLicenseUrl?: string;
+  rejectionReason?: string | null;
+  createdAt: string;
 }
 
 export function mapVendorApplicationToSellerRow(
@@ -24,11 +25,12 @@ export function mapVendorApplicationToSellerRow(
     name: application.storeName,
     phone: "-",
     image: "/assets/images/faces/propic(1).png",
-    balance: 0,
-    package: "N/A",
     shopName: application.storeName,
-    published: application.status === "APPROVED",
-    status: application.status
+    status: application.status,
+    description: application.description,
+    businessLicenseUrl: application.businessLicenseUrl,
+    rejectionReason: application.rejectionReason,
+    createdAt: application.createdAt
   };
 }
 
@@ -52,15 +54,21 @@ export async function fetchAdminVendorApplicationsForUi(): Promise<{
 
 export async function updateAdminVendorApplicationForUi(input: {
   applicationId: string;
-  approved: boolean;
-}): Promise<{ success: boolean; published?: boolean; status?: string; error?: string }> {
+  status: "APPROVED" | "REJECTED";
+  rejectionReason?: string;
+}): Promise<{
+  success: boolean;
+  published?: boolean;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+  error?: string;
+}> {
   const response = await reviewVendorApplication(
-    input.approved
+    input.status === "APPROVED"
       ? { applicationId: input.applicationId, status: "APPROVED" }
       : {
           applicationId: input.applicationId,
           status: "REJECTED",
-          rejectionReason: "Rejected by admin"
+          rejectionReason: (input.rejectionReason || "Rejected by admin").trim()
         }
   );
 
