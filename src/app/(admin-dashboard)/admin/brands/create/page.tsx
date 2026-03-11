@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CreateBrandPageView } from "pages-sections/vendor-dashboard/brands/page-view";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Brand Create - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function BrandCreate() {
-  return <CreateBrandPageView />;
+  return (
+    <AdminScopeNotice
+      title="Create Brand"
+      description="Brand management screens are intentionally deferred in this portfolio scope."
+    />
+  );
 }

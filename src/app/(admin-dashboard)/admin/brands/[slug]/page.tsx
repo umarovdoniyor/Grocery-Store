@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { EditBrandPageView } from "pages-sections/vendor-dashboard/brands/page-view";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Edit Brand - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function BrandEdit() {
-  return <EditBrandPageView />;
+  return (
+    <AdminScopeNotice
+      title="Edit Brand"
+      description="Brand edit workflow is intentionally deferred in this portfolio scope."
+    />
+  );
 }

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { SellerPackagePageView } from "pages-sections/vendor-dashboard/seller-package/page-view";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Seller Package - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SellerPackage() {
-  return <SellerPackagePageView />;
+  return (
+    <AdminScopeNotice
+      title="Seller Package"
+      description="Seller package management APIs are not included in this portfolio milestone."
+    />
+  );
 }

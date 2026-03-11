@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { BrandsPageView } from "pages-sections/vendor-dashboard/brands/page-view";
-import { getAdminBrands } from "utils/services/admin-dashboard";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Brands - Bazaar Next.js E-commerce Template",
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Brands() {
-  const brands = await getAdminBrands();
-  return <BrandsPageView brands={brands} />;
+  return (
+    <AdminScopeNotice
+      title="Brands Module"
+      description="Brand CRUD is intentionally out of scope for this portfolio milestone."
+    />
+  );
 }

@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { PayoutsPageView } from "pages-sections/vendor-dashboard/payouts/page-view";
-import { getAdminPayouts } from "utils/services/admin-dashboard";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Payouts - Bazaar Next.js E-commerce Template",
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Payouts() {
-  const payouts = await getAdminPayouts();
-  return <PayoutsPageView payouts={payouts} />;
+  return (
+    <AdminScopeNotice
+      title="Payouts"
+      description="Payout management APIs are not included in this portfolio milestone."
+    />
+  );
 }

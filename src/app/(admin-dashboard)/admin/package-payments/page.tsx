@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { PackagePaymentPageView } from "pages-sections/vendor-dashboard/package-payments/page-view";
-import { getAdminPackagePayments } from "utils/services/admin-dashboard";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Package Payments - Bazaar Next.js E-commerce Template",
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function PackagePayments() {
-  const payments = await getAdminPackagePayments();
-  return <PackagePaymentPageView payments={payments} />;
+  return (
+    <AdminScopeNotice
+      title="Package Payments"
+      description="Finance package payment APIs are not included in this portfolio milestone."
+    />
+  );
 }

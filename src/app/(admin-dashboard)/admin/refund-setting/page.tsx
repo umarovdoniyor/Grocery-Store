@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { RefundSettingPageView } from "pages-sections/vendor-dashboard/refund-setting/page-view";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Refund Setting - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RefundSetting() {
-  return <RefundSettingPageView />;
+  return (
+    <AdminScopeNotice
+      title="Refund Settings"
+      description="Refund configuration APIs are not included in this portfolio milestone."
+    />
+  );
 }

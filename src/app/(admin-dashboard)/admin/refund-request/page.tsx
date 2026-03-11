@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { RefundRequestPageView } from "pages-sections/vendor-dashboard/refund-request/page-view";
-import { getAdminRefundRequests } from "utils/services/admin-dashboard";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Refund Request - Bazaar Next.js E-commerce Template",
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RefundRequest() {
-  const requests = await getAdminRefundRequests();
-  return <RefundRequestPageView requests={requests} />;
+  return (
+    <AdminScopeNotice
+      title="Refund Requests"
+      description="Refund operations APIs are not included in this portfolio milestone."
+    />
+  );
 }

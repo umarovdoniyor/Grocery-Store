@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { EarningHistoryPageView } from "pages-sections/vendor-dashboard/earning-history/page-view";
-import { getAdminEarningHistory } from "utils/services/admin-dashboard";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Earning History - Bazaar Next.js E-commerce Template",
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function EarningHistory() {
-  const earnings = await getAdminEarningHistory();
-  return <EarningHistoryPageView earnings={earnings} />;
+  return (
+    <AdminScopeNotice
+      title="Earning History"
+      description="Finance reporting APIs are not included in this portfolio milestone."
+    />
+  );
 }
