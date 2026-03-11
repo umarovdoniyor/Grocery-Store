@@ -32,6 +32,11 @@ const adminNavigation = [
     name: "Vendor Applications",
     icon: duotone.Seller,
     path: "/admin/sellers"
+  },
+  {
+    name: "Account Settings",
+    icon: duotone.AccountSetting,
+    path: "/admin/account-settings"
   }
 ];
 

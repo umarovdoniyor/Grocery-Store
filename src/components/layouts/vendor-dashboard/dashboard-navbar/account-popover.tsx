@@ -28,7 +28,12 @@ export default function AccountPopover() {
   const displayRole = user?.role ? `${user.role[0].toUpperCase()}${user.role.slice(1)}` : "Member";
 
   const profilePath = user?.role === "admin" ? "/admin/customers" : "/profile";
-  const settingsPath = user?.role === "vendor" ? "/vendor/account-settings" : "/profile";
+  const settingsPath =
+    user?.role === "admin"
+      ? "/admin/account-settings"
+      : user?.role === "vendor"
+        ? "/vendor/account-settings"
+        : "/profile";
   const ordersPath = user?.role === "admin" ? "/admin/orders" : "/orders";
 
   return (
