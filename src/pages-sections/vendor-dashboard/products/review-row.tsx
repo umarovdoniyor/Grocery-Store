@@ -73,7 +73,7 @@ export default function ReviewRow({
         <FlexBox alignItems="center" justifyContent="center" gap={0.5}>
           <StyledIconButton
             disabled={isUpdating || published}
-            title="Quick Approve (Test)"
+            title="Quick Approve"
             onClick={() => onQuickApprove?.(id)}
           >
             <CheckCircle />

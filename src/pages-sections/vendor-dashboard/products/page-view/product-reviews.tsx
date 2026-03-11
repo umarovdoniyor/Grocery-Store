@@ -187,11 +187,11 @@ export default function ProductReviewsPageView(_: Props) {
     const response = await updateReviewStatusByAdmin({
       reviewId,
       status: "PUBLISHED",
-      reason: "Quick approved for testing."
+      reason: "Approved by admin moderation."
     });
 
     if (!response.success || !response.review) {
-      setError(response.error || "Failed to approve review (test action).");
+      setError(response.error || "Failed to approve review.");
       setUpdatingId(null);
       return;
     }

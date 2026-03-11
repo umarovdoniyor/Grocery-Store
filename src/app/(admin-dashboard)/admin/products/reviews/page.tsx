@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import AdminScopeNotice from "components/admin/AdminScopeNotice";
+import { ProductReviewsPageView } from "pages-sections/vendor-dashboard/products/page-view";
 
 export const metadata: Metadata = {
   title: "Product Reviews - Bazaar Next.js E-commerce Template",
@@ -9,10 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductReviews() {
-  return (
-    <AdminScopeNotice
-      title="Product Reviews"
-      description="Review moderation APIs are not included in this portfolio milestone."
-    />
-  );
+  return <ProductReviewsPageView />;
 }

@@ -34,6 +34,11 @@ const adminNavigation = [
     path: "/admin/sellers"
   },
   {
+    name: "Review Moderation",
+    icon: duotone.Review,
+    path: "/admin/products/reviews"
+  },
+  {
     name: "Account Settings",
     icon: duotone.AccountSetting,
     path: "/admin/account-settings"
