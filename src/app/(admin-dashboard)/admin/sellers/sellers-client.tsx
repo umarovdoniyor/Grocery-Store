@@ -110,6 +110,7 @@ export default function SellersClient() {
   return (
     <SellersPageView
       sellers={sellers}
+      showCreateButton={false}
       updatingSellerId={updatingSellerId}
       onApproveSeller={handleApproveSeller}
       onRejectSeller={handleRejectSeller}

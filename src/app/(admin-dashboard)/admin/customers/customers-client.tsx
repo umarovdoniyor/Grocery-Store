@@ -80,6 +80,7 @@ export default function CustomersClient() {
   return (
     <CustomersPageView
       customers={customers}
+      showCreateButton={false}
       updatingMemberId={updatingMemberId}
       onToggleMemberStatus={handleToggleMemberStatus}
     />

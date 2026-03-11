@@ -47,5 +47,5 @@ export default function OrdersClient() {
     return <AsyncState error={error} />;
   }
 
-  return <OrdersPageView orders={orders} />;
+  return <OrdersPageView orders={orders} showCreateButton={false} />;
 }

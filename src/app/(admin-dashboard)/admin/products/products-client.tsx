@@ -96,6 +96,7 @@ export default function ProductsClient() {
   return (
     <ProductsPageView
       products={products}
+      showCreateButton={false}
       updatingProductId={updatingProductId}
       removingProductId={removingProductId}
       onTogglePublished={handleTogglePublished}

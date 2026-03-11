@@ -22,6 +22,7 @@ import { Seller } from "../types";
 // =============================================================================
 type Props = {
   sellers: Seller[];
+  showCreateButton?: boolean;
   updatingSellerId?: string | null;
   onApproveSeller: (seller: Seller) => void;
   onRejectSeller: (seller: Seller) => void;
@@ -30,6 +31,7 @@ type Props = {
 
 export default function SellersPageView({
   sellers,
+  showCreateButton = true,
   updatingSellerId,
   onApproveSeller,
   onRejectSeller
@@ -43,6 +45,7 @@ export default function SellersPageView({
         url="/admin/sellers"
         buttonText="Vendor Applications"
         searchPlaceholder="Search application..."
+        showButton={showCreateButton}
       />
 
       <Card>

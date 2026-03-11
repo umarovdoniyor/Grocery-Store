@@ -20,6 +20,7 @@ import { tableHeading } from "../table-heading";
 // =============================================================================
 type Props = {
   customers: any[];
+  showCreateButton?: boolean;
   updatingMemberId?: string | null;
   onToggleMemberStatus: (customer: any) => void;
 };
@@ -27,6 +28,7 @@ type Props = {
 
 export default function CustomersPageView({
   customers,
+  showCreateButton = true,
   updatingMemberId,
   onToggleMemberStatus
 }: Props) {
@@ -39,6 +41,7 @@ export default function CustomersPageView({
         buttonText="Add Customer"
         url="/admin/customers"
         searchPlaceholder="Search Customer..."
+        showButton={showCreateButton}
       />
 
       <Card>

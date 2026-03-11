@@ -30,6 +30,7 @@ const tableHeading = [
 type Props = {
   products: ProductRowItem[];
   basePath?: string;
+  showCreateButton?: boolean;
   updatingProductId?: string | null;
   removingProductId?: string | null;
   onTogglePublished: (product: any) => void;
@@ -40,6 +41,7 @@ type Props = {
 export default function ProductsPageView({
   products,
   basePath = "/admin/products",
+  showCreateButton = true,
   updatingProductId,
   removingProductId,
   onTogglePublished,
@@ -56,6 +58,7 @@ export default function ProductsPageView({
         buttonText="Add Product"
         url={`${basePath}/create`}
         searchPlaceholder="Search Product..."
+        showButton={showCreateButton}
       />
 
       <Card>

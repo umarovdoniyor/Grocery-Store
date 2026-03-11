@@ -45,7 +45,7 @@ export default function AccountPopover() {
         aria-expanded={open ? "true" : undefined}
         aria-controls={open ? "account-menu" : undefined}
       >
-        <Avatar alt="Remy Sharp" src="/assets/images/avatars/001-man.svg" />
+        <Avatar alt={displayName} src={user?.avatar || "/assets/images/avatars/001-man.svg"} />
       </IconButton>
 
       <Menu
@@ -97,13 +97,13 @@ export default function AccountPopover() {
         </Box>
 
         <Divider />
-        <MenuItem LinkComponent={Link} href={profilePath}>
+        <MenuItem component={Link} href={profilePath}>
           Profile
         </MenuItem>
-        <MenuItem LinkComponent={Link} href={ordersPath}>
+        <MenuItem component={Link} href={ordersPath}>
           {user?.role === "admin" ? "Manage Orders" : "My Orders"}
         </MenuItem>
-        <MenuItem LinkComponent={Link} href={settingsPath}>
+        <MenuItem component={Link} href={settingsPath}>
           Settings
         </MenuItem>
         <Divider />
