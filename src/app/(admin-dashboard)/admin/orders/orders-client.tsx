@@ -6,7 +6,10 @@ import AsyncState from "components/AsyncState";
 import { OrdersPageView } from "pages-sections/vendor-dashboard/orders/page-view";
 import type Order from "models/Order.model";
 import { useSnackbar } from "notistack";
-import { fetchAdminOrdersForUiByQuery, markAdminOrderDeliveredForUi } from "utils/services/admin-orders";
+import {
+  fetchAdminOrdersForUiByQuery,
+  markAdminOrderDeliveredForUi
+} from "utils/services/admin-orders";
 
 export default function OrdersClient() {
   const { enqueueSnackbar } = useSnackbar();

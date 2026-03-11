@@ -42,10 +42,7 @@ export default function RightContent() {
   const { user } = useAuth();
   const [value, setValue] = useState("");
 
-  const searchPath = useMemo(
-    () => resolveSearchPath(pathname, user?.role),
-    [pathname, user?.role]
-  );
+  const searchPath = useMemo(() => resolveSearchPath(pathname, user?.role), [pathname, user?.role]);
 
   useEffect(() => {
     setValue(searchParams.get("q") || "");

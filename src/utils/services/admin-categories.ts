@@ -31,7 +31,11 @@ export async function fetchAdminCategoriesForUi(): Promise<{
   const response = await getCategoriesByAdmin({ page: 1, limit: 100 });
 
   if (!response.success) {
-    return { categories: [], total: 0, error: response.error || "Failed to fetch categories by admin" };
+    return {
+      categories: [],
+      total: 0,
+      error: response.error || "Failed to fetch categories by admin"
+    };
   }
 
   return {
@@ -58,7 +62,11 @@ export async function fetchAdminCategoriesForUiByQuery(input?: {
   });
 
   if (!response.success) {
-    return { categories: [], total: 0, error: response.error || "Failed to fetch categories by admin" };
+    return {
+      categories: [],
+      total: 0,
+      error: response.error || "Failed to fetch categories by admin"
+    };
   }
 
   return {

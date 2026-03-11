@@ -45,7 +45,11 @@ export async function fetchAdminVendorApplicationsForUi(): Promise<{
   });
 
   if (!response.success) {
-    return { sellers: [], total: 0, error: response.error || "Failed to fetch vendor applications" };
+    return {
+      sellers: [],
+      total: 0,
+      error: response.error || "Failed to fetch vendor applications"
+    };
   }
 
   return {
@@ -72,7 +76,11 @@ export async function fetchAdminVendorApplicationsForUiByQuery(input?: {
   });
 
   if (!response.success) {
-    return { sellers: [], total: 0, error: response.error || "Failed to fetch vendor applications" };
+    return {
+      sellers: [],
+      total: 0,
+      error: response.error || "Failed to fetch vendor applications"
+    };
   }
 
   return {

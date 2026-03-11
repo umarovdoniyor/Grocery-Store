@@ -5,7 +5,10 @@ import Typography from "@mui/material/Typography";
 import Card1 from "pages-sections/vendor-dashboard/dashboard/card-1";
 import DataListTable from "pages-sections/vendor-dashboard/dashboard/table";
 import { getAdminDashboardCards, getAdminStockOutProducts } from "utils/services/admin-dashboard";
-import type { Card as DashboardCard, StockOut } from "pages-sections/vendor-dashboard/dashboard/types";
+import type {
+  Card as DashboardCard,
+  StockOut
+} from "pages-sections/vendor-dashboard/dashboard/types";
 
 const tableHeading = [
   { id: "product", label: "Product", alignRight: false },

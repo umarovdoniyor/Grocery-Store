@@ -85,7 +85,9 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
       // causing protected dashboard pages to keep re-triggering redirects in background.
       if (
         typeof window !== "undefined" &&
-        (target.startsWith("/login") || target.startsWith("/register") || target.startsWith("/reset-password"))
+        (target.startsWith("/login") ||
+          target.startsWith("/register") ||
+          target.startsWith("/reset-password"))
       ) {
         window.location.replace(target);
       } else {

@@ -59,12 +59,7 @@ export default function OrderRow({
             Mark Delivered
           </Button>
         ) : onMarkDelivered && isFinalized ? (
-          <Button
-            size="small"
-            variant="outlined"
-            disabled
-            sx={{ ml: 1, minWidth: 120 }}
-          >
+          <Button size="small" variant="outlined" disabled sx={{ ml: 1, minWidth: 120 }}>
             Finalized
           </Button>
         ) : null}

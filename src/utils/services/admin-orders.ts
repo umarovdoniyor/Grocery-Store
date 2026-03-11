@@ -93,7 +93,10 @@ export async function fetchAdminOrdersForUiByQuery(input?: {
     return { orders: [], total: 0, error: response.error || "Failed to fetch admin orders" };
   }
 
-  return { orders: (response.list || []).map(mapAdminOrderToUi), total: Number(response.total || 0) };
+  return {
+    orders: (response.list || []).map(mapAdminOrderToUi),
+    total: Number(response.total || 0)
+  };
 }
 
 export async function fetchAdminOrderByIdForUi(
