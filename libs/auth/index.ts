@@ -222,7 +222,6 @@ export const updateUserInfo = (jwtToken: any, member?: any) => {
 export const logOut = () => {
   deleteStorage();
   deleteUserInfo();
-  window.location.reload();
 };
 
 /** =============== deleteStorage ===============*/

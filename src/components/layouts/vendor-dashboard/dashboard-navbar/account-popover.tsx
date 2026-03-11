@@ -21,6 +21,13 @@ export default function AccountPopover() {
   const { user, logout } = useAuth();
   const open = Boolean(anchorEl);
 
+  const handleLogout = () => {
+    logout();
+    if (typeof window !== "undefined") {
+      window.location.replace("/");
+    }
+  };
+
   const handleClose = () => setAnchorEl(null);
 
   const fullName = [user?.name?.firstName, user?.name?.lastName].filter(Boolean).join(" ").trim();
@@ -107,7 +114,7 @@ export default function AccountPopover() {
           Settings
         </MenuItem>
         <Divider />
-        <MenuItem onClick={logout}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>
   );

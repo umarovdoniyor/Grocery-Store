@@ -11,7 +11,7 @@ export default function Layout({ children }: PropsWithChildren) {
   const requiredRole = pathname.startsWith("/admin") ? "admin" : "vendor";
 
   return (
-    <ProtectedRoute requiredRole={requiredRole}>
+    <ProtectedRoute requiredRole={requiredRole} redirectTo="/">
       <VendorDashboardLayout>{children}</VendorDashboardLayout>
     </ProtectedRoute>
   );

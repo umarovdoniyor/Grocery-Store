@@ -79,7 +79,18 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
 
     // Not authenticated - redirect to login
     if (!isAuthenticated) {
-      router.replace(buildAuthRedirect());
+      const target = buildAuthRedirect();
+
+      // Use hard navigation for auth redirects to avoid intercepted modal routes
+      // causing protected dashboard pages to keep re-triggering redirects in background.
+      if (
+        typeof window !== "undefined" &&
+        (target.startsWith("/login") || target.startsWith("/register") || target.startsWith("/reset-password"))
+      ) {
+        window.location.replace(target);
+      } else {
+        router.replace(target);
+      }
       return;
     }
 
