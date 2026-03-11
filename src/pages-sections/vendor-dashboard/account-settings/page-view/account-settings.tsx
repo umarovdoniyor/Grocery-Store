@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 // MUI
@@ -34,6 +34,15 @@ const validationSchema = yup.object().shape({
 });
 
 type CountryOption = { label: string; value: string };
+
+type AccountSettingsFormValues = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  contact: string;
+  city: string;
+  country: CountryOption | null;
+};
 
 const DEFAULT_COVER = "/assets/images/banners/banner-10.png";
 
@@ -78,21 +87,21 @@ export default function AccountSettingsPageView() {
     [user?.id]
   );
 
-  const initialValues = useMemo(
+  const initialValues = useMemo<AccountSettingsFormValues>(
     () => ({
       city: "",
       email: user?.email || "",
       contact: user?.phone || "",
       last_name: user?.name?.lastName || "",
       first_name: user?.name?.firstName || "",
-      country: { label: "", value: "" } as CountryOption
+      country: { label: "", value: "" }
     }),
     [user]
   );
 
-  const methods = useForm({
+  const methods = useForm<AccountSettingsFormValues>({
     defaultValues: initialValues,
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(validationSchema) as Resolver<AccountSettingsFormValues>
   });
 
   const {

@@ -13,7 +13,7 @@ interface UseProtectedRouteOptions {
 const ROLE_LANDING_PATH: Record<UserRole, string> = {
   customer: "/profile",
   vendor: "/vendor/dashboard",
-  admin: "/admin/orders"
+  admin: "/admin/dashboard"
 };
 
 const AUTH_PATHS = new Set(["/login", "/register", "/reset-password"]);

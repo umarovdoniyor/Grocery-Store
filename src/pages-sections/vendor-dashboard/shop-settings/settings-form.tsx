@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 // MUI
@@ -28,12 +28,22 @@ const validationSchema = yup.object().shape({
   coverImage: yup.string().optional()
 });
 
+type ShopSettingsFormValues = {
+  order: number;
+  category: string;
+  shopName: string;
+  shopPhone: string;
+  shopAddress: string;
+  description: string;
+  coverImage?: string;
+};
+
 export default function SettingsForm() {
   const { user, updateMemberProfile } = useAuth();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [shopApiNotice, setShopApiNotice] = useState<string | null>(null);
 
-  const methods = useForm({
+  const methods = useForm<ShopSettingsFormValues>({
     defaultValues: {
       order: 10,
       category: "fashion",
@@ -43,7 +53,7 @@ export default function SettingsForm() {
       description: user?.vendorProfile?.storeDescription || "",
       coverImage: ""
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(validationSchema) as Resolver<ShopSettingsFormValues>
   });
 
   const {

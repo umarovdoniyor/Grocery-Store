@@ -8,11 +8,7 @@ import ProtectedRoute from "components/auth/ProtectedRoute";
 export default function Layout({ children }: PropsWithChildren) {
   const pathname = usePathname();
 
-  const requiredRole = pathname.startsWith("/admin")
-    ? "admin"
-    : pathname.startsWith("/vendor")
-      ? "vendor"
-      : undefined;
+  const requiredRole = pathname.startsWith("/admin") ? "admin" : "vendor";
 
   return (
     <ProtectedRoute requiredRole={requiredRole}>
