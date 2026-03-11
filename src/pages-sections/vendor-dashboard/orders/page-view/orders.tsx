@@ -24,13 +24,17 @@ type Props = {
   orders: Order[];
   basePath?: string;
   showCreateButton?: boolean;
+  updatingOrderId?: string | null;
+  onMarkDelivered?: (orderId: string) => void;
 };
 // =============================================================================
 
 export default function OrdersPageView({
   orders,
   basePath = "/admin/orders",
-  showCreateButton = true
+  showCreateButton = true,
+  updatingOrderId = null,
+  onMarkDelivered
 }: Props) {
   // RESHAPE THE ORDER LIST BASED TABLE HEAD CELL ID
   const filteredOrders = orders.map((item) => ({
@@ -67,7 +71,13 @@ export default function OrdersPageView({
 
               <TableBody>
                 {filteredList.map((order) => (
-                  <OrderRow order={order} basePath={basePath} key={order.id} />
+                  <OrderRow
+                    order={order}
+                    basePath={basePath}
+                    key={order.id}
+                    isUpdating={updatingOrderId === order.id}
+                    onMarkDelivered={onMarkDelivered}
+                  />
                 ))}
               </TableBody>
             </Table>
