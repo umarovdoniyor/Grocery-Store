@@ -33,16 +33,45 @@ export function mapMemberToCustomerRow(member: MemberByAdmin): AdminCustomerRow 
 
 export async function fetchAdminCustomersForUi(): Promise<{
   customers: AdminCustomerRow[];
+  total: number;
   error?: string;
 }> {
   const response = await getMembersByAdmin({ page: 1, limit: 50 });
 
   if (!response.success) {
-    return { customers: [], error: response.error || "Failed to fetch admin members" };
+    return { customers: [], total: 0, error: response.error || "Failed to fetch admin members" };
   }
 
   return {
-    customers: (response.list || []).map(mapMemberToCustomerRow)
+    customers: (response.list || []).map(mapMemberToCustomerRow),
+    total: Number(response.total || 0)
+  };
+}
+
+export async function fetchAdminCustomersForUiByQuery(input?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  memberStatus?: string;
+}): Promise<{
+  customers: AdminCustomerRow[];
+  total: number;
+  error?: string;
+}> {
+  const response = await getMembersByAdmin({
+    page: input?.page || 1,
+    limit: input?.limit || 50,
+    search: input?.search || undefined,
+    memberStatus: input?.memberStatus || undefined
+  });
+
+  if (!response.success) {
+    return { customers: [], total: 0, error: response.error || "Failed to fetch admin members" };
+  }
+
+  return {
+    customers: (response.list || []).map(mapMemberToCustomerRow),
+    total: Number(response.total || 0)
   };
 }
 

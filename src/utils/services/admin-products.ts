@@ -35,16 +35,45 @@ export function mapAdminProductToRow(product: ProductByAdmin): AdminProductRow {
 
 export async function fetchAdminProductsForUi(): Promise<{
   products: AdminProductRow[];
+  total: number;
   error?: string;
 }> {
   const response = await getProductsByAdmin({ page: 1, limit: 100 });
 
   if (!response.success) {
-    return { products: [], error: response.error || "Failed to fetch admin products" };
+    return { products: [], total: 0, error: response.error || "Failed to fetch admin products" };
   }
 
   return {
-    products: (response.list || []).map(mapAdminProductToRow)
+    products: (response.list || []).map(mapAdminProductToRow),
+    total: Number(response.total || 0)
+  };
+}
+
+export async function fetchAdminProductsForUiByQuery(input?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+}): Promise<{
+  products: AdminProductRow[];
+  total: number;
+  error?: string;
+}> {
+  const response = await getProductsByAdmin({
+    page: input?.page || 1,
+    limit: input?.limit || 100,
+    search: input?.search || undefined,
+    status: input?.status
+  });
+
+  if (!response.success) {
+    return { products: [], total: 0, error: response.error || "Failed to fetch admin products" };
+  }
+
+  return {
+    products: (response.list || []).map(mapAdminProductToRow),
+    total: Number(response.total || 0)
   };
 }
 

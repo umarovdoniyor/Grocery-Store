@@ -1,28 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
 import { ProductsPageView } from "pages-sections/vendor-dashboard/products/page-view";
 import {
   AdminProductRow,
-  fetchAdminProductsForUi,
+  fetchAdminProductsForUiByQuery,
   removeAdminProductForUi,
   updateAdminProductPublishedForUi
 } from "utils/services/admin-products";
 
 export default function ProductsClient() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<AdminProductRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingProductId, setUpdatingProductId] = useState<string | null>(null);
   const [removingProductId, setRemovingProductId] = useState<string | null>(null);
 
+  const query = searchParams.get("q")?.trim() || "";
+  const statusRaw = searchParams.get("status")?.trim().toUpperCase() || "";
+  const status = ["DRAFT", "PUBLISHED", "ARCHIVED"].includes(statusRaw)
+    ? (statusRaw as "DRAFT" | "PUBLISHED" | "ARCHIVED")
+    : undefined;
+
   useEffect(() => {
     const loadProducts = async () => {
-      const response = await fetchAdminProductsForUi();
+      setLoading(true);
+      const response = await fetchAdminProductsForUiByQuery({
+        page: 1,
+        limit: 100,
+        search: query || undefined,
+        status
+      });
 
       if (response.error) {
         setError(response.error);
+      } else {
+        setError(null);
       }
 
       setProducts(response.products);
@@ -30,7 +46,7 @@ export default function ProductsClient() {
     };
 
     loadProducts();
-  }, []);
+  }, [query, status]);
 
   const handleTogglePublished = async (product: AdminProductRow) => {
     setUpdatingProductId(product.id);

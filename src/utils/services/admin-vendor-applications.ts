@@ -36,6 +36,7 @@ export function mapVendorApplicationToSellerRow(
 
 export async function fetchAdminVendorApplicationsForUi(): Promise<{
   sellers: AdminSellerRow[];
+  total: number;
   error?: string;
 }> {
   const response = await getVendorApplicationsByAdmin({
@@ -44,11 +45,39 @@ export async function fetchAdminVendorApplicationsForUi(): Promise<{
   });
 
   if (!response.success) {
-    return { sellers: [], error: response.error || "Failed to fetch vendor applications" };
+    return { sellers: [], total: 0, error: response.error || "Failed to fetch vendor applications" };
   }
 
   return {
-    sellers: (response.list || []).map(mapVendorApplicationToSellerRow)
+    sellers: (response.list || []).map(mapVendorApplicationToSellerRow),
+    total: Number(response.total || 0)
+  };
+}
+
+export async function fetchAdminVendorApplicationsForUiByQuery(input?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+}): Promise<{
+  sellers: AdminSellerRow[];
+  total: number;
+  error?: string;
+}> {
+  const response = await getVendorApplicationsByAdmin({
+    page: input?.page || 1,
+    limit: input?.limit || 100,
+    search: input?.search || undefined,
+    status: input?.status
+  });
+
+  if (!response.success) {
+    return { sellers: [], total: 0, error: response.error || "Failed to fetch vendor applications" };
+  }
+
+  return {
+    sellers: (response.list || []).map(mapVendorApplicationToSellerRow),
+    total: Number(response.total || 0)
   };
 }
 

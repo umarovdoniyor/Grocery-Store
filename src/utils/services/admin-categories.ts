@@ -25,15 +25,44 @@ export function mapAdminCategoryToUi(input: {
 
 export async function fetchAdminCategoriesForUi(): Promise<{
   categories: Category[];
+  total: number;
   error?: string;
 }> {
   const response = await getCategoriesByAdmin({ page: 1, limit: 100 });
 
   if (!response.success) {
-    return { categories: [], error: response.error || "Failed to fetch categories by admin" };
+    return { categories: [], total: 0, error: response.error || "Failed to fetch categories by admin" };
   }
 
   return {
-    categories: (response.list || []).map(mapAdminCategoryToUi)
+    categories: (response.list || []).map(mapAdminCategoryToUi),
+    total: Number(response.total || 0)
+  };
+}
+
+export async function fetchAdminCategoriesForUiByQuery(input?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "ACTIVE" | "INACTIVE";
+}): Promise<{
+  categories: Category[];
+  total: number;
+  error?: string;
+}> {
+  const response = await getCategoriesByAdmin({
+    page: input?.page || 1,
+    limit: input?.limit || 100,
+    search: input?.search || undefined,
+    status: input?.status
+  });
+
+  if (!response.success) {
+    return { categories: [], total: 0, error: response.error || "Failed to fetch categories by admin" };
+  }
+
+  return {
+    categories: (response.list || []).map(mapAdminCategoryToUi),
+    total: Number(response.total || 0)
   };
 }

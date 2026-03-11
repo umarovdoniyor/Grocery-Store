@@ -1,26 +1,42 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
 import { SellersPageView } from "pages-sections/vendor-dashboard/sellers/page-view";
 import {
   AdminSellerRow,
-  fetchAdminVendorApplicationsForUi,
+  fetchAdminVendorApplicationsForUiByQuery,
   updateAdminVendorApplicationForUi
 } from "utils/services/admin-vendor-applications";
 
 export default function SellersClient() {
+  const searchParams = useSearchParams();
   const [sellers, setSellers] = useState<AdminSellerRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingSellerId, setUpdatingSellerId] = useState<string | null>(null);
 
+  const query = searchParams.get("q")?.trim() || "";
+  const statusRaw = searchParams.get("status")?.trim().toUpperCase() || "";
+  const status = ["PENDING", "APPROVED", "REJECTED"].includes(statusRaw)
+    ? (statusRaw as "PENDING" | "APPROVED" | "REJECTED")
+    : undefined;
+
   useEffect(() => {
     const loadApplications = async () => {
-      const response = await fetchAdminVendorApplicationsForUi();
+      setLoading(true);
+      const response = await fetchAdminVendorApplicationsForUiByQuery({
+        page: 1,
+        limit: 100,
+        search: query || undefined,
+        status
+      });
 
       if (response.error) {
         setError(response.error);
+      } else {
+        setError(null);
       }
 
       setSellers(response.sellers);
@@ -28,7 +44,7 @@ export default function SellersClient() {
     };
 
     loadApplications();
-  }, []);
+  }, [query, status]);
 
   const updateSellerStatus = async (
     seller: AdminSellerRow,
@@ -55,7 +71,7 @@ export default function SellersClient() {
         item.id === seller.id
           ? {
               ...item,
-              status: response.status as string
+              status: response.status ?? item.status
             }
           : item
       )

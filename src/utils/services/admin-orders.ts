@@ -76,6 +76,26 @@ export async function fetchAdminOrdersForUi(): Promise<{ orders: Order[]; error?
   return { orders: (response.list || []).map(mapAdminOrderToUi) };
 }
 
+export async function fetchAdminOrdersForUiByQuery(input?: {
+  page?: number;
+  limit?: number;
+  orderNo?: string;
+  status?: string;
+}): Promise<{ orders: Order[]; total: number; error?: string }> {
+  const response = await getOrdersByAdmin({
+    page: input?.page || 1,
+    limit: input?.limit || 50,
+    orderNo: input?.orderNo || undefined,
+    status: input?.status || undefined
+  });
+
+  if (!response.success) {
+    return { orders: [], total: 0, error: response.error || "Failed to fetch admin orders" };
+  }
+
+  return { orders: (response.list || []).map(mapAdminOrderToUi), total: Number(response.total || 0) };
+}
+
 export async function fetchAdminOrderByIdForUi(
   orderId: string
 ): Promise<{ order: Order | null; error?: string }> {
