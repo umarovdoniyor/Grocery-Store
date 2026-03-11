@@ -4,6 +4,11 @@ import { UserRole } from "models/User.model";
 const adminNavigation = [
   { type: "label", label: "Admin" },
   {
+    name: "Dashboard",
+    icon: duotone.Dashboard,
+    path: "/admin/dashboard"
+  },
+  {
     name: "Orders",
     icon: duotone.Order,
     path: "/admin/orders"
@@ -62,7 +67,7 @@ const vendorNavigation = [
   },
   {
     name: "Shop Settings",
-    icon: duotone.Setting,
+    icon: duotone.Settings,
     path: "/vendor/shop-settings"
   }
 ];
