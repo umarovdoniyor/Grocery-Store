@@ -28,7 +28,7 @@ export interface CreateCategoryInput {
   image?: string;
   status?: "ACTIVE" | "INACTIVE";
   sortOrder?: number;
-  parentId?: string;
+  parentId?: string | null;
 }
 
 export interface Category {
@@ -54,7 +54,7 @@ export interface UpdateCategoryInput {
   image?: string;
   status?: "ACTIVE" | "INACTIVE";
   sortOrder?: number;
-  parentId?: string;
+  parentId?: string | null;
 }
 
 export interface CategoryInquiryInput {
@@ -62,7 +62,7 @@ export interface CategoryInquiryInput {
   limit: number;
   status?: "ACTIVE" | "INACTIVE";
   search?: string;
-  parentId?: string;
+  parentId?: string | null;
 }
 
 export interface AdminProductsInquiryInput {

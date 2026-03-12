@@ -1,7 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
+import CircularProgress from "@mui/material/CircularProgress";
 // MUI ICON COMPONENTS
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
@@ -16,17 +15,27 @@ interface Category {
   name: string;
   slug: string;
   image: string;
-  level: number;
-  featured: boolean;
+  parentName: string;
+  active: boolean;
 }
 
-type Props = { category: Category };
+type Props = {
+  category: Category;
+  isUpdating?: boolean;
+  isRemoving?: boolean;
+  onToggleStatus: (category: Category) => void;
+  onRemoveCategory: (category: Category) => void;
+};
 // ========================================================================
 
-export default function CategoryRow({ category }: Props) {
-  const { image, name, level, featured, id, slug } = category;
-
-  const [featuredCategory, setFeaturedCategory] = useState(featured);
+export default function CategoryRow({
+  category,
+  isUpdating,
+  isRemoving,
+  onToggleStatus,
+  onRemoveCategory
+}: Props) {
+  const { image, name, parentName, active, id, slug } = category;
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
@@ -38,24 +47,22 @@ export default function CategoryRow({ category }: Props) {
 
       <StyledTableCell align="left">
         <Avatar variant="rounded">
-          <Image
-            fill
+          <img
             alt={name}
             src={image}
-            sizes="(100%, 100%)"
-            style={{ objectFit: "contain" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         </Avatar>
       </StyledTableCell>
 
-      <StyledTableCell align="left">{level}</StyledTableCell>
+      <StyledTableCell align="left">{parentName}</StyledTableCell>
 
       <StyledTableCell align="left">
-        <BazaarSwitch
-          color="info"
-          checked={featuredCategory}
-          onChange={() => setFeaturedCategory((state) => !state)}
-        />
+        {isUpdating ? (
+          <CircularProgress size={18} color="info" />
+        ) : (
+          <BazaarSwitch color="info" checked={active} onChange={() => onToggleStatus(category)} />
+        )}
       </StyledTableCell>
 
       <StyledTableCell align="center">
@@ -65,9 +72,13 @@ export default function CategoryRow({ category }: Props) {
           </StyledIconButton>
         </Link>
 
-        <StyledIconButton>
-          <Delete />
-        </StyledIconButton>
+        {isRemoving ? (
+          <CircularProgress size={18} color="error" />
+        ) : (
+          <StyledIconButton onClick={() => onRemoveCategory(category)}>
+            <Delete />
+          </StyledIconButton>
+        )}
       </StyledTableCell>
     </StyledTableRow>
   );

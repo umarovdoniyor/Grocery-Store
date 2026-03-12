@@ -10,32 +10,33 @@ import OverlayScrollbar from "components/overlay-scrollbar";
 import { TableHeader, TablePagination } from "components/data-table";
 // GLOBAL CUSTOM HOOK
 import useMuiTable from "hooks/useMuiTable";
+import type { AdminCategoryRow } from "utils/services/admin-categories";
 // LOCAL CUSTOM COMPONENT
 import CategoryRow from "../category-row";
 import SearchArea from "../../search-box";
 import PageWrapper from "../../page-wrapper";
-// CUSTOM DATA MODEL
-import Category from "models/Category.model";
 // TABLE HEAD COLUMN DATA
 import { tableHeading } from "../table-heading";
 
 // =============================================================================
-type Props = { categories: Category[] };
+type Props = {
+  categories: AdminCategoryRow[];
+  updatingCategoryId?: string | null;
+  removingCategoryId?: string | null;
+  onToggleStatus: (category: AdminCategoryRow) => void;
+  onRemoveCategory: (category: AdminCategoryRow) => void;
+};
 // =============================================================================
 
-const CategoriesPageView = ({ categories }: Props) => {
-  // RESHAPE THE PRODUCT LIST BASED TABLE HEAD CELL ID
-  const filteredCategories = categories.map((item) => ({
-    id: item.id,
-    name: item.name,
-    slug: item.slug,
-    image: item.image!,
-    featured: item.featured!,
-    level: 0
-  }));
-
+const CategoriesPageView = ({
+  categories,
+  updatingCategoryId,
+  removingCategoryId,
+  onToggleStatus,
+  onRemoveCategory
+}: Props) => {
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
-    useMuiTable({ listData: filteredCategories });
+    useMuiTable({ listData: categories });
 
   return (
     <PageWrapper title="Product Categories">
@@ -58,7 +59,14 @@ const CategoriesPageView = ({ categories }: Props) => {
 
               <TableBody>
                 {filteredList.map((category) => (
-                  <CategoryRow key={category.id} category={category} />
+                  <CategoryRow
+                    key={category.id}
+                    category={category}
+                    isUpdating={updatingCategoryId === category.id}
+                    isRemoving={removingCategoryId === category.id}
+                    onToggleStatus={onToggleStatus}
+                    onRemoveCategory={onRemoveCategory}
+                  />
                 ))}
               </TableBody>
             </Table>

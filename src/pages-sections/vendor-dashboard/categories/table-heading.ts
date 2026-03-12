@@ -3,7 +3,7 @@ export const tableHeading = [
   { id: "id", label: "ID", align: "left" },
   { id: "name", label: "Name", align: "left" },
   { id: "image", label: "Image", align: "left" },
-  { id: "level", label: "Level", align: "left" },
-  { id: "featured", label: "Featured", align: "left" },
+  { id: "parentName", label: "Parent", align: "left" },
+  { id: "active", label: "Status", align: "left" },
   { id: "action", label: "Action", align: "center" }
 ];
