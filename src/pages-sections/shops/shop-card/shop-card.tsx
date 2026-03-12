@@ -43,13 +43,7 @@ export default function ShopCard(props: Partial<Shop>) {
       <FlexBetween pl={3} pr={1}>
         <Link href={`/shops/${slug}`} passHref>
           <StyledAvatar variant="rounded">
-            <Image
-              fill
-              alt={name!}
-              src={profilePicture!}
-              sizes="(75px, 75px)"
-              unoptimized
-            />
+            <Image fill alt={name!} src={profilePicture!} sizes="(75px, 75px)" unoptimized />
           </StyledAvatar>
         </Link>
 

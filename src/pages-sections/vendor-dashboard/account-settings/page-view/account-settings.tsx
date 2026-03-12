@@ -158,7 +158,7 @@ export default function AccountSettingsPageView() {
       }
 
       setCoverImagePath(uploadResult.path);
-      
+
       const vendorUpdateResult = await updateMyVendorProfile({
         coverImageUrl: uploadResult.path.trim()
       });

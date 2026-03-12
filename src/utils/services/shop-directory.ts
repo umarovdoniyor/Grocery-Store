@@ -374,7 +374,12 @@ const getVendorProducts = async ({
   };
 };
 
-const getVendorShopsData = async (page: number, limit: number, search = "", sort: string = "newest") => {
+const getVendorShopsData = async (
+  page: number,
+  limit: number,
+  search = "",
+  sort: string = "newest"
+) => {
   const vendorsResponse = await getVendors({
     page,
     limit,
@@ -684,47 +689,50 @@ export const getAvailableShops = async () => {
   }));
 };
 
-export const getAvailableShopsByCategory = async (categoryId: string, excludedVendorId?: string) => {
+export const getAvailableShopsByCategory = async (
+  categoryId: string,
+  excludedVendorId?: string
+) => {
   if (!categoryId) return [];
 
-    const productsResponse = await getProducts({
-      page: 1,
-      limit: CATEGORY_LOOKUP_PRODUCT_LIMIT,
-      categoryIds: [categoryId],
-      sortBy: "POPULAR"
-    });
+  const productsResponse = await getProducts({
+    page: 1,
+    limit: CATEGORY_LOOKUP_PRODUCT_LIMIT,
+    categoryIds: [categoryId],
+    sortBy: "POPULAR"
+  });
 
-    if (!productsResponse.success || !productsResponse.list?.length) return [];
+  if (!productsResponse.success || !productsResponse.list?.length) return [];
 
-    const detailResults = await Promise.allSettled(
-      productsResponse.list.map((product) => getProductById(product._id))
-    );
+  const detailResults = await Promise.allSettled(
+    productsResponse.list.map((product) => getProductById(product._id))
+  );
 
-    const vendorIds = new Set<string>();
+  const vendorIds = new Set<string>();
 
-    detailResults.forEach((result) => {
-      if (result.status !== "fulfilled") return;
+  detailResults.forEach((result) => {
+    if (result.status !== "fulfilled") return;
 
-      const vendorId = result.value.product?.vendor?._id;
-      if (!vendorId) return;
-      if (excludedVendorId && vendorId === excludedVendorId) return;
+    const vendorId = result.value.product?.vendor?._id;
+    if (!vendorId) return;
+    if (excludedVendorId && vendorId === excludedVendorId) return;
 
-      vendorIds.add(vendorId);
-    });
+    vendorIds.add(vendorId);
+  });
 
-    if (vendorIds.size === 0) return [];
+  if (vendorIds.size === 0) return [];
 
-    const vendorsResponse = await getVendors({
-      page: 1,
-      limit: 50,
-      search: "",
-      status: "ACTIVE",
-      sortBy: "POPULAR"
-    });
+  const vendorsResponse = await getVendors({
+    page: 1,
+    limit: 50,
+    search: "",
+    status: "ACTIVE",
+    sortBy: "POPULAR"
+  });
 
-    if (!vendorsResponse.success || !vendorsResponse.list?.length) return [];
+  if (!vendorsResponse.success || !vendorsResponse.list?.length) return [];
 
-    const vendorMap = new Map(vendorsResponse.list.map((vendor) => [vendor._id, vendor]));
+  const vendorMap = new Map(vendorsResponse.list.map((vendor) => [vendor._id, vendor]));
 
   return Array.from(vendorIds)
     .map((vendorId) => vendorMap.get(vendorId))

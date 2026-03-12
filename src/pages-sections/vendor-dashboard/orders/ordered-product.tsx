@@ -82,11 +82,7 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
           >
             {nextStatusOptions.map((option) => (
               <MenuItem value={option} key={option}>
-                 {option === "PACKING"
-                   ? "Packing"
-                   : option === "SHIPPED"
-                     ? "Shipped"
-                     : "Delivered"}
+                {option === "PACKING" ? "Packing" : option === "SHIPPED" ? "Shipped" : "Delivered"}
               </MenuItem>
             ))}
           </TextField>
