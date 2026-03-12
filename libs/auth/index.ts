@@ -103,7 +103,8 @@ export const signUp = async (
   nickname: string,
   firstName: string,
   lastName: string,
-  phone?: string
+  phone?: string,
+  address?: string
 ): Promise<void> => {
   try {
     // 1. Request JWT token from server after signup
@@ -113,7 +114,8 @@ export const signUp = async (
       nickname,
       firstName,
       lastName,
-      phone
+      phone,
+      address
     });
 
     // 2. If token received, store it and update user info
@@ -137,7 +139,8 @@ const requestSignUpJwtToken = async ({
   nickname,
   firstName,
   lastName,
-  phone
+  phone,
+  address
 }: {
   email: string;
   password: string;
@@ -145,6 +148,7 @@ const requestSignUpJwtToken = async ({
   firstName: string;
   lastName: string;
   phone?: string;
+  address?: string;
 }): Promise<{ jwtToken: string; member: any }> => {
   // 1. Get Apollo Client instance
   const apolloClient = await initializeApollo();
@@ -160,7 +164,8 @@ const requestSignUpJwtToken = async ({
           memberNickname: nickname,
           memberFirstName: firstName,
           memberLastName: lastName,
-          memberPhone: phone
+          memberPhone: phone,
+          memberAddress: address
         }
       },
       fetchPolicy: "network-only" // Don't use cache, always fetch fresh

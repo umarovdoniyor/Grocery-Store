@@ -23,19 +23,32 @@ import { useAuth } from "contexts/AuthContext";
 
 // REGISTER FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
-  name: yup
+  firstName: yup
     .string()
     .trim()
-    .min(2, "Name must be at least 2 characters")
-    .required("Name is required"),
+    .min(1, "First name is required")
+    .required("First name is required"),
+  lastName: yup.string().trim().min(1, "Last name is required").required("Last name is required"),
+  nickname: yup
+    .string()
+    .trim()
+    .min(3, "Nickname must be at least 3 characters")
+    .required("Nickname is required"),
   email: yup.string().email("Invalid Email Address").required("Email is required"),
   password: yup
     .string()
     .min(8, "Password must be at least 8 characters")
-    .matches(/[A-Z]/, "Password must include at least one uppercase letter")
-    .matches(/[a-z]/, "Password must include at least one lowercase letter")
-    .matches(/[0-9]/, "Password must include at least one number")
     .required("Password is required"),
+  phone: yup
+    .string()
+    .trim()
+    .optional()
+    .test(
+      "is-international-phone",
+      "Phone must be in international format, e.g. +1234567890",
+      (value) => !value || /^\+[1-9]\d{7,14}$/.test(value)
+    ),
+  address: yup.string().trim().optional(),
   re_password: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
@@ -63,9 +76,13 @@ export default function RegisterPageView() {
   };
 
   const initialValues = {
-    name: "",
+    firstName: "",
+    lastName: "",
+    nickname: "",
     email: "",
     password: "",
+    phone: "",
+    address: "",
     re_password: "",
     agreement: false
   };
@@ -117,9 +134,13 @@ export default function RegisterPageView() {
     setError(null);
     setSuccessMessage(null);
     const result = await registerUser({
-      name: values.name.trim(),
+      firstName: values.firstName.trim(),
+      lastName: values.lastName.trim(),
+      nickname: values.nickname.trim(),
       email: values.email.trim().toLowerCase(),
       password: values.password,
+      phone: values.phone?.trim() || undefined,
+      address: values.address?.trim() || undefined,
       role: "customer"
     });
 
@@ -131,7 +152,21 @@ export default function RegisterPageView() {
       const message = result.error || "Registration failed";
       setError(message);
 
-      if (/already exists|duplicate|taken/i.test(message)) {
+      if (/nickname|taken/i.test(message)) {
+        setFieldError("nickname", {
+          type: "server",
+          message: "This nickname is already taken"
+        });
+      }
+
+      if (/phone|already exists|duplicate/i.test(message)) {
+        setFieldError("phone", {
+          type: "server",
+          message: "This phone number is already in use"
+        });
+      }
+
+      if (/email|already exists|duplicate|taken/i.test(message)) {
         setFieldError("email", {
           type: "server",
           message: "An account with this email already exists"
@@ -155,12 +190,22 @@ export default function RegisterPageView() {
       )}
 
       <div className="mb-1">
-        <Label>Full Name</Label>
-        <TextField fullWidth name="name" size="medium" placeholder="Ralph Awards" />
+        <Label>First Name</Label>
+        <TextField fullWidth name="firstName" size="medium" placeholder="Ralph" />
       </div>
 
       <div className="mb-1">
-        <Label>Email or Phone Number</Label>
+        <Label>Last Name</Label>
+        <TextField fullWidth name="lastName" size="medium" placeholder="Awards" />
+      </div>
+
+      <div className="mb-1">
+        <Label>Nickname</Label>
+        <TextField fullWidth name="nickname" size="medium" placeholder="ralph_awards" />
+      </div>
+
+      <div className="mb-1">
+        <Label>Email Address</Label>
         <TextField
           fullWidth
           name="email"
@@ -168,6 +213,16 @@ export default function RegisterPageView() {
           type="email"
           placeholder="example@mail.com"
         />
+      </div>
+
+      <div className="mb-1">
+        <Label>Phone Number (Optional)</Label>
+        <TextField fullWidth name="phone" size="medium" placeholder="+1234567890" />
+      </div>
+
+      <div className="mb-1">
+        <Label>Address (Optional)</Label>
+        <TextField fullWidth name="address" size="medium" placeholder="Street, city, country" />
       </div>
 
       <div className="mb-1">

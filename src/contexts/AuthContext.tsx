@@ -43,9 +43,13 @@ interface AuthContextType {
 }
 
 interface RegisterData {
-  name: string;
+  firstName: string;
+  lastName: string;
+  nickname: string;
   email: string;
   password: string;
+  phone?: string;
+  address?: string;
   role?: UserRole;
   // Vendor-specific fields
   storeName?: string;
@@ -257,18 +261,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const register = async (registerData: RegisterData) => {
     try {
-      const { name, email, password, role = "customer" } = registerData;
+      const {
+        firstName,
+        lastName,
+        nickname,
+        email,
+        password,
+        phone,
+        address,
+        role = "customer"
+      } = registerData;
 
       if (role === "vendor") {
         return { success: false, error: "Vendor registration is not enabled yet." };
       }
 
-      const nameParts = name.trim().split(/\s+/);
-      const firstName = nameParts[0] || name;
-      const lastName = nameParts.slice(1).join(" ") || "User";
-      const nickname = firstName;
-
-      await authSignUp(email, password, nickname, firstName, lastName);
+      await authSignUp(email, password, nickname, firstName, lastName, phone, address);
 
       const memberData = userVar();
       const userData = mapMemberToUser(memberData);
