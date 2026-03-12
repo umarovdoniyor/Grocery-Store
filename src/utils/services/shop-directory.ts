@@ -1,8 +1,8 @@
-import { cache } from "react";
 import type Shop from "models/Shop.model";
 import type Product from "models/Product.model";
 import { getProductById, getProducts } from "../../../libs/product";
 import { getProductReviews } from "../../../libs/review";
+import { toPublicImageUrl } from "../../../libs/upload";
 import {
   getVendorBySlug,
   getVendorProducts as getVendorProductsApi,
@@ -32,9 +32,57 @@ const mapShopSort = (sort?: string): "NEWEST" | "OLDEST" | "NAME_ASC" | "NAME_DE
   return "NEWEST";
 };
 
-const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE) => {
-  if (!value) return fallback;
-  return value;
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const addVersionQuery = (url: string, version?: string | null) => {
+  if (!version) return url;
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${encodeURIComponent(version)}`;
+};
+
+const resolveVendorImage = (value?: string | null, version?: string | null) => {
+  if (!value) return "";
+
+  const normalized = value.replace(/\\/g, "/").trim();
+  if (!normalized) return "";
+
+  if (
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://") ||
+    normalized.startsWith("blob:")
+  ) {
+    return addVersionQuery(normalized, version);
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) {
+    const localPath = normalized.startsWith("/") ? normalized : `/${normalized}`;
+    return addVersionQuery(localPath, version);
+  }
+
+  return addVersionQuery(toPublicImageUrl(normalized, apiBase), version);
+};
+
+const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE, version?: string | null) => {
+  const resolved = resolveVendorImage(value, version);
+  if (!resolved) return fallback;
+  return resolved;
 };
 
 const mapProductToUi = (
@@ -177,7 +225,7 @@ const mapVendorToShop = (vendor: VendorSummary): VendorShop => {
       id: vendor._id,
       email: "",
       phone: vendor.memberPhone || "-",
-      avatar: safeImage(vendor.memberImage, DEFAULT_PROFILE),
+      avatar: safeImage(vendor.memberImage, DEFAULT_PROFILE, vendor.updatedAt),
       password: "",
       dateOfBirth: "",
       verified: vendor.verified,
@@ -188,8 +236,8 @@ const mapVendorToShop = (vendor: VendorSummary): VendorShop => {
     phone: vendor.memberPhone || "-",
     address: vendor.memberAddress || "Address not provided",
     verified: vendor.verified,
-    coverPicture: safeImage(vendor.coverImage, DEFAULT_COVER),
-    profilePicture: safeImage(vendor.memberImage, DEFAULT_PROFILE),
+    coverPicture: safeImage(vendor.coverImage, DEFAULT_COVER, vendor.updatedAt),
+    profilePicture: safeImage(vendor.memberImage, DEFAULT_PROFILE, vendor.updatedAt),
     socialLinks: {
       facebook: null,
       youtube: null,
@@ -326,27 +374,41 @@ const getVendorProducts = async ({
   };
 };
 
-const getVendorShopsData = cache(
-  async (page: number, limit: number, search = "", sort: string = "newest") => {
-    const vendorsResponse = await getVendors({
-      page,
-      limit,
-      search,
-      status: "ACTIVE",
-      sortBy: mapShopSort(sort)
-    });
+const getVendorShopsData = async (page: number, limit: number, search = "", sort: string = "newest") => {
+  const vendorsResponse = await getVendors({
+    page,
+    limit,
+    search,
+    status: "ACTIVE",
+    sortBy: mapShopSort(sort)
+  });
 
-    if (!vendorsResponse.success) {
-      console.error("[shops] Failed to fetch vendors:", vendorsResponse.error);
-      return { shops: [] as VendorShop[], total: 0 };
-    }
-
-    return {
-      shops: (vendorsResponse.list || []).map(mapVendorToShop),
-      total: vendorsResponse.total || 0
-    };
+  if (!vendorsResponse.success) {
+    console.error("[shops] Failed to fetch vendors:", vendorsResponse.error);
+    return { shops: [] as VendorShop[], total: 0 };
   }
-);
+
+  const enrichedVendors = await Promise.all(
+    (vendorsResponse.list || []).map(async (vendor) => {
+      if (vendor.coverImage) return vendor;
+
+      const bySlug = await getVendorBySlug(vendor.slug);
+      if (!bySlug.success || !bySlug.vendor?.coverImage) {
+        return vendor;
+      }
+
+      return {
+        ...vendor,
+        coverImage: bySlug.vendor.coverImage
+      };
+    })
+  );
+
+  return {
+    shops: enrichedVendors.map(mapVendorToShop),
+    total: vendorsResponse.total || 0
+  };
+};
 
 const findVendorSlugById = async (vendorId: string): Promise<string | null> => {
   if (!vendorId) return null;
@@ -479,7 +541,7 @@ const findVendorBySearch = async (term: string): Promise<VendorSummary | null> =
   return null;
 };
 
-export const getShopList = cache(async (page = 1, options?: { q?: string; sort?: string }) => {
+export const getShopList = async (page = 1, options?: { q?: string; sort?: string }) => {
   const currentPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
   const query = (options?.q || "").trim();
   const sort = options?.sort || "newest";
@@ -498,12 +560,12 @@ export const getShopList = cache(async (page = 1, options?: { q?: string; sort?:
       lastIndex
     }
   };
-});
+};
 
-export const getShopSlugs = cache(async () => {
+export const getShopSlugs = async () => {
   const { shops } = await getVendorShopsData(1, 50, "", "newest");
   return shops.map((item) => ({ params: { slug: item.slug } }));
-});
+};
 
 export const getProductsBySlug = async (
   slug: string,
@@ -612,7 +674,7 @@ export const getProductsBySlug = async (
   };
 };
 
-export const getAvailableShops = cache(async () => {
+export const getAvailableShops = async () => {
   const { shops } = await getVendorShopsData(1, 3);
 
   return shops.slice(0, 3).map((item) => ({
@@ -620,11 +682,10 @@ export const getAvailableShops = cache(async () => {
     imgUrl: item.profilePicture || DEFAULT_PROFILE,
     url: `/shops/${item.slug}`
   }));
-});
+};
 
-export const getAvailableShopsByCategory = cache(
-  async (categoryId: string, excludedVendorId?: string) => {
-    if (!categoryId) return [];
+export const getAvailableShopsByCategory = async (categoryId: string, excludedVendorId?: string) => {
+  if (!categoryId) return [];
 
     const productsResponse = await getProducts({
       page: 1,
@@ -665,14 +726,13 @@ export const getAvailableShopsByCategory = cache(
 
     const vendorMap = new Map(vendorsResponse.list.map((vendor) => [vendor._id, vendor]));
 
-    return Array.from(vendorIds)
-      .map((vendorId) => vendorMap.get(vendorId))
-      .filter((vendor): vendor is NonNullable<typeof vendor> => Boolean(vendor))
-      .slice(0, 4)
-      .map((vendor) => ({
-        name: vendor.storeName,
-        imgUrl: safeImage(vendor.memberImage, DEFAULT_PROFILE),
-        url: `/shops/${vendor.slug}`
-      }));
-  }
-);
+  return Array.from(vendorIds)
+    .map((vendorId) => vendorMap.get(vendorId))
+    .filter((vendor): vendor is NonNullable<typeof vendor> => Boolean(vendor))
+    .slice(0, 4)
+    .map((vendor) => ({
+      name: vendor.storeName,
+      imgUrl: safeImage(vendor.memberImage, DEFAULT_PROFILE),
+      url: `/shops/${vendor.slug}`
+    }));
+};

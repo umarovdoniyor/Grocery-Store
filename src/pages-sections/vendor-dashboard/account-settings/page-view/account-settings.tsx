@@ -22,6 +22,7 @@ import {
   uploadMemberAvatar,
   uploadVendorImage
 } from "../../../../../libs/upload";
+import { updateMyVendorProfile } from "../../../../../libs/vendor";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
 
 const validationSchema = yup.object().shape({
@@ -157,14 +158,22 @@ export default function AccountSettingsPageView() {
       }
 
       setCoverImagePath(uploadResult.path);
+      
+      const vendorUpdateResult = await updateMyVendorProfile({
+        coverImageUrl: uploadResult.path.trim()
+      });
+
+      if (!vendorUpdateResult.success) {
+        await sweetMixinErrorAlert(vendorUpdateResult.error || "Failed to save shop image");
+        return;
+      }
+
       if (typeof window !== "undefined") {
         localStorage.setItem(storageKey, uploadResult.path);
       }
 
-      setShopImageNotice(
-        "Shop image uploaded. It is currently saved locally in browser for preview until shop-profile update API is available."
-      );
-      await sweetTopSmallSuccessAlert("Shop image uploaded");
+      setShopImageNotice("Shop image uploaded and saved to your vendor profile.");
+      await sweetTopSmallSuccessAlert("Shop image updated");
     } catch (error: any) {
       await sweetMixinErrorAlert(error?.message || "Failed to upload shop image");
     } finally {
