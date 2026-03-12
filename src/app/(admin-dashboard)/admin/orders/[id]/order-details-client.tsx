@@ -59,7 +59,7 @@ export default function OrderDetailsClient({ id }: Props) {
     }
 
     setOrder(response.order);
-    enqueueSnackbar("Order marked as delivered (test action).", { variant: "success" });
+    enqueueSnackbar("Order marked as delivered.", { variant: "success" });
   };
 
   return (

@@ -57,8 +57,14 @@ export default function OrderedProducts({ order }: Props) {
         />
       </FlexBetween>
 
+      {!order.isDelivered && (
+        <Typography px={2} py={1.5} variant="body2" color="text.secondary">
+          Reviews are available after the order is marked as delivered.
+        </Typography>
+      )}
+
       {items.map((item, ind) => {
-        const canReview = Boolean(item.product_id);
+        const canReview = order.isDelivered && Boolean(item.product_id);
 
         return (
           <FlexBetween px={2} py={1} flexWrap="wrap" key={`${item.product_id || ind}`} gap={1}>
@@ -96,7 +102,7 @@ export default function OrderedProducts({ order }: Props) {
                 })
               }
             >
-              Write a Review
+              {canReview ? "Write a Review" : "Review Locked"}
             </Button>
           </FlexBetween>
         );

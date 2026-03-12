@@ -30,7 +30,7 @@ const BASE_MENUS = [
       {
         icon: "CreditCard",
         href: "/payment-methods",
-        title: "Payment Methods",
+        title: "Demo Payments",
         countKey: "paymentMethods"
       }
     ]

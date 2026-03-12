@@ -8,10 +8,20 @@ import DashboardHeader from "../../dashboard-header";
 import Order from "models/Order.model";
 
 // =============================================================
-type Props = { order: Order };
+type Props = {
+  order: Order;
+  canCancel?: boolean;
+  isCancelling?: boolean;
+  onCancelOrder?: () => void;
+};
 // =============================================================
 
-export function OrderDetailsPageView({ order }: Props) {
+export function OrderDetailsPageView({
+  order,
+  canCancel = false,
+  isCancelling = false,
+  onCancelOrder
+}: Props) {
   return (
     <Fragment>
       <DashboardHeader href="/orders" title="Order Details" />
@@ -24,7 +34,12 @@ export function OrderDetailsPageView({ order }: Props) {
 
       <OrderedProducts order={order} />
 
-      <OrderSummery order={order} />
+      <OrderSummery
+        order={order}
+        canCancel={canCancel}
+        isCancelling={isCancelling}
+        onCancelOrder={onCancelOrder}
+      />
     </Fragment>
   );
 }

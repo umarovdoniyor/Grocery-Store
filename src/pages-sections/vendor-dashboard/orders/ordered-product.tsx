@@ -26,12 +26,21 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
   const { item_id, product_img, product_name, product_price, product_quantity, status } =
     product || {};
 
-  const statusValue: Status =
+  const normalizedStatus =
     status === "DELIVERED" || status === "Delivered"
       ? "DELIVERED"
-      : status === "SHIPPED" || status === "Processing"
+      : status === "SHIPPED"
         ? "SHIPPED"
         : "PACKING";
+
+  const statusValue: Status = normalizedStatus;
+  const nextStatusOptions: Status[] =
+    normalizedStatus === "DELIVERED"
+      ? ["DELIVERED"]
+      : normalizedStatus === "SHIPPED"
+        ? ["SHIPPED", "DELIVERED"]
+        : ["PACKING", "SHIPPED"];
+  const isLocked = normalizedStatus === "DELIVERED";
 
   return (
     <Box my={2} gap={2} display="grid" gridTemplateColumns={{ md: "1fr 1fr", xs: "1fr" }}>
@@ -67,13 +76,19 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
             select
             size="small"
             value={statusValue}
-            disabled={updating}
+            disabled={updating || isLocked}
             sx={{ minWidth: 170 }}
             onChange={(event) => onUpdateStatus(item_id, event.target.value as Status)}
           >
-            <MenuItem value="PACKING">Packing</MenuItem>
-            <MenuItem value="SHIPPED">Shipped</MenuItem>
-            <MenuItem value="DELIVERED">Delivered</MenuItem>
+            {nextStatusOptions.map((option) => (
+              <MenuItem value={option} key={option}>
+                {option === "PACKING"
+                  ? "Packing"
+                  : option === "SHIPPED"
+                    ? "Shipped"
+                    : "Delivered"}
+              </MenuItem>
+            ))}
           </TextField>
         ) : null}
       </FlexBetween>

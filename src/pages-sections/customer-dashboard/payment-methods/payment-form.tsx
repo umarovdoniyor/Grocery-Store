@@ -12,10 +12,10 @@ import { FormProvider, TextField } from "components/form-hook";
 import Payment from "models/Payment.model";
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
-  cvc: yup.string().required("Card CVC is required"),
-  card_no: yup.string().required("Card No is required"),
-  exp: yup.string().required("Card expiry date is required")
+  name: yup.string().required("Profile name is required"),
+  cvc: yup.string().required("Verification code is required"),
+  card_no: yup.string().required("Reference ID is required"),
+  exp: yup.string().required("Schedule field is required")
 });
 
 // ==============================================================
@@ -48,19 +48,19 @@ export default function PaymentForm({ payment }: Props) {
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <Grid container spacing={3}>
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="card_no" label="Card Number" />
+          <TextField size="medium" fullWidth name="card_no" label="Reference ID" />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="name" label="Name on Card" />
+          <TextField size="medium" fullWidth name="name" label="Profile Name" />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="exp" label="Exp. Date" />
+          <TextField size="medium" fullWidth name="exp" label="Renewal Date" />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="cvc" label="CVC" />
+          <TextField size="medium" fullWidth name="cvc" label="Verification Code" />
         </Grid>
 
         <Grid size={12}>
@@ -71,7 +71,7 @@ export default function PaymentForm({ payment }: Props) {
             variant="contained"
             loading={isSubmitting}
           >
-            Save Changes
+            Save Demo Profile
           </Button>
         </Grid>
       </Grid>

@@ -22,9 +22,13 @@ interface Order {
   createdAt: Date;
   discount: number;
   deliveredAt: Date;
+  subtotal?: number;
+  shippingFee?: number;
   totalPrice: number;
   isDelivered: boolean;
   shippingAddress: string;
+  paymentMethod?: string;
+  rawStatus?: string;
   status: OrderStatus;
 }
 

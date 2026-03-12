@@ -1,7 +1,5 @@
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { format } from "date-fns/format";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
@@ -14,6 +12,14 @@ interface Props {
 }
 // ==============================================================
 
+const getColor = (status: string) => {
+  if (status === "Pending") return "secondary" as const;
+  if (status === "Processing") return "info" as const;
+  if (status === "Delivered") return "success" as const;
+  if (status === "Cancelled") return "error" as const;
+  return "default" as const;
+};
+
 export default function OrderActions({ id, createdAt, status }: Props) {
   return (
     <div>
@@ -25,36 +31,11 @@ export default function OrderActions({ id, createdAt, status }: Props) {
         <Typography variant="body1" sx={{ span: { color: "grey.600" } }}>
           <span>Placed on:</span> {format(new Date(createdAt), "dd MMM, yyyy")}
         </Typography>
-      </FlexBox>
 
-      <FlexBox gap={3} my={3} flexDirection={{ sm: "row", xs: "column" }}>
-        <TextField
-          fullWidth
-          color="info"
-          size="medium"
-          variant="outlined"
-          label="Add Product"
-          placeholder="Type product name"
-        />
-
-        <TextField
-          select
-          fullWidth
-          color="info"
-          size="medium"
-          defaultValue={status}
-          label="Order Status"
-          slotProps={{
-            select: {
-              IconComponent: () => <KeyboardArrowDown sx={{ color: "grey.600", mr: 1 }} />
-            }
-          }}
-        >
-          <MenuItem value="Processing">Processing</MenuItem>
-          <MenuItem value="Pending">Pending</MenuItem>
-          <MenuItem value="Delivered">Delivered</MenuItem>
-          <MenuItem value="Cancelled">Cancelled</MenuItem>
-        </TextField>
+        <Typography variant="body1" sx={{ span: { color: "grey.600" } }}>
+          <span>Current status:</span>{" "}
+          <Chip size="small" label={status} color={getColor(status)} sx={{ ml: 1 }} />
+        </Typography>
       </FlexBox>
     </div>
   );

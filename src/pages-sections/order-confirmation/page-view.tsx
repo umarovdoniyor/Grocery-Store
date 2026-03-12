@@ -44,7 +44,7 @@ export default function OrderConfirmationPageView() {
 
         {paymentMethod && (
           <Typography fontSize={16} variant="body1" color="text.secondary">
-            Payment method: <strong>{paymentMethod}</strong>
+            Checkout mode: <strong>{paymentMethod}</strong>
           </Typography>
         )}
 

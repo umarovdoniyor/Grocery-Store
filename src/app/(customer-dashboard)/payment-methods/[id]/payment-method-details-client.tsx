@@ -10,7 +10,7 @@ export default function PaymentMethodDetailsClient({ id }: Props) {
   const payment = getCustomerPaymentById(id);
 
   if (!payment) {
-    return <AsyncState error="Payment method not found." />;
+    return <AsyncState error="Demo payment profile not found." />;
   }
 
   return <PaymentDetailsPageView payment={payment} />;

@@ -31,6 +31,7 @@ export default function OrderDetailsPageView({
 }: Props) {
   const canMarkDelivered =
     Boolean(onMarkDelivered) && order.status !== "Delivered" && order.status !== "Cancelled";
+  const canUpdateItems = order.status !== "Delivered" && order.status !== "Cancelled";
 
   return (
     <PageWrapper title="Order Details">
@@ -46,7 +47,7 @@ export default function OrderDetailsPageView({
                 product={item}
                 key={index}
                 updating={updatingItemId === item.item_id}
-                onUpdateStatus={onUpdateItemStatus}
+                onUpdateStatus={canUpdateItems ? onUpdateItemStatus : undefined}
               />
             ))}
           </Card>
@@ -71,7 +72,7 @@ export default function OrderDetailsPageView({
               loading={isUpdatingStatus}
               onClick={onMarkDelivered}
             >
-              Mark as Delivered (Test)
+              Mark as Delivered
             </Button>
           ) : onMarkDelivered ? (
             <Button variant="outlined" color="success" disabled>

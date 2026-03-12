@@ -17,7 +17,7 @@ interface Props {
 export function PaymentMethodsPageView({ payments, totalPages }: Props) {
   return (
     <Fragment>
-      <DashboardHeader Icon={CreditCard} title="Payment Methods" />
+      <DashboardHeader Icon={CreditCard} title="Demo Payment Profiles" />
 
       {payments.map((item) => (
         <ListCard

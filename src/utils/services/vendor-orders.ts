@@ -10,6 +10,7 @@ interface MyOrderItem {
   orderId: string;
   productId: string;
   vendorId: string;
+  status?: string;
   quantity: number;
   unitPrice: number;
   salePrice?: number | null;
@@ -110,7 +111,7 @@ function mapMyOrderToVendorUi(order: MyOrder, vendorId: string): Order | null {
       product_price: Number(item.appliedPrice || 0),
       product_quantity: Number(item.quantity || 1),
       variant: item.productSnapshotUnit || undefined,
-      status: order.status
+      status: item.status || order.status
     })),
     createdAt,
     discount: Number(order.discountAmount || 0),
@@ -118,6 +119,7 @@ function mapMyOrderToVendorUi(order: MyOrder, vendorId: string): Order | null {
     totalPrice: vendorTotal,
     isDelivered: order.status === "DELIVERED",
     shippingAddress: toShippingAddress(order),
+    rawStatus: order.status,
     status: mapStatus(order.status)
   };
 }

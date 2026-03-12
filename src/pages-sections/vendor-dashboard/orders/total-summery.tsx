@@ -57,7 +57,7 @@ export default function TotalSummery({ total, discount }: Props) {
         <Typography variant="h6">{currency(total)}</Typography>
       </FlexBetween>
 
-      <p>Paid by Credit/Debit Card</p>
+      <p>Paid with Demo Payment</p>
     </Card>
   );
 }

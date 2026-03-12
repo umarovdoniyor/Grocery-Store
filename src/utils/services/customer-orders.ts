@@ -1,6 +1,17 @@
 import type Order from "models/Order.model";
 import { initializeApollo } from "../../../apollo/client";
+import { CANCEL_MY_ORDER } from "../../../apollo/user/mutation";
 import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
+
+export const CUSTOMER_CANCELLABLE_ORDER_STATUSES = [
+  "PENDING_PAYMENT",
+  "PAID",
+  "CONFIRMED"
+] as const;
+
+export function isCustomerOrderCancellable(status?: string | null) {
+  return !!status && CUSTOMER_CANCELLABLE_ORDER_STATUSES.includes(status as any);
+}
 
 const mapStatus = (status?: string): Order["status"] => {
   if (!status) return "Pending";
@@ -33,6 +44,8 @@ const toDate = (value?: string | null) => {
 const mapOrder = (order: any): Order => {
   const createdAt = toDate(order?.createdAt);
   const deliveredAt = toDate(order?.deliveredAt);
+  const subtotal = Number(order?.subtotal || 0);
+  const deliveryFee = Number(order?.deliveryFee || 0);
   const discountAmount = Number(order?.discountAmount || 0);
   const totalAmount = Number(order?.totalAmount || 0);
 
@@ -55,17 +68,21 @@ const mapOrder = (order: any): Order => {
     items: (order?.items || []).map((item: any) => ({
       product_id: item?.productId || "",
       order_id: item?.orderId || order?._id || "",
+      item_id: item?._id || "",
       product_img:
         item?.productSnapshotThumbnail ||
         "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png",
       product_name: item?.productSnapshotTitle || "Product",
       product_price: Number(item?.appliedPrice ?? item?.unitPrice ?? 0),
       product_quantity: Number(item?.quantity || 1),
-      variant: item?.productSnapshotUnit || undefined
+      variant: item?.productSnapshotUnit || undefined,
+      status: item?.status || undefined
     })),
     createdAt,
     discount: discountAmount,
     deliveredAt,
+    subtotal,
+    shippingFee: deliveryFee,
     totalPrice: totalAmount,
     isDelivered: order?.status === "DELIVERED",
     shippingAddress: [
@@ -78,6 +95,8 @@ const mapOrder = (order: any): Order => {
     ]
       .filter(Boolean)
       .join(", "),
+    paymentMethod: order?.paymentMethod || undefined,
+    rawStatus: order?.status || undefined,
     status: mapStatus(order?.status)
   };
 };
@@ -132,5 +151,47 @@ export async function getCustomerOrderById(orderId: string): Promise<{
     return { success: true, order: mapOrder(orderData) };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to fetch order details" };
+  }
+}
+
+export async function cancelCustomerOrder(input: {
+  orderId: string;
+  reason: string;
+  currentStatus?: string;
+}): Promise<{
+  success: boolean;
+  order?: Order;
+  error?: string;
+}> {
+  try {
+    const reason = input.reason.trim();
+
+    if (!reason) {
+      return { success: false, error: "Cancel reason is required" };
+    }
+
+    if (input.currentStatus && !isCustomerOrderCancellable(input.currentStatus)) {
+      return { success: false, error: "This order can no longer be cancelled." };
+    }
+
+    const apolloClient = await initializeApollo();
+    const { data } = await apolloClient.mutate({
+      mutation: CANCEL_MY_ORDER,
+      variables: {
+        input: {
+          orderId: input.orderId,
+          reason
+        }
+      }
+    });
+
+    const orderData = data?.cancelMyOrder;
+    if (!orderData) {
+      return { success: false, error: "Failed to cancel order" };
+    }
+
+    return { success: true, order: mapOrder(orderData) };
+  } catch (error: any) {
+    return { success: false, error: error?.message || "Failed to cancel order" };
   }
 }

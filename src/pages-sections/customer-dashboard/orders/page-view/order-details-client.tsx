@@ -8,15 +8,22 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { OrderDetailsPageView } from "./order-details";
 import type Order from "models/Order.model";
-import { getCustomerOrderById } from "utils/services/customer-orders";
+import { useSnackbar } from "notistack";
+import {
+  cancelCustomerOrder,
+  getCustomerOrderById,
+  isCustomerOrderCancellable
+} from "utils/services/customer-orders";
 
 interface Props {
   orderId: string;
 }
 
 export default function OrderDetailsClient({ orderId }: Props) {
+  const { enqueueSnackbar } = useSnackbar();
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -56,5 +63,35 @@ export default function OrderDetailsClient({ orderId }: Props) {
     );
   }
 
-  return <OrderDetailsPageView order={order} />;
+  const handleCancelOrder = async () => {
+    if (!order || isCancelling || !isCustomerOrderCancellable(order.rawStatus)) return;
+
+    const reason = window.prompt("Reason for cancellation", "Changed my mind")?.trim();
+    if (!reason) return;
+
+    setIsCancelling(true);
+    const result = await cancelCustomerOrder({
+      orderId: order.id,
+      reason,
+      currentStatus: order.rawStatus
+    });
+    setIsCancelling(false);
+
+    if (!result.success || !result.order) {
+      enqueueSnackbar(result.error || "Failed to cancel order.", { variant: "error" });
+      return;
+    }
+
+    setOrder(result.order);
+    enqueueSnackbar("Order cancelled.", { variant: "success" });
+  };
+
+  return (
+    <OrderDetailsPageView
+      order={order}
+      canCancel={isCustomerOrderCancellable(order.rawStatus)}
+      isCancelling={isCancelling}
+      onCancelOrder={handleCancelOrder}
+    />
+  );
 }
