@@ -1,5 +1,10 @@
 import { initializeApollo } from "../../apollo/client";
-import { GET_CATEGORIES, GET_CATEGORY_BY_ID, GET_CATEGORY_BY_SLUG } from "../../apollo/user/query";
+import {
+  GET_CATEGORIES,
+  GET_CATEGORY_BY_ID,
+  GET_CATEGORY_BY_SLUG,
+  GET_CATEGORY_TREE
+} from "../../apollo/user/query";
 
 export interface CategoryInquiryInput {
   page?: number;
@@ -21,6 +26,16 @@ export interface Category {
   parentId?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CategoryTreeNode {
+  _id: string;
+  name: string;
+  slug: string;
+  parentId?: string | null;
+  icon?: string;
+  image?: string;
+  children?: CategoryTreeNode[];
 }
 
 export async function getCategories(input?: CategoryInquiryInput): Promise<{
@@ -90,6 +105,28 @@ export async function getCategoryBySlug(slug: string): Promise<{
     return { success: true, category };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch category by slug";
+    return { success: false, error: message };
+  }
+}
+
+export async function getCategoryTree(): Promise<{
+  success: boolean;
+  tree?: CategoryTreeNode[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_CATEGORY_TREE,
+      fetchPolicy: "network-only"
+    });
+
+    const tree = data?.getCategoryTree || [];
+
+    return { success: true, tree };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch category tree";
     return { success: false, error: message };
   }
 }

@@ -25,13 +25,13 @@ import {
 import { getLayoutData } from "utils/services/layout-data";
 
 // =====================================================
-type Props = { selected?: string };
+type Props = { selected?: { title: string; slug: string } };
 // =====================================================
 
 export default async function GroceryOnePageView({ selected }: Props) {
   const [products, popularProducts, trendingProducts, grocery1NavList, layoutData] =
     await Promise.all([
-      getGroceryProducts(selected),
+      getGroceryProducts(selected?.slug),
       getPopularProducts(),
       getTrendingProducts(),
       getGrocery1Navigation(),
@@ -66,7 +66,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
       {/* SIDEBAR WITH OTHER CONTENTS */}
       <StickyWrapper SideNav={SideNav}>
         {selected ? (
-          <Section4 products={products} title={selected} />
+          <Section4 products={products} title={selected.title} />
         ) : (
           <Fragment>
             {/* POPULAR PRODUCTS AREA */}

@@ -493,6 +493,43 @@ export const GET_CATEGORIES = gql`
   }
 `;
 
+export const GET_CATEGORY_TREE = gql`
+  query GetCategoryTree {
+    getCategoryTree {
+      _id
+      name
+      slug
+      parentId
+      icon
+      image
+      children {
+        _id
+        name
+        slug
+        parentId
+        icon
+        image
+        children {
+          _id
+          name
+          slug
+          parentId
+          icon
+          image
+          children {
+            _id
+            name
+            slug
+            parentId
+            icon
+            image
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const GET_CATEGORY_BY_ID = gql`
   query GetCategoryById($categoryId: String!) {
     getCategoryById(categoryId: $categoryId) {

@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type LayoutModel from "models/Layout.model";
-import { getCategories } from "../../../libs/category";
+import { getCategories, getCategoryTree } from "../../../libs/category";
 import navbarNavigation from "data/navbarNavigation";
 import { categoryMenus } from "data/navigations";
 import {
@@ -14,7 +14,7 @@ import {
   topbarSocialLinks
 } from "data/layout-data";
 import type { CategoryMenuItem } from "models/Category.model";
-import type { Category } from "../../../libs/category";
+import type { Category, CategoryTreeNode } from "../../../libs/category";
 import type { Menu, CategoryMenuItem as NavigationCategoryMenuItem } from "models/Navigation.model";
 
 const footerContact = {
@@ -22,6 +22,143 @@ const footerContact = {
   email: "uilib.help@gmail.com",
   address: "70 Washington Square South, New York, NY 10012, United States"
 };
+
+function flattenCategoryTree(tree: CategoryTreeNode[]): CategoryTreeNode[] {
+  const result: CategoryTreeNode[] = [];
+
+  const traverse = (nodes: CategoryTreeNode[]) => {
+    nodes.forEach((node) => {
+      result.push(node);
+      if (node.children?.length) {
+        traverse(node.children);
+      }
+    });
+  };
+
+  traverse(tree);
+  return result;
+}
+
+function toCategoryLink(slug: string) {
+  return `/products/search?category=${slug}`;
+}
+
+function toVisual(node: CategoryTreeNode) {
+  return {
+    icon: node.icon || undefined,
+    img: node.image || undefined
+  };
+}
+
+function buildGroupedChildrenForCategoryList(parent: CategoryTreeNode): CategoryMenuItem[] {
+  const children = parent.children || [];
+
+  if (!children.length) {
+    return [
+      {
+        title: "Browse",
+        href: toCategoryLink(parent.slug),
+        children: [
+          {
+            title: `All ${parent.name}`,
+            href: toCategoryLink(parent.slug),
+            ...toVisual(parent)
+          }
+        ]
+      }
+    ];
+  }
+
+  const hasThirdLevel = children.some((child) => (child.children || []).length > 0);
+
+  if (!hasThirdLevel) {
+    return [
+      {
+        title: "Sub Categories",
+        href: toCategoryLink(parent.slug),
+        children: children.map((child) => ({
+          title: child.name,
+          href: toCategoryLink(child.slug),
+          ...toVisual(child)
+        }))
+      }
+    ];
+  }
+
+  return children.map((child) => {
+    const thirdLevel = child.children || [];
+
+    return {
+      title: child.name,
+      href: toCategoryLink(child.slug),
+      ...toVisual(child),
+      children: thirdLevel.length
+        ? thirdLevel.map((leaf) => ({
+            title: leaf.name,
+            href: toCategoryLink(leaf.slug),
+            ...toVisual(leaf)
+          }))
+        : [{ title: `All ${child.name}`, href: toCategoryLink(child.slug), ...toVisual(child) }]
+    };
+  });
+}
+
+function buildGroupedChildrenForHeaderNav(
+  parent: CategoryTreeNode
+): NavigationCategoryMenuItem["child"] {
+  const children = parent.children || [];
+
+  if (!children.length) {
+    return [
+      {
+        title: "Browse",
+        child: [
+          {
+            title: `All ${parent.name}`,
+            url: toCategoryLink(parent.slug),
+            ...toVisual(parent)
+          }
+        ]
+      }
+    ];
+  }
+
+  const hasThirdLevel = children.some((child) => (child.children || []).length > 0);
+
+  if (!hasThirdLevel) {
+    return [
+      {
+        title: "Sub Categories",
+        child: children.map((child) => ({
+          title: child.name,
+          url: toCategoryLink(child.slug),
+          ...toVisual(child)
+        }))
+      }
+    ];
+  }
+
+  return children.map((child) => {
+    const thirdLevel = child.children || [];
+
+    return {
+      title: child.name,
+      child: thirdLevel.length
+        ? thirdLevel.map((leaf) => ({
+            title: leaf.name,
+            url: toCategoryLink(leaf.slug),
+            ...toVisual(leaf)
+          }))
+        : [
+            {
+              title: `All ${child.name}`,
+              url: toCategoryLink(child.slug),
+              ...toVisual(child)
+            }
+          ]
+    };
+  });
+}
 
 async function getHeaderCategories() {
   const liveCategories = await getLiveCategories();
@@ -37,42 +174,75 @@ async function getHeaderCategories() {
 }
 
 async function getHeaderCategoryMenus(): Promise<CategoryMenuItem[]> {
-  const liveCategories = await getLiveCategories();
+  const treeResponse = await getCategoryTree();
 
-  const liveMenus: CategoryMenuItem[] = liveCategories.map((item) => ({
-    title: item.name,
-    href: `/products/search?category=${item.slug}`,
-    icon: "CategoryOutline"
-  }));
+  if (treeResponse.success && treeResponse.tree?.length) {
+    const liveMenus: CategoryMenuItem[] = treeResponse.tree.map((parent) => ({
+      title: parent.name,
+      href: toCategoryLink(parent.slug),
+      ...toVisual(parent),
+      component: "List",
+      children: buildGroupedChildrenForCategoryList(parent)
+    }));
 
-  return liveMenus.length ? liveMenus : categoryMenus;
+    return liveMenus;
+  }
+
+  return categoryMenus;
 }
 
 async function getLiveCategories(): Promise<Category[]> {
-  const response = await getCategories({ page: 1, limit: 50, status: "ACTIVE" });
+  const treeResponse = await getCategoryTree();
+
+  if (treeResponse.success && treeResponse.tree?.length) {
+    const flat = flattenCategoryTree(treeResponse.tree);
+    return flat.map((item) => ({
+      _id: item._id,
+      name: item.name,
+      slug: item.slug,
+      status: "ACTIVE",
+      sortOrder: 0,
+      parentId: item.parentId || null,
+      createdAt: "",
+      updatedAt: ""
+    }));
+  }
+
+  const response = await getCategories({ page: 1, limit: 200, status: "ACTIVE" });
   return response.list || [];
 }
 
 async function getHeaderNavigation(): Promise<Menu[]> {
-  const liveCategories = await getLiveCategories();
+  const treeResponse = await getCategoryTree();
 
-  if (!liveCategories.length) return navbarNavigation;
+  let categoryMegaMenu: NavigationCategoryMenuItem[] = [];
 
-  const categoryMegaMenu: NavigationCategoryMenuItem[] = liveCategories.map((item) => ({
-    title: item.name,
-    child: [
-      {
-        title: "Browse",
-        child: [
-          {
-            title: `All ${item.name}`,
-            url: `/products/search?category=${item.slug}`,
-            icon: "CategoryOutline"
-          }
-        ]
-      }
-    ]
-  }));
+  if (treeResponse.success && treeResponse.tree?.length) {
+    categoryMegaMenu = treeResponse.tree.map((parent) => ({
+      title: parent.name,
+      child: buildGroupedChildrenForHeaderNav(parent)
+    }));
+  } else {
+    const liveCategories = await getLiveCategories();
+
+    if (!liveCategories.length) return navbarNavigation;
+
+    categoryMegaMenu = liveCategories.map((item) => ({
+      title: item.name,
+      child: [
+        {
+          title: "Browse",
+          child: [
+            {
+              title: `All ${item.name}`,
+              url: toCategoryLink(item.slug),
+              icon: "CategoryOutline"
+            }
+          ]
+        }
+      ]
+    }));
+  }
 
   return navbarNavigation.map((nav) => {
     if (nav.title === "Categories" && nav.megaMenuWithSub) {

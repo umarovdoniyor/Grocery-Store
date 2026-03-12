@@ -23,5 +23,5 @@ export default async function GroceryOneWithCategory({ params }: Props) {
   const category = await getGroceryCategory(cat);
   if (!category) notFound();
 
-  return <GroceryOnePageView selected={category.title} />;
+  return <GroceryOnePageView selected={category} />;
 }
