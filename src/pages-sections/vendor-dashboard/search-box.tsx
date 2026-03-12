@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 // MUI
 import Add from "@mui/icons-material/Add";
@@ -27,16 +28,46 @@ export default function SearchArea({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const downSM = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
+  const [value, setValue] = useState(searchParams.get("q") || "");
 
-  const handleSearch = debounce((value: string) => {
-    if (value) router.push(`?q=${value}`);
-    else router.push(pathname);
-  }, 100);
+  useEffect(() => {
+    setValue(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  const handleSearch = useMemo(
+    () =>
+      debounce((rawValue: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        const nextValue = rawValue.trim();
+
+        if (nextValue) params.set("q", nextValue);
+        else params.delete("q");
+
+        const query = params.toString();
+        router.replace(query ? `${pathname}?${query}` : pathname);
+      }, 350),
+    [pathname, router, searchParams]
+  );
+
+  useEffect(() => {
+    return () => {
+      handleSearch.cancel();
+    };
+  }, [handleSearch]);
 
   return (
     <FlexBox mb={2} gap={2} justifyContent="space-between" flexWrap="wrap">
-      <SearchInput placeholder={searchPlaceholder} onChange={(e) => handleSearch(e.target.value)} />
+      <SearchInput
+        placeholder={searchPlaceholder}
+        value={value}
+        onChange={(e) => {
+          const nextValue = e.target.value;
+          setValue(nextValue);
+          handleSearch(nextValue);
+        }}
+      />
 
       {showButton && (
         <Button
@@ -45,7 +76,7 @@ export default function SearchArea({
           fullWidth={downSM}
           variant="contained"
           startIcon={<Add />}
-          LinkComponent={Link}
+          component={Link}
           sx={{ minHeight: 44 }}
         >
           {buttonText}
