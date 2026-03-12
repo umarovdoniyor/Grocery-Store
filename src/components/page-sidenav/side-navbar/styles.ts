@@ -38,6 +38,7 @@ export const StyledList = styled("div", {
   shouldForwardProp: (prop) => prop !== "active"
 })<{ active: boolean }>(({ theme, active }) => ({
   display: "flex",
+  gap: theme.spacing(1),
   cursor: "pointer",
   padding: "4px 20px",
   alignItems: "center",
@@ -58,7 +59,7 @@ export const Circle = styled("span")(({ theme }) => ({
   width: 4,
   height: 4,
   marginLeft: "2rem",
-  marginRight: "8px",
+  marginRight: 0,
   borderRadius: "3px",
   backgroundColor: theme.palette.grey[600]
 }));

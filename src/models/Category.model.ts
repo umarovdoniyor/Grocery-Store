@@ -19,6 +19,7 @@ export interface CategoryMenuItem {
   href: string;
   title: string;
   icon?: string;
+  img?: string;
   offer?: CategoryOffer;
   children?: CategoryMenuItem[];
   component?: "Grid" | "List";

@@ -45,6 +45,7 @@ export function CategoryList({ categories, position = "absolute" }: Props) {
             key={item.title}
             href={item.href}
             icon={item.icon}
+            img={item.img}
             title={item.title}
             caret={!!item.children}
             render={item.component ? <MegaMenu data={item.children!} banner={item.offer} /> : null}
