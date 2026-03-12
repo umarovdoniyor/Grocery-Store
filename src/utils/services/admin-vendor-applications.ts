@@ -99,13 +99,20 @@ export async function updateAdminVendorApplicationForUi(input: {
   status?: "PENDING" | "APPROVED" | "REJECTED";
   error?: string;
 }> {
+  if (input.status === "REJECTED" && !input.rejectionReason?.trim()) {
+    return {
+      success: false,
+      error: "Rejection reason is required"
+    };
+  }
+
   const response = await reviewVendorApplication(
     input.status === "APPROVED"
       ? { applicationId: input.applicationId, status: "APPROVED" }
       : {
           applicationId: input.applicationId,
           status: "REJECTED",
-          rejectionReason: (input.rejectionReason || "Rejected by admin").trim()
+          rejectionReason: input.rejectionReason!.trim()
         }
   );
 

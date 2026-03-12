@@ -438,7 +438,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       return { success: true, applicationId: application._id };
     } catch (error: any) {
-      const message = error?.message || "Failed to apply for vendor";
+      const rawMessage = error?.message || "Failed to apply for vendor";
+
+      let message = rawMessage;
+      if (/pending/i.test(rawMessage)) {
+        message = "You already have a pending vendor application.";
+      } else if (/approved|already\s+a\s+vendor/i.test(rawMessage)) {
+        message = "You are already approved as a vendor.";
+      }
+
       return { success: false, error: message };
     }
   };

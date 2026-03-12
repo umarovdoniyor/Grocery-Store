@@ -9,19 +9,34 @@ import { LOGIN, SIGN_UP } from "../../apollo/user/mutation";
 const getAuthErrorMessage = (error: any, fallback: string) => {
   const graphQLError = error?.graphQLErrors?.[0];
   const networkError = error?.networkError;
+  const code =
+    graphQLError?.extensions?.code || networkError?.result?.errors?.[0]?.extensions?.code || "";
   const message =
     graphQLError?.message ||
     networkError?.result?.errors?.[0]?.message ||
     error?.message ||
     fallback;
 
-  if (/password/i.test(message)) return "Please check your password and try again.";
-  if (/blocked|suspend/i.test(message)) return "Your account is currently unavailable.";
+  if (/SUSPENDED_USER/i.test(code) || /suspended/i.test(message)) {
+    return "Your account is suspended.";
+  }
+
+  if (/BLOCKED_USER/i.test(code) || /blocked/i.test(message)) {
+    return "Your account is blocked.";
+  }
+
+  if (
+    /WRONG_PASSWORD/i.test(code) ||
+    /wrong password|invalid credentials|unauthorized/i.test(message)
+  ) {
+    return "Invalid credentials. Please check your identifier and password.";
+  }
+
+  if (/password/i.test(message))
+    return "Invalid credentials. Please check your identifier and password.";
+
   if (/already exists|duplicate|taken/i.test(message))
     return "An account with this email already exists.";
-  if (/invalid credentials|unauthorized/i.test(message)) {
-    return "Invalid email or password.";
-  }
 
   return message;
 };

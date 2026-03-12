@@ -19,8 +19,11 @@ import { useAuth } from "contexts/AuthContext";
 
 // LOGIN FORM FIELD VALIDATION SCHEMA
 const validationSchema = yup.object().shape({
-  password: yup.string().required("Password is required"),
-  identifier: yup.string().trim().required("Email or phone is required")
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+  identifier: yup.string().trim().required("Email, phone, or nickname is required")
 });
 
 export default function LoginPageView() {
@@ -77,10 +80,7 @@ export default function LoginPageView() {
 
   const handleSubmitForm = handleSubmit(async (values) => {
     setError(null);
-    const normalizedIdentifier = values.identifier.trim();
-    const loginIdentifier = normalizedIdentifier.includes("@")
-      ? normalizedIdentifier.toLowerCase()
-      : normalizedIdentifier;
+    const loginIdentifier = values.identifier.trim();
     const result = await login(loginIdentifier, values.password);
 
     if (result.success) {
@@ -89,15 +89,20 @@ export default function LoginPageView() {
       const message = result.error || "Login failed";
       setError(message);
 
-      if (/password/i.test(message)) {
-        setFieldError("password", { type: "server", message: "Please check your password" });
-      }
-
-      if (/invalid email|email/i.test(message)) {
+      if (/suspended/i.test(message)) {
         setFieldError("identifier", {
           type: "server",
-          message: "Please check your email or phone number"
+          message: "This account is suspended"
         });
+      } else if (/blocked/i.test(message)) {
+        setFieldError("identifier", {
+          type: "server",
+          message: "This account is blocked"
+        });
+      } else {
+        const genericMessage = "Invalid credentials. Please check your identifier and password.";
+        setFieldError("identifier", { type: "server", message: genericMessage });
+        setFieldError("password", { type: "server", message: genericMessage });
       }
     }
   });
@@ -111,13 +116,13 @@ export default function LoginPageView() {
       )}
 
       <div className="mb-1">
-        <Label>Email or Phone Number</Label>
+        <Label>Email, Phone Number, or Nickname</Label>
         <TextField
           fullWidth
           name="identifier"
           type="text"
           size="medium"
-          placeholder="example@mail.com or +8210..."
+          placeholder="example@mail.com, +1234567890, or nickname"
         />
       </div>
 

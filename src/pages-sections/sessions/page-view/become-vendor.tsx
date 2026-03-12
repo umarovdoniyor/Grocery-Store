@@ -18,9 +18,17 @@ import { useAuth } from "contexts/AuthContext";
 import Link from "next/link";
 
 const validationSchema = yup.object().shape({
-  storeName: yup.string().required("Store name is required"),
-  storeDescription: yup.string().required("Store description is required"),
-  businessLicense: yup.string().required("Business license number is required")
+  storeName: yup.string().trim().required("Store name is required"),
+  storeDescription: yup.string().trim().required("Store description is required"),
+  businessLicense: yup
+    .string()
+    .trim()
+    .required("Business license URL is required")
+    .test(
+      "is-url-or-path",
+      "Business license must be a valid URL or uploaded file path",
+      (value) => !value || /^https?:\/\//i.test(value) || value.startsWith("/")
+    )
 });
 
 export default function BecomeVendorPageView() {
@@ -32,6 +40,7 @@ export default function BecomeVendorPageView() {
   const [applicationStatus, setApplicationStatus] = useState<
     "PENDING" | "APPROVED" | "REJECTED" | null
   >(null);
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
   const [isCheckingApplication, setIsCheckingApplication] = useState(true);
 
   const methods = useForm({
@@ -57,6 +66,7 @@ export default function BecomeVendorPageView() {
     const application = result.application;
     if (result.success && application) {
       setApplicationStatus(application.status);
+      setRejectionReason(application.rejectionReason || null);
       reset({
         storeName: application.storeName || "",
         storeDescription: application.description || "",
@@ -69,6 +79,7 @@ export default function BecomeVendorPageView() {
       }
     } else {
       setApplicationStatus(null);
+      setRejectionReason(null);
     }
 
     setIsCheckingApplication(false);
@@ -95,9 +106,9 @@ export default function BecomeVendorPageView() {
     setSuccess(null);
 
     const result = await applyVendor({
-      storeName: values.storeName,
-      description: values.storeDescription,
-      businessLicenseUrl: values.businessLicense
+      storeName: values.storeName.trim(),
+      description: values.storeDescription.trim(),
+      businessLicenseUrl: values.businessLicense.trim()
     });
 
     if (result.success) {
@@ -209,11 +220,37 @@ export default function BecomeVendorPageView() {
               </Grid>
             </Grid>
           </Box>
+        ) : applicationStatus === "APPROVED" ? (
+          <Box>
+            <Alert severity="success" sx={{ mb: 3 }}>
+              Your vendor application is approved. Redirecting to vendor dashboard...
+            </Alert>
+
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Button fullWidth variant="contained" LinkComponent={Link} href="/vendor/dashboard">
+                  Go to Vendor Dashboard
+                </Button>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  onClick={loadApplicationStatus}
+                  disabled={isCheckingApplication}
+                >
+                  Refresh Status
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
         ) : (
           <FormProvider methods={methods} onSubmit={handleSubmitForm}>
             {applicationStatus === "REJECTED" && (
               <Alert severity="warning" sx={{ mb: 3 }}>
                 Your previous application was rejected. Update details and submit again.
+                {rejectionReason ? ` Reason: ${rejectionReason}` : ""}
               </Alert>
             )}
 
@@ -246,8 +283,8 @@ export default function BecomeVendorPageView() {
                 <TextField
                   fullWidth
                   name="businessLicense"
-                  label="Business License Number"
-                  placeholder="BL-123456789"
+                  label="Business License URL"
+                  placeholder="https://... or /uploads/vendor/..."
                 />
               </Grid>
             </Grid>

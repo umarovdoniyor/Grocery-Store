@@ -27,6 +27,7 @@ function formatStatus(status: Seller["status"]) {
 
 export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejectSeller }: Props) {
   const { name, phone, image, shopName, status, rejectionReason, createdAt, description } = seller;
+  const canReview = status === "PENDING";
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
@@ -76,7 +77,7 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
               size="small"
               variant="contained"
               color="success"
-              disabled={status === "APPROVED"}
+              disabled={!canReview}
               onClick={() => onApproveSeller(seller)}
             >
               Approve
@@ -86,7 +87,7 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
               size="small"
               variant="outlined"
               color="error"
-              disabled={status === "REJECTED"}
+              disabled={!canReview}
               onClick={() => onRejectSeller(seller)}
             >
               Reject
