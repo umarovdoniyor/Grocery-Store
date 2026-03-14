@@ -93,13 +93,15 @@ const mapProductToUi = (
   const salePrice = typeof item.salePrice === "number" ? item.salePrice : undefined;
   const discount =
     salePrice && price > salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
+  const thumbnail =
+    resolveVendorImage(item.thumbnail, item.createdAt) || "/assets/images/products/placeholder.png";
 
   return {
     id: item._id,
     slug: item.slug,
     title: item.title,
-    thumbnail: item.thumbnail || "/assets/images/products/placeholder.png",
-    images: [item.thumbnail || "/assets/images/products/placeholder.png"],
+    thumbnail,
+    images: [thumbnail],
     price,
     discount,
     rating: Number(reviewSummary?.ratingAvg || 0),
