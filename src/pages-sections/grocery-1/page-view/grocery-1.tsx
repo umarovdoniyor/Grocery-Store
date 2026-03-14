@@ -25,7 +25,9 @@ import {
 import { getLayoutData } from "utils/services/layout-data";
 
 // =====================================================
-type Props = { selected?: { title: string; slug: string } };
+type Props = {
+  selected?: { title: string; slug: string; parent?: { title: string; slug: string } | null };
+};
 // =====================================================
 
 export default async function GroceryOnePageView({ selected }: Props) {
@@ -66,7 +68,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
       {/* SIDEBAR WITH OTHER CONTENTS */}
       <StickyWrapper SideNav={SideNav}>
         {selected ? (
-          <Section4 products={products} title={selected.title} />
+          <Section4 products={products} title={selected.title} parentCategory={selected.parent} />
         ) : (
           <Fragment>
             {/* POPULAR PRODUCTS AREA */}
