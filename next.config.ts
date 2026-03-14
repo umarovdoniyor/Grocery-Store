@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["ui-lib.com", "example.com", "www.example.com", "localhost"],
+    // Needed for local API media URLs during development.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       {
         protocol: "https",
@@ -23,6 +24,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
+        port: "3007"
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
         port: "3007"
       }
     ]
