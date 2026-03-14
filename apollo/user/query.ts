@@ -242,6 +242,46 @@ export const GET_FEATURED_PRODUCTS = gql`
   }
 `;
 
+export const GET_POPULAR_PRODUCTS = gql`
+  query GetPopularProducts($input: PopularProductsInquiry!) {
+    getPopularProducts(input: $input) {
+      _id
+      title
+      slug
+      thumbnail
+      ratingAvg
+      reviewsCount
+      price
+      salePrice
+      stockQty
+      status
+      likes
+      views
+      createdAt
+    }
+  }
+`;
+
+export const GET_TRENDING_PRODUCTS = gql`
+  query GetTrendingProducts($input: TrendingProductsInquiry!) {
+    getTrendingProducts(input: $input) {
+      _id
+      title
+      slug
+      thumbnail
+      ratingAvg
+      reviewsCount
+      price
+      salePrice
+      stockQty
+      status
+      likes
+      views
+      createdAt
+    }
+  }
+`;
+
 export const GET_RELATED_PRODUCTS = gql`
   query GetRelatedProducts($input: RelatedProductsInquiry!) {
     getRelatedProducts(input: $input) {

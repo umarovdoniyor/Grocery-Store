@@ -11,6 +11,8 @@ import {
   GET_PRODUCTS,
   GET_PRODUCT_BY_ID,
   GET_FEATURED_PRODUCTS,
+  GET_POPULAR_PRODUCTS,
+  GET_TRENDING_PRODUCTS,
   GET_RELATED_PRODUCTS,
   SEARCH_SUGGESTIONS
 } from "../../apollo/user/query";
@@ -124,6 +126,15 @@ export interface CatalogProductsInquiryInput {
 
 export interface FeaturedProductsInquiryInput {
   limit: number;
+}
+
+export interface PopularProductsInquiryInput {
+  limit: number;
+}
+
+export interface TrendingProductsInquiryInput {
+  limit: number;
+  windowDays?: number;
 }
 
 export interface RelatedProductsInquiryInput {
@@ -327,6 +338,52 @@ export async function getFeaturedProducts(input: FeaturedProductsInquiryInput): 
     return { success: true, list };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch featured products";
+    return { success: false, error: message };
+  }
+}
+
+export async function getPopularProducts(input: PopularProductsInquiryInput): Promise<{
+  success: boolean;
+  list?: ProductSummary[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_POPULAR_PRODUCTS,
+      variables: { input },
+      fetchPolicy: "cache-first"
+    });
+
+    const list = data?.getPopularProducts || [];
+
+    return { success: true, list };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch popular products";
+    return { success: false, error: message };
+  }
+}
+
+export async function getTrendingProducts(input: TrendingProductsInquiryInput): Promise<{
+  success: boolean;
+  list?: ProductSummary[];
+  error?: string;
+}> {
+  try {
+    const apolloClient = await initializeApollo();
+
+    const { data } = await apolloClient.query({
+      query: GET_TRENDING_PRODUCTS,
+      variables: { input },
+      fetchPolicy: "cache-first"
+    });
+
+    const list = data?.getTrendingProducts || [];
+
+    return { success: true, list };
+  } catch (error: any) {
+    const message = error?.message || "Failed to fetch trending products";
     return { success: false, error: message };
   }
 }

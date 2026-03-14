@@ -4,7 +4,8 @@ import type Service from "models/Service.model";
 import type CategoryNavList from "models/CategoryNavList.model";
 import { getCategories, getCategoryBySlug, getCategoryTree } from "../../../libs/category";
 import {
-  getFeaturedProducts,
+  getPopularProducts as getPopularProductsApi,
+  getTrendingProducts as getTrendingProductsApi,
   getProducts,
   type ProductSummary,
   type ProductSortBy
@@ -155,12 +156,13 @@ export const getGrocery1Navigation = cache(async () => {
 });
 
 export const getPopularProducts = cache(async (): Promise<Product[]> => {
-  const response = await getFeaturedProducts({ limit: 12 });
+  const response = await getPopularProductsApi({ limit: 12 });
   return (response.list || []).map(toProductModel);
 });
 
 export const getTrendingProducts = cache(async (): Promise<Product[]> => {
-  return getCatalogProductsForHome({ sortBy: "POPULAR", limit: 12 });
+  const response = await getTrendingProductsApi({ limit: 12, windowDays: 7 });
+  return (response.list || []).map(toProductModel);
 });
 
 export const getGroceryProducts = cache(async (category?: string): Promise<Product[]> => {
