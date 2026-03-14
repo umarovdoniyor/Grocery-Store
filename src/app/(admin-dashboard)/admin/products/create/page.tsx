@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ProductCreatePageView } from "pages-sections/vendor-dashboard/products/page-view";
+import AdminScopeNotice from "components/admin/AdminScopeNotice";
 
 export const metadata: Metadata = {
   title: "Product Create - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProductCreate() {
-  return <ProductCreatePageView mode="create" basePath="/admin/products" />;
+  return (
+    <AdminScopeNotice
+      title="Product Creation Is Vendor-Only"
+      description="Backend policy allows product creation only for authenticated vendors. Use vendor accounts to create products, while admins curate featured products and moderation."
+    />
+  );
 }

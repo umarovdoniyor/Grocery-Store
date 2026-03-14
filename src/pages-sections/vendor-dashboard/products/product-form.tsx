@@ -32,21 +32,76 @@ import {
   updateProduct
 } from "../../../../libs/product";
 
+const mongoIdRegex = /^[a-f\d]{24}$/i;
+
+const splitCommaValues = (value?: string) =>
+  (value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const toNumberOrNaN = (value?: string) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : Number.NaN;
+};
+
 // FORM FIELDS VALIDATION SCHEMA
 const validationSchema = yup.object({
-  name: yup.string().required("Name is required!"),
-  category: yup.string().required("Category is required!"),
-  description: yup.string().required("Description is required!"),
-  stock: yup.string().required("Stock is required!"),
-  price: yup.string().required("Price is required!"),
-  sale_price: yup.string().optional(),
-  tags: yup.string().required("Tags is required!"),
-  brand: yup.string().optional(),
-  sku: yup.string().optional(),
+  name: yup
+    .string()
+    .trim()
+    .required("Name is required!")
+    .min(3, "Name must be at least 3 characters")
+    .max(120, "Name must be at most 120 characters"),
+  category: yup
+    .string()
+    .required("Category is required!")
+    .test("mongo-id", "Category must be a valid id", (value) => mongoIdRegex.test(value || "")),
+  description: yup
+    .string()
+    .trim()
+    .required("Description is required!")
+    .min(10, "Description must be at least 10 characters")
+    .max(5000, "Description must be at most 5000 characters"),
+  stock: yup
+    .string()
+    .required("Stock is required!")
+    .test("stock-int", "Stock must be an integer >= 0", (value) => {
+      if (!value) return false;
+      return /^\d+$/.test(value.trim());
+    }),
+  min_order_qty: yup
+    .string()
+    .optional()
+    .test("min-order-int", "Minimum order must be an integer >= 1", (value) => {
+      if (!value?.trim()) return true;
+      return /^\d+$/.test(value.trim()) && Number(value.trim()) >= 1;
+    }),
+  price: yup
+    .string()
+    .required("Price is required!")
+    .test("price-min", "Price must be at least 0.01", (value) => {
+      if (!value?.trim()) return false;
+      const price = toNumberOrNaN(value.trim());
+      return Number.isFinite(price) && price >= 0.01;
+    }),
+  sale_price: yup.string().optional().test("sale-min", "Sale price must be >= 0", (value) => {
+    if (!value?.trim()) return true;
+    const salePrice = toNumberOrNaN(value.trim());
+    return Number.isFinite(salePrice) && salePrice >= 0;
+  }),
+  tags: yup.string().optional(),
+  brand: yup.string().trim().max(80, "Brand must be at most 80 characters").optional(),
+  sku: yup.string().trim().max(80, "SKU must be at most 80 characters").optional(),
   unit: yup.string().required("Unit is required!"),
   status: yup.string().required("Status is required!"),
-  thumbnail: yup.string().required("Thumbnail URL is required!"),
-  images: yup.string().required("At least one image URL is required!")
+  thumbnail: yup.string().optional(),
+  images: yup
+    .string()
+    .required("At least one image URL is required!")
+    .test("images-list", "At least one image URL is required!", (value) => {
+      return splitCommaValues(value).length > 0;
+    })
 });
 
 type FormValues = yup.InferType<typeof validationSchema>;
@@ -75,10 +130,11 @@ export default function ProductForm({
     name: "",
     tags: "",
     stock: "",
+    min_order_qty: "",
     brand: "",
     sku: "",
     unit: "PCS",
-    status: "PUBLISHED",
+    status: "DRAFT",
     thumbnail: "",
     images: "",
     price: "",
@@ -237,6 +293,7 @@ export default function ProductForm({
           category: product.categoryIds?.[0] || "",
           description: product.description || "",
           stock: String(product.stockQty || ""),
+          min_order_qty: product.minOrderQty ? String(product.minOrderQty) : "",
           price: String(product.price || ""),
           sale_price: product.salePrice ? String(product.salePrice) : "",
           tags: (product.tags || []).join(", "),
@@ -263,10 +320,35 @@ export default function ProductForm({
   const handleSubmitForm = handleSubmit(async (values) => {
     setFormError(null);
 
-    const imageList = values.images
-      .split(",")
-      .map((item) => item.trim())
+    const apiBaseUrl = getApiBaseUrl();
+
+    const normalizeAssetUrl = (rawValue?: string) => {
+      const normalized = (rawValue || "").trim().replace(/\\/g, "/");
+      if (!normalized) return "";
+
+      if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+        return normalized;
+      }
+
+      if (normalized.startsWith("blob:") || normalized.startsWith("data:")) {
+        return "";
+      }
+
+      return apiBaseUrl ? toPublicImageUrl(normalized, apiBaseUrl) : normalized;
+    };
+
+    const imageList = splitCommaValues(values.images)
+      .map((item) => normalizeAssetUrl(item))
       .filter(Boolean);
+
+    if (!imageList.length) {
+      setFormError("At least one valid image URL is required");
+      return;
+    }
+
+    const minOrderQtyValue = values.min_order_qty?.trim()
+      ? Number(values.min_order_qty.trim())
+      : undefined;
 
     const payload = {
       title: values.name,
@@ -278,12 +360,13 @@ export default function ProductForm({
       price: Number(values.price),
       salePrice: values.sale_price ? Number(values.sale_price) : undefined,
       stockQty: Number(values.stock),
+      minOrderQty: minOrderQtyValue,
       tags: values.tags
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
       images: imageList,
-      thumbnail: values.thumbnail,
+      thumbnail: normalizeAssetUrl(values.thumbnail) || undefined,
       status: values.status as ProductStatus
     };
 
@@ -405,6 +488,18 @@ export default function ProductForm({
               size="medium"
               label="Stock"
               placeholder="Stock"
+            />
+          </Grid>
+
+          <Grid size={{ sm: 6, xs: 12 }}>
+            <TextField
+              fullWidth
+              name="min_order_qty"
+              color="info"
+              size="medium"
+              type="number"
+              label="Minimum Order Qty"
+              placeholder="Minimum Order Qty"
             />
           </Grid>
 
