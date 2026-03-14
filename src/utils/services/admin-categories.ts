@@ -4,7 +4,7 @@ import {
   updateCategory,
   type Category as AdminCategory
 } from "../../../libs/admin";
-import { getCategoryBySlug } from "../../../libs/category";
+import { getCategoryById, getCategoryBySlug } from "../../../libs/category";
 
 export interface AdminCategoryRow {
   id: string;
@@ -125,6 +125,25 @@ export async function fetchAdminCategoryForEditBySlug(slug: string): Promise<{
   error?: string;
 }> {
   const response = await getCategoryBySlug(slug);
+
+  if (!response.success) {
+    return { error: response.error || "Failed to fetch category" };
+  }
+
+  const category = response.category;
+
+  if (!category) {
+    return { error: "Category not found" };
+  }
+
+  return { category };
+}
+
+export async function fetchAdminCategoryForEditById(categoryId: string): Promise<{
+  category?: AdminCategory;
+  error?: string;
+}> {
+  const response = await getCategoryById(categoryId);
 
   if (!response.success) {
     return { error: response.error || "Failed to fetch category" };

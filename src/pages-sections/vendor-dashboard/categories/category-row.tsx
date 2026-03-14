@@ -45,6 +45,8 @@ export default function CategoryRow({
         <CategoryWrapper>{name}</CategoryWrapper>
       </StyledTableCell>
 
+      <StyledTableCell align="left">{slug}</StyledTableCell>
+
       <StyledTableCell align="left">
         <Avatar variant="rounded">
           <img
@@ -66,7 +68,7 @@ export default function CategoryRow({
       </StyledTableCell>
 
       <StyledTableCell align="center">
-        <Link href={`/admin/categories/${slug}`}>
+        <Link href={`/admin/categories/${id}`}>
           <StyledIconButton>
             <Edit />
           </StyledIconButton>

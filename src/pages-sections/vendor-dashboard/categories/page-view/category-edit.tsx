@@ -6,11 +6,11 @@ import AsyncState from "components/AsyncState";
 // LOCAL CUSTOM COMPONENT
 import CategoryForm from "../category-form";
 import PageWrapper from "../../page-wrapper";
-import { fetchAdminCategoryForEditBySlug } from "utils/services/admin-categories";
+import { fetchAdminCategoryForEditById } from "utils/services/admin-categories";
 import type { Category as AdminCategory } from "../../../../libs/admin";
 
 export default function EditCategoryPageView() {
-  const params = useParams<{ slug: string }>();
+  const params = useParams<{ slug: string }>(); // route param is named [slug] but now holds an ID
   const [category, setCategory] = useState<AdminCategory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export default function EditCategoryPageView() {
     const loadCategory = async () => {
       setLoading(true);
 
-      const response = await fetchAdminCategoryForEditBySlug(decodeURIComponent(params.slug));
+      const response = await fetchAdminCategoryForEditById(params.slug);
 
       if (cancelled) {
         return;
