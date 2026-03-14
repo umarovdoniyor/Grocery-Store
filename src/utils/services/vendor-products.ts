@@ -1,3 +1,4 @@
+import { getCategories } from "../../../libs/category";
 import { getMyProducts, removeProduct, updateProduct, Product } from "../../../libs/product";
 
 export interface VendorProductRow {
@@ -10,6 +11,8 @@ export interface VendorProductRow {
   category: string;
   published: boolean;
 }
+
+type CategoryNameMap = Map<string, string>;
 
 function toPlaceholderImage() {
   return "/assets/images/products/placeholder.png";
@@ -32,7 +35,10 @@ function mapVendorProductsError(message?: string) {
   return message;
 }
 
-export function mapVendorProductToRow(product: Product): VendorProductRow {
+function mapVendorProductToRow(
+  product: Product,
+  categoryNameMap?: CategoryNameMap
+): VendorProductRow {
   return {
     id: product._id,
     slug: product._id,
@@ -40,23 +46,42 @@ export function mapVendorProductToRow(product: Product): VendorProductRow {
     brand: product.brand || "-",
     price: product.salePrice ?? product.price,
     image: product.thumbnail || toPlaceholderImage(),
-    category: product.categoryIds?.[0] || "-",
+    category:
+      categoryNameMap?.get(product.categoryIds?.[0] || "") || product.categoryIds?.[0] || "-",
     published: product.status === "PUBLISHED"
   };
+}
+
+async function getCategoryNameMap(): Promise<CategoryNameMap> {
+  const response = await getCategories({ page: 1, limit: 500 });
+  const map = new Map<string, string>();
+
+  if (!response.success) return map;
+
+  (response.list || []).forEach((category) => {
+    map.set(category._id, category.name);
+  });
+
+  return map;
 }
 
 export async function fetchVendorProductsForUi(): Promise<{
   products: VendorProductRow[];
   error?: string;
 }> {
-  const response = await getMyProducts({ page: 1, limit: 100 });
+  const [response, categoryNameMap] = await Promise.all([
+    getMyProducts({ page: 1, limit: 100 }),
+    getCategoryNameMap()
+  ]);
 
   if (!response.success) {
     return { products: [], error: mapVendorProductsError(response.error) };
   }
 
   return {
-    products: (response.list || []).map(mapVendorProductToRow)
+    products: (response.list || []).map((product) =>
+      mapVendorProductToRow(product, categoryNameMap)
+    )
   };
 }
 

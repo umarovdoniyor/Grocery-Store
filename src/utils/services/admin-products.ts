@@ -1,3 +1,4 @@
+import { getCategories } from "../../../libs/category";
 import {
   getFeaturedProductsByAdmin,
   getProductsByAdmin,
@@ -20,11 +21,16 @@ export interface AdminProductRow {
   featuredRank?: number | null;
 }
 
+type CategoryNameMap = Map<string, string>;
+
 function toPlaceholderImage() {
   return "/assets/images/products/placeholder.png";
 }
 
-export function mapAdminProductToRow(product: ProductByAdmin): AdminProductRow {
+export function mapAdminProductToRow(
+  product: ProductByAdmin,
+  categoryNameMap?: CategoryNameMap
+): AdminProductRow {
   return {
     id: product._id,
     slug: product._id,
@@ -32,11 +38,25 @@ export function mapAdminProductToRow(product: ProductByAdmin): AdminProductRow {
     brand: product.brand || "-",
     price: product.salePrice ?? product.price,
     image: product.thumbnail || toPlaceholderImage(),
-    category: product.categoryIds?.[0] || "-",
+    category:
+      categoryNameMap?.get(product.categoryIds?.[0] || "") || product.categoryIds?.[0] || "-",
     published: product.status === "PUBLISHED",
     featured: Boolean(product.isFeatured),
     featuredRank: product.featuredRank ?? null
   };
+}
+
+async function getCategoryNameMap(): Promise<CategoryNameMap> {
+  const response = await getCategories({ page: 1, limit: 500 });
+  const map = new Map<string, string>();
+
+  if (!response.success) return map;
+
+  (response.list || []).forEach((category) => {
+    map.set(category._id, category.name);
+  });
+
+  return map;
 }
 
 export async function fetchAdminProductsForUi(): Promise<{
@@ -44,14 +64,19 @@ export async function fetchAdminProductsForUi(): Promise<{
   total: number;
   error?: string;
 }> {
-  const response = await getProductsByAdmin({ page: 1, limit: 100 });
+  const [response, categoryNameMap] = await Promise.all([
+    getProductsByAdmin({ page: 1, limit: 100 }),
+    getCategoryNameMap()
+  ]);
 
   if (!response.success) {
     return { products: [], total: 0, error: response.error || "Failed to fetch admin products" };
   }
 
   return {
-    products: (response.list || []).map(mapAdminProductToRow),
+    products: (response.list || []).map((product) =>
+      mapAdminProductToRow(product, categoryNameMap)
+    ),
     total: Number(response.total || 0)
   };
 }
@@ -66,19 +91,24 @@ export async function fetchAdminProductsForUiByQuery(input?: {
   total: number;
   error?: string;
 }> {
-  const response = await getProductsByAdmin({
-    page: input?.page || 1,
-    limit: input?.limit || 100,
-    search: input?.search || undefined,
-    status: input?.status
-  });
+  const [response, categoryNameMap] = await Promise.all([
+    getProductsByAdmin({
+      page: input?.page || 1,
+      limit: input?.limit || 100,
+      search: input?.search || undefined,
+      status: input?.status
+    }),
+    getCategoryNameMap()
+  ]);
 
   if (!response.success) {
     return { products: [], total: 0, error: response.error || "Failed to fetch admin products" };
   }
 
   return {
-    products: (response.list || []).map(mapAdminProductToRow),
+    products: (response.list || []).map((product) =>
+      mapAdminProductToRow(product, categoryNameMap)
+    ),
     total: Number(response.total || 0)
   };
 }
@@ -93,19 +123,24 @@ export async function fetchAdminFeaturedProductsForUiByQuery(input?: {
   total: number;
   error?: string;
 }> {
-  const response = await getFeaturedProductsByAdmin({
-    page: input?.page || 1,
-    limit: input?.limit || 100,
-    search: input?.search || undefined,
-    status: input?.status
-  });
+  const [response, categoryNameMap] = await Promise.all([
+    getFeaturedProductsByAdmin({
+      page: input?.page || 1,
+      limit: input?.limit || 100,
+      search: input?.search || undefined,
+      status: input?.status
+    }),
+    getCategoryNameMap()
+  ]);
 
   if (!response.success) {
     return { products: [], total: 0, error: response.error || "Failed to fetch featured products" };
   }
 
   return {
-    products: (response.list || []).map(mapAdminProductToRow),
+    products: (response.list || []).map((product) =>
+      mapAdminProductToRow(product, categoryNameMap)
+    ),
     total: Number(response.total || 0)
   };
 }
