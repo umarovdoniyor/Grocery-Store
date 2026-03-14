@@ -286,6 +286,37 @@ export const REMOVE_PRODUCT_BY_ADMIN = gql`
   }
 `;
 
+export const SET_PRODUCT_FEATURED_BY_ADMIN = gql`
+  mutation SetProductFeaturedByAdmin($input: SetProductFeaturedByAdminInput!) {
+    setProductFeaturedByAdmin(input: $input) {
+      _id
+      memberId
+      title
+      description
+      categoryIds
+      brand
+      sku
+      unit
+      price
+      salePrice
+      stockQty
+      minOrderQty
+      tags
+      images
+      thumbnail
+      status
+      views
+      likes
+      ordersCount
+      isFeatured
+      featuredRank
+      featuredAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const UPDATE_ORDER_STATUS_BY_ADMIN = gql`
   mutation UpdateOrderStatusByAdmin($input: UpdateOrderStatusByAdminInput!) {
     updateOrderStatusByAdmin(input: $input) {

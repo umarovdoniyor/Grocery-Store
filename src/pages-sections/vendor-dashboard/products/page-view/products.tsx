@@ -17,7 +17,7 @@ import SearchArea from "../../search-box";
 import PageWrapper from "../../page-wrapper";
 
 // TABLE HEADING DATA LIST
-const tableHeading = [
+const defaultTableHeading = [
   { id: "name", label: "Name", align: "left" },
   { id: "category", label: "Category", align: "left" },
   { id: "brand", label: "Brand", align: "left" },
@@ -31,9 +31,13 @@ type Props = {
   products: ProductRowItem[];
   basePath?: string;
   showCreateButton?: boolean;
+  showFeaturedToggle?: boolean;
   updatingProductId?: string | null;
+  updatingFeaturedProductId?: string | null;
   removingProductId?: string | null;
   onTogglePublished: (product: any) => void;
+  onToggleFeatured?: (product: any) => void;
+  onUpdateFeaturedRank?: (product: any, featuredRank: number) => void;
   onRemoveProduct: (product: any) => void;
 };
 // =============================================================================
@@ -42,12 +46,27 @@ export default function ProductsPageView({
   products,
   basePath = "/admin/products",
   showCreateButton = true,
+  showFeaturedToggle = false,
   updatingProductId,
+  updatingFeaturedProductId,
   removingProductId,
   onTogglePublished,
+  onToggleFeatured,
+  onUpdateFeaturedRank,
   onRemoveProduct
 }: Props) {
   const reshapedProducts = products;
+  const tableHeading = showFeaturedToggle
+    ? [
+        { id: "name", label: "Name", align: "left" },
+        { id: "category", label: "Category", align: "left" },
+        { id: "brand", label: "Brand", align: "left" },
+        { id: "price", label: "Price", align: "left" },
+        { id: "published", label: "Published", align: "left" },
+        { id: "featured", label: "Featured", align: "left" },
+        { id: "action", label: "Action", align: "center" }
+      ]
+    : defaultTableHeading;
 
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: reshapedProducts });
@@ -79,8 +98,12 @@ export default function ProductsPageView({
                     product={product}
                     basePath={basePath}
                     isUpdating={updatingProductId === product.id}
+                    isUpdatingFeatured={updatingFeaturedProductId === product.id}
                     isRemoving={removingProductId === product.id}
+                    showFeaturedToggle={showFeaturedToggle}
                     onTogglePublished={onTogglePublished}
+                    onToggleFeatured={onToggleFeatured}
+                    onUpdateFeaturedRank={onUpdateFeaturedRank}
                     onRemoveProduct={onRemoveProduct}
                   />
                 ))}

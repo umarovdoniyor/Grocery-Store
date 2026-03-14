@@ -279,6 +279,42 @@ export const GET_PRODUCTS_BY_ADMIN = gql`
   }
 `;
 
+export const GET_FEATURED_PRODUCTS_BY_ADMIN = gql`
+  query GetFeaturedProductsByAdmin($input: AdminProductsInquiry) {
+    getFeaturedProductsByAdmin(input: $input) {
+      list {
+        _id
+        memberId
+        title
+        description
+        categoryIds
+        brand
+        sku
+        unit
+        price
+        salePrice
+        stockQty
+        minOrderQty
+        tags
+        images
+        thumbnail
+        status
+        views
+        likes
+        ordersCount
+        isFeatured
+        featuredRank
+        featuredAt
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
 export const GET_PRODUCT_BY_ID_BY_ADMIN = gql`
   query GetProductByIdByAdmin($productId: String!) {
     getProductByIdByAdmin(productId: $productId) {

@@ -8,6 +8,7 @@ import {
   AdminProductRow,
   fetchAdminProductsForUiByQuery,
   removeAdminProductForUi,
+  updateAdminProductFeaturedForUi,
   updateAdminProductPublishedForUi
 } from "utils/services/admin-products";
 
@@ -17,6 +18,7 @@ export default function ProductsClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingProductId, setUpdatingProductId] = useState<string | null>(null);
+  const [updatingFeaturedProductId, setUpdatingFeaturedProductId] = useState<string | null>(null);
   const [removingProductId, setRemovingProductId] = useState<string | null>(null);
 
   const query = searchParams.get("q")?.trim() || "";
@@ -85,6 +87,63 @@ export default function ProductsClient() {
     setRemovingProductId(null);
   };
 
+  const handleToggleFeatured = async (product: AdminProductRow) => {
+    setUpdatingFeaturedProductId(product.id);
+
+    const response = await updateAdminProductFeaturedForUi({
+      productId: product.id,
+      featured: !product.featured
+    });
+
+    if (!response.success || response.featured === undefined) {
+      setError(response.error || "Failed to update featured status");
+      setUpdatingFeaturedProductId(null);
+      return;
+    }
+
+    setProducts((prev) =>
+      prev.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              featured: response.featured as boolean,
+              featuredRank: response.featuredRank ?? null
+            }
+          : item
+      )
+    );
+    setUpdatingFeaturedProductId(null);
+  };
+
+  const handleUpdateFeaturedRank = async (product: AdminProductRow, featuredRank: number) => {
+    setUpdatingFeaturedProductId(product.id);
+
+    const response = await updateAdminProductFeaturedForUi({
+      productId: product.id,
+      featured: true,
+      featuredRank
+    });
+
+    if (!response.success) {
+      setError(response.error || "Failed to update featured rank");
+      setUpdatingFeaturedProductId(null);
+      return;
+    }
+
+    setProducts((prev) =>
+      prev.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              featured: true,
+              featuredRank: response.featuredRank ?? featuredRank
+            }
+          : item
+      )
+    );
+    setUpdatingFeaturedProductId(null);
+  };
+
   if (loading) {
     return <AsyncState loading />;
   }
@@ -97,9 +156,13 @@ export default function ProductsClient() {
     <ProductsPageView
       products={products}
       showCreateButton={false}
+      showFeaturedToggle
       updatingProductId={updatingProductId}
+      updatingFeaturedProductId={updatingFeaturedProductId}
       removingProductId={removingProductId}
       onTogglePublished={handleTogglePublished}
+      onToggleFeatured={handleToggleFeatured}
+      onUpdateFeaturedRank={handleUpdateFeaturedRank}
       onRemoveProduct={handleRemoveProduct}
     />
   );
