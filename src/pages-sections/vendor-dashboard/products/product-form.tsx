@@ -85,11 +85,14 @@ const validationSchema = yup.object({
       const price = toNumberOrNaN(value.trim());
       return Number.isFinite(price) && price >= 0.01;
     }),
-  sale_price: yup.string().optional().test("sale-min", "Sale price must be >= 0", (value) => {
-    if (!value?.trim()) return true;
-    const salePrice = toNumberOrNaN(value.trim());
-    return Number.isFinite(salePrice) && salePrice >= 0;
-  }),
+  sale_price: yup
+    .string()
+    .optional()
+    .test("sale-min", "Sale price must be >= 0", (value) => {
+      if (!value?.trim()) return true;
+      const salePrice = toNumberOrNaN(value.trim());
+      return Number.isFinite(salePrice) && salePrice >= 0;
+    }),
   tags: yup.string().optional(),
   brand: yup.string().trim().max(80, "Brand must be at most 80 characters").optional(),
   sku: yup.string().trim().max(80, "SKU must be at most 80 characters").optional(),
@@ -320,25 +323,19 @@ export default function ProductForm({
   const handleSubmitForm = handleSubmit(async (values) => {
     setFormError(null);
 
-    const apiBaseUrl = getApiBaseUrl();
-
-    const normalizeAssetUrl = (rawValue?: string) => {
+    const sanitizeSubmittedUrl = (rawValue?: string) => {
       const normalized = (rawValue || "").trim().replace(/\\/g, "/");
       if (!normalized) return "";
-
-      if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
-        return normalized;
-      }
 
       if (normalized.startsWith("blob:") || normalized.startsWith("data:")) {
         return "";
       }
 
-      return apiBaseUrl ? toPublicImageUrl(normalized, apiBaseUrl) : normalized;
+      return normalized;
     };
 
     const imageList = splitCommaValues(values.images)
-      .map((item) => normalizeAssetUrl(item))
+      .map((item) => sanitizeSubmittedUrl(item))
       .filter(Boolean);
 
     if (!imageList.length) {
@@ -366,7 +363,7 @@ export default function ProductForm({
         .map((item) => item.trim())
         .filter(Boolean),
       images: imageList,
-      thumbnail: normalizeAssetUrl(values.thumbnail) || undefined,
+      thumbnail: sanitizeSubmittedUrl(values.thumbnail) || undefined,
       status: values.status as ProductStatus
     };
 
