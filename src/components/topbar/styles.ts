@@ -10,10 +10,8 @@ export const StyledRoot = styled("div", {
   fontSize: 12,
   paddingBlock: 7,
   color: "#2a3823",
-  borderBottom: "1px solid rgba(96, 114, 73, 0.22)",
-  background:
-    bgColor ||
-    "linear-gradient(90deg, rgba(244, 240, 224, 0.98) 0%, rgba(236, 231, 209, 0.98) 100%)"
+  borderBottom: "1px solid rgba(96, 114, 73, 0.10)",
+  background: bgColor || "#f6f4ea"
 }));
 
 export const StyledContainer = styled(Container)(() => ({
@@ -55,7 +53,7 @@ export const RightContent = styled("div")(() => ({
   flexShrink: 0,
   display: "flex",
   alignItems: "center",
-  "a": {
+  a: {
     color: "#4b5c3e",
     transition: "color 180ms ease",
     ":hover": { color: "#2f421f" }
