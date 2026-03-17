@@ -1,44 +1,39 @@
+import Link from "next/link";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 // STYLED COMPONENT
-import { SectionContainer, SearchOutlinedIcon } from "./styles";
+import { SectionContainer } from "./styles";
 
 export default function Section1() {
-  const SEARCH_BUTTON = (
-    <Button
-      color="primary"
-      disableElevation
-      variant="contained"
-      sx={{ px: "2rem", height: "100%", borderRadius: "0 8px 8px 0" }}
-    >
-      Search
-    </Button>
-  );
-
-  const STYLED = {
-    height: 50,
-    paddingRight: 0,
-    color: "grey.700",
-    background: "white",
-    "& fieldset": { border: "none" }
-  };
+  const categoryLinks = [
+    { label: "Seasonal Fruits", href: "/products/search?keyword=fruits" },
+    { label: "Garden Vegetables", href: "/products/search?keyword=vegetables" },
+    { label: "Dairy & Breakfast", href: "/products/search?keyword=dairy" },
+    { label: "Healthy Pantry", href: "/products/search?keyword=organic" }
+  ];
 
   return (
     <SectionContainer>
-      <h1>Get your grocery delivery within 30 minutes</h1>
+      <h1>Fresh groceries at your doorstep in 30 minutes</h1>
+      <p className="heroSubTitle">
+        Curated produce, pantry staples, and everyday essentials from trusted local vendors.
+      </p>
 
-      <div className="searchBox">
-        <TextField
-          fullWidth
-          placeholder="Searching for..."
-          slotProps={{
-            input: {
-              sx: STYLED,
-              endAdornment: SEARCH_BUTTON,
-              startAdornment: <SearchOutlinedIcon fontSize="small" />
-            }
-          }}
-        />
+      <div className="heroActions">
+        <Link href="/products">
+          <Button className="heroPrimaryBtn" disableElevation variant="contained">
+            Start Shopping
+          </Button>
+        </Link>
+
+        <div className="quickLinks">
+          {categoryLinks.map((item) => (
+            <Link key={item.label} href={item.href}>
+              <Button className="quickChip" disableElevation variant="text">
+                {item.label}
+              </Button>
+            </Link>
+          ))}
+        </div>
       </div>
     </SectionContainer>
   );

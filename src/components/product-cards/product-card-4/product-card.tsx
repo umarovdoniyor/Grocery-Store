@@ -42,6 +42,7 @@ export default function ProductCard4({ product }: Props) {
             width={450}
             height={450}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            className="productImage"
           />
         </Link>
 
@@ -57,7 +58,7 @@ export default function ProductCard4({ product }: Props) {
           {/* PRODUCT RATING / REVIEW  */}
           <ProductRating my={1} rating={rating} />
 
-          <FlexBox alignItems="center" flexWrap="wrap" gap={1.5} mb={1}>
+          <FlexBox className="metaRow" alignItems="center" flexWrap="wrap" gap={1.5} mb={1}>
             <Typography variant="caption" color="text.secondary">
               {Number(reviewsCount || 0)} reviews
             </Typography>
@@ -78,7 +79,9 @@ export default function ProductCard4({ product }: Props) {
           </FlexBox>
 
           {/* PRODUCT PRICE WITH DISCOUNT */}
-          <ProductPrice discount={discount} price={price} />
+          <div className="priceRow">
+            <ProductPrice discount={discount} price={price} />
+          </div>
         </div>
 
         {/* ADD TO CART BUTTON */}

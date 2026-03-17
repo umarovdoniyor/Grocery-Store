@@ -7,6 +7,7 @@ import ProductCard4 from "components/product-cards/product-card-4";
 import Product from "models/Product.model";
 // STYLED COMPONENT
 import { SubTitle } from "../styles";
+import { Section3Wrapper } from "./styles";
 
 // =================================================================
 type Props = { title: string; products: Product[] };
@@ -14,9 +15,11 @@ type Props = { title: string; products: Product[] };
 
 export default function Section3({ products, title }: Props) {
   return (
-    <div className="mb-3">
-      <Typography variant="h2">{title}</Typography>
-      <SubTitle>Best collection in {new Date().getFullYear()} for you!</SubTitle>
+    <Section3Wrapper className="mb-3">
+      <div className="sectionHeader">
+        <Typography variant="h2">{title}</Typography>
+        <SubTitle>Fresh picks curated for your kitchen this week.</SubTitle>
+      </div>
 
       <ProductsCarousel>
         {products.map((product) => (
@@ -25,6 +28,6 @@ export default function Section3({ products, title }: Props) {
           </Box>
         ))}
       </ProductsCarousel>
-    </div>
+    </Section3Wrapper>
   );
 }

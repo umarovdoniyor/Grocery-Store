@@ -6,5 +6,8 @@ import { styled } from "@mui/material/styles";
 export const SubTitle = styled("p")(({ theme }) => ({
   marginTop: ".25rem",
   marginBottom: "20px",
-  color: theme.palette.grey[600]
+  color: "#5a7040",
+  fontSize: "0.9rem",
+  fontWeight: 500,
+  letterSpacing: "0.01em"
 }));

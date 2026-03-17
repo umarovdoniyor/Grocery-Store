@@ -12,12 +12,12 @@ type Props = { price: number; discount: number };
 export default function ProductPrice({ discount, price }: Props) {
   return (
     <FlexBox alignItems="center" gap={1} mt={0.5}>
-      <Typography color="primary" fontWeight={600}>
+      <Typography color="primary" fontWeight={700} sx={{ fontSize: 18, letterSpacing: "-0.01em" }}>
         {calculateDiscount(price, discount)}
       </Typography>
 
       {discount > 0 && (
-        <Box component="del" fontSize={12} fontWeight={500} color="grey.400">
+        <Box component="del" fontSize={12} fontWeight={600} color="grey.400">
           {currency(price)}
         </Box>
       )}

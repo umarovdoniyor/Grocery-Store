@@ -13,7 +13,16 @@ export default function ProductsCarousel({ children }: PropsWithChildren) {
   });
 
   return (
-    <Box position="relative">
+    <Box
+      position="relative"
+      sx={{
+        px: { xs: 0, md: 0.5 },
+        py: 1,
+        borderRadius: 4,
+        background:
+          "linear-gradient(180deg, rgba(248, 246, 239, 0.72) 0%, rgba(248, 246, 239, 0) 100%)"
+      }}
+    >
       <Carousel ref={ref} api={api} options={options}>
         {children}
       </Carousel>

@@ -22,8 +22,13 @@ type Props = {
 export default function AllProducts({ products, title = "All Products", parentCategory }: Props) {
   return (
     <div className="mb-3" id="products">
-      <Typography variant="h2">{title}</Typography>
-      <SubTitle>Best collection in {new Date().getFullYear()} for you!</SubTitle>
+      <Typography
+        variant="h2"
+        sx={{ color: "#21311a", fontWeight: 700, letterSpacing: "-0.02em" }}
+      >
+        {title}
+      </Typography>
+      <SubTitle>Farm-fresh picks, delivered straight to your door.</SubTitle>
 
       {products.length > 0 ? (
         <>
@@ -36,8 +41,23 @@ export default function AllProducts({ products, title = "All Products", parentCa
           </Grid>
 
           <FlexRowCenter mt={6}>
-            <Button variant="contained" color="primary" sx={{ fontSize: 13 }}>
-              Load More...
+            <Button
+              variant="contained"
+              sx={{
+                fontSize: 13,
+                fontWeight: 600,
+                borderRadius: "50px",
+                px: 4,
+                py: 1.2,
+                background: "linear-gradient(135deg, #6f8f44 0%, #4f6d2f 100%)",
+                boxShadow: "0 4px 14px rgba(79, 109, 47, 0.35)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #5a7a30 0%, #3d5820 100%)",
+                  boxShadow: "0 6px 20px rgba(79, 109, 47, 0.45)"
+                }
+              }}
+            >
+              Load More
             </Button>
           </FlexRowCenter>
         </>
