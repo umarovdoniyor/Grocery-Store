@@ -14,6 +14,7 @@ export const StyledRoot = styled("div", {
   margin: "auto",
   maxWidth: "100%",
   overflow: "hidden",
+  backgroundColor: "transparent",
   position: "relative",
   ...(axis === "y" && { height: "100%" })
 }));
@@ -22,7 +23,8 @@ export const StyledContainer = styled("ul", {
   shouldForwardProp: (prop) => prop !== "axis" && prop !== "slideSpacing"
 })<StyledProps>(({ axis, slideSpacing }) => ({
   display: "flex",
-  backfaceVisibility: "hidden",
+  backgroundColor: "transparent",
+  backfaceVisibility: "visible",
   ...(axis === "x" && {
     touchAction: "pan-y pinch-zoom",
     marginLeft: `calc(${slideSpacing} * -1)`
@@ -55,7 +57,12 @@ export function Carousel({ sx, ref, options, children, slotProps }: CarouselProp
 
   return (
     <StyledRoot sx={sx} axis={axis} ref={ref} dir={direction} className="carousel-root">
-      <StyledContainer axis={axis} slideSpacing={slideSpacing} className="carousel-container">
+      <StyledContainer
+        axis={axis}
+        slideSpacing={slideSpacing}
+        sx={slotProps?.container}
+        className="carousel-container"
+      >
         {renderChildren}
       </StyledContainer>
     </StyledRoot>

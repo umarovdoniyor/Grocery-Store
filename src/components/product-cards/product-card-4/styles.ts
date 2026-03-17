@@ -13,12 +13,12 @@ export const StyledCard = styled(Card)(() => ({
   flexDirection: "column",
   justifyContent: "space-between",
   border: "1px solid rgba(69, 93, 48, 0.1)",
-  background: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.94) 100%)",
-  boxShadow: "0 16px 34px rgba(29, 42, 20, 0.08)",
+  backgroundColor: "#ffffff",
+  boxShadow: "0 8px 18px rgba(29, 42, 20, 0.06)",
   transition: "transform 250ms ease-in-out, box-shadow 250ms ease-in-out",
   "&:hover": {
     transform: "translateY(-6px)",
-    boxShadow: "0 22px 40px rgba(29, 42, 20, 0.14)"
+    boxShadow: "0 14px 26px rgba(29, 42, 20, 0.1)"
   },
   "&:hover .controller": { display: "flex", bottom: 24 },
   "&:hover .productImage": {
@@ -70,9 +70,10 @@ export const ImageWrapper = styled("div")(({ theme }) => ({
   position: "relative",
   padding: "40px 34px 28px",
   placeItems: "center",
-  background:
-    "radial-gradient(120px 90px at 18% 20%, rgba(249, 221, 133, 0.25), rgba(249, 221, 133, 0)), linear-gradient(180deg, #f8f5eb 0%, #f2efe4 100%)",
+  backgroundColor: "#f7f4ea",
   "& .productImage": {
+    mixBlendMode: "multiply",
+    opacity: 0.98,
     transition: "transform 250ms ease"
   }
 }));

@@ -3,13 +3,17 @@
 import { styled } from "@mui/material/styles";
 
 export const Section3Wrapper = styled("section")(({ theme }) => ({
-  paddingBlock: 12,
+  background: "#f7f4ea",
+  borderRadius: "20px",
+  padding: "28px 28px 20px",
+  marginBottom: "1.5rem",
+
   "& .sectionHeader": {
     display: "flex",
     alignItems: "flex-end",
     justifyContent: "space-between",
     gap: 16,
-    marginBottom: 18
+    marginBottom: 20
   },
   "& h2": {
     margin: 0,
@@ -21,6 +25,7 @@ export const Section3Wrapper = styled("section")(({ theme }) => ({
     color: "#627058"
   },
   [theme.breakpoints.down("sm")]: {
+    padding: "20px 16px 16px",
     "& .sectionHeader": {
       alignItems: "flex-start",
       flexDirection: "column",

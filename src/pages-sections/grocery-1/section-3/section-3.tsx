@@ -15,7 +15,7 @@ type Props = { title: string; products: Product[] };
 
 export default function Section3({ products, title }: Props) {
   return (
-    <Section3Wrapper className="mb-3">
+    <Section3Wrapper>
       <div className="sectionHeader">
         <Typography variant="h2">{title}</Typography>
         <SubTitle>Fresh picks curated for your kitchen this week.</SubTitle>

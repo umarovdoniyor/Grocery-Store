@@ -21,7 +21,15 @@ type Props = {
 
 export default function AllProducts({ products, title = "All Products", parentCategory }: Props) {
   return (
-    <div className="mb-3" id="products">
+    <div
+      id="products"
+      style={{
+        background: "#f7f4ea",
+        borderRadius: "20px",
+        padding: "28px 28px 24px",
+        marginBottom: "1.5rem"
+      }}
+    >
       <Typography
         variant="h2"
         sx={{ color: "#21311a", fontWeight: 700, letterSpacing: "-0.02em" }}
