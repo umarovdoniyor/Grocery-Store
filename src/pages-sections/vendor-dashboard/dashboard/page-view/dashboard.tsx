@@ -188,7 +188,9 @@ export default function DashboardPageView() {
       }
 
       if (!summaryResponse.success && !productsResponse.success) {
-        setError(summaryResponse.error || productsResponse.error || "Failed to load dashboard data.");
+        setError(
+          summaryResponse.error || productsResponse.error || "Failed to load dashboard data."
+        );
       }
 
       setIsLoading(false);

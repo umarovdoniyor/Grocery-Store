@@ -30,7 +30,9 @@ interface VendorReviewSummary {
 const DEFAULT_REVIEW_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_GRAPHQL_URL || "http://localhost:3001";
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+  "http://localhost:3001";
 
 function resolveReviewProductImage(value?: string | null) {
   const normalized = value?.trim();

@@ -21,7 +21,6 @@ interface Props {
 }
 
 export default function StockOutProducts({ stockOutProducts }: Props) {
-
   return (
     <Card>
       <FlexBetween px={3} py={2.5}>

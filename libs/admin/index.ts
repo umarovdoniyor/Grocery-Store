@@ -80,6 +80,8 @@ export interface MembersInquiryByAdminInput {
   limit: number;
   memberType?: string;
   memberStatus?: string;
+  type?: string;
+  status?: string;
   search?: string;
 }
 
@@ -244,6 +246,7 @@ export interface OrderByAdmin {
 
 export interface MemberByAdmin {
   _id: string;
+  ordersCount?: number;
   memberEmail: string;
   memberPhone?: string | null;
   memberNickname?: string | null;
@@ -324,21 +327,59 @@ export async function getMembersByAdmin(input: MembersInquiryByAdminInput): Prom
   total?: number;
   error?: string;
 }> {
-  try {
+  const run = async (variablesInput: Record<string, any>) => {
     const apolloClient = await initializeApollo();
 
     const { data } = await apolloClient.query({
       query: GET_MEMBERS_BY_ADMIN,
-      variables: { input },
+      variables: { input: variablesInput },
       fetchPolicy: "network-only"
     });
 
     const list = data?.getMembersByAdmin?.list || [];
     const total = data?.getMembersByAdmin?.metaCounter?.total || 0;
 
+    return { list, total };
+  };
+
+  try {
+    const primaryInput = {
+      page: input.page,
+      limit: input.limit,
+      search: input.search,
+      status: input.status || input.memberStatus,
+      type: input.type || input.memberType,
+      memberStatus: input.memberStatus,
+      memberType: input.memberType
+    };
+
+    const { list, total } = await run(primaryInput);
+
     return { success: true, list, total };
   } catch (error: any) {
     const message = error?.message || "Failed to fetch members by admin";
+
+    const canRetryWithLegacyInput =
+      /Field\s+"status"\s+is not defined|Field\s+"type"\s+is not defined/i.test(message);
+
+    if (canRetryWithLegacyInput) {
+      try {
+        const legacyInput = {
+          page: input.page,
+          limit: input.limit,
+          search: input.search,
+          memberStatus: input.memberStatus || input.status,
+          memberType: input.memberType || input.type
+        };
+
+        const { list, total } = await run(legacyInput);
+        return { success: true, list, total };
+      } catch (retryError: any) {
+        const retryMessage = retryError?.message || "Failed to fetch members by admin";
+        return { success: false, error: retryMessage };
+      }
+    }
+
     return { success: false, error: message };
   }
 }

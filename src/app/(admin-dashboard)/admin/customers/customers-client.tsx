@@ -69,6 +69,28 @@ export default function CustomersClient() {
     setUpdatingMemberId(null);
   };
 
+  const handleSoftDeleteMember = async (customer: AdminCustomerRow) => {
+    const confirmed = window.confirm(`Soft delete ${customer.name}?`);
+    if (!confirmed) return;
+
+    setUpdatingMemberId(customer.id);
+
+    const response = await updateAdminMemberStatusForUi({
+      memberId: customer.id,
+      status: "DELETED",
+      reason: "Soft deleted by admin"
+    });
+
+    if (!response.success) {
+      setError(response.error || "Failed to delete member");
+      setUpdatingMemberId(null);
+      return;
+    }
+
+    setCustomers((prev) => prev.filter((item) => item.id !== customer.id));
+    setUpdatingMemberId(null);
+  };
+
   if (loading) {
     return <AsyncState loading />;
   }
@@ -83,6 +105,7 @@ export default function CustomersClient() {
       showCreateButton={false}
       updatingMemberId={updatingMemberId}
       onToggleMemberStatus={handleToggleMemberStatus}
+      onSoftDeleteMember={handleSoftDeleteMember}
     />
   );
 }

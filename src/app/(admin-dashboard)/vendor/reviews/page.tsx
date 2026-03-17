@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-const REVIEW_STATUS_SET = new Set<ProductReviewStatus>(["PUBLISHED", "PENDING", "REJECTED", "HIDDEN"]);
+const REVIEW_STATUS_SET = new Set<ProductReviewStatus>([
+  "PUBLISHED",
+  "PENDING",
+  "REJECTED",
+  "HIDDEN"
+]);
 
 export default async function Reviews({
   searchParams
@@ -22,7 +27,5 @@ export default async function Reviews({
     ? (rawStatus as ProductReviewStatus)
     : "ALL";
 
-  return (
-    <ReviewsPageView selectedStatus={selectedStatus} />
-  );
+  return <ReviewsPageView selectedStatus={selectedStatus} />;
 }

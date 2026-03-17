@@ -43,6 +43,7 @@ export const GET_MEMBERS_BY_ADMIN = gql`
     getMembersByAdmin(input: $input) {
       list {
         _id
+        ordersCount
         memberEmail
         memberPhone
         memberNickname

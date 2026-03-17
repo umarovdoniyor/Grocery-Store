@@ -89,7 +89,10 @@ async function getVendorShopImageMap(): Promise<Map<string, string>> {
   }
 
   return new Map(
-    response.list.map((vendor) => [vendor.storeName.trim().toLowerCase(), resolveSellerImage(vendor.coverImage)])
+    response.list.map((vendor) => [
+      vendor.storeName.trim().toLowerCase(),
+      resolveSellerImage(vendor.coverImage)
+    ])
   );
 }
 
@@ -129,7 +132,10 @@ export async function fetchAdminVendorApplicationsForUi(): Promise<{
     };
   }
 
-  const [avatarMap, shopImageMap] = await Promise.all([getVendorAvatarMap(), getVendorShopImageMap()]);
+  const [avatarMap, shopImageMap] = await Promise.all([
+    getVendorAvatarMap(),
+    getVendorShopImageMap()
+  ]);
 
   return {
     sellers: (response.list || []).map((item) =>
@@ -167,7 +173,10 @@ export async function fetchAdminVendorApplicationsForUiByQuery(input?: {
     };
   }
 
-  const [avatarMap, shopImageMap] = await Promise.all([getVendorAvatarMap(), getVendorShopImageMap()]);
+  const [avatarMap, shopImageMap] = await Promise.all([
+    getVendorAvatarMap(),
+    getVendorShopImageMap()
+  ]);
 
   return {
     sellers: (response.list || []).map((item) =>

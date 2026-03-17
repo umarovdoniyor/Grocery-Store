@@ -23,6 +23,7 @@ type Props = {
   showCreateButton?: boolean;
   updatingMemberId?: string | null;
   onToggleMemberStatus: (customer: any) => void;
+  onSoftDeleteMember: (customer: any) => void;
 };
 // =============================================================================
 
@@ -30,7 +31,8 @@ export default function CustomersPageView({
   customers,
   showCreateButton = true,
   updatingMemberId,
-  onToggleMemberStatus
+  onToggleMemberStatus,
+  onSoftDeleteMember
 }: Props) {
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =
     useMuiTable({ listData: customers });
@@ -62,6 +64,7 @@ export default function CustomersPageView({
                     key={customer.id}
                     isUpdating={updatingMemberId === customer.id}
                     onToggleMemberStatus={onToggleMemberStatus}
+                    onSoftDeleteMember={onSoftDeleteMember}
                   />
                 ))}
               </TableBody>

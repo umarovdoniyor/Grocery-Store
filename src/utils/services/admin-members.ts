@@ -1,4 +1,5 @@
 import { getMembersByAdmin, MemberByAdmin, updateMemberStatusByAdmin } from "../../../libs/admin";
+import { toPublicImageUrl } from "../../../libs/upload";
 
 export interface AdminCustomerRow {
   id: string;
@@ -8,7 +9,49 @@ export interface AdminCustomerRow {
   avatar: string;
   balance: number;
   orders: number;
+  memberType: string;
   memberStatus: string;
+}
+
+const DEFAULT_CUSTOMER_AVATAR = "/assets/images/faces/propic(1).png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+function resolveCustomerAvatar(value?: string | null): string {
+  const normalized = value?.replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_CUSTOMER_AVATAR;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_CUSTOMER_AVATAR;
+    } catch {
+      return DEFAULT_CUSTOMER_AVATAR;
+    }
+  }
+
+  try {
+    return toPublicImageUrl(normalized, getApiBaseUrl());
+  } catch {
+    return DEFAULT_CUSTOMER_AVATAR;
+  }
 }
 
 function toDisplayName(member: MemberByAdmin): string {
@@ -24,9 +67,10 @@ export function mapMemberToCustomerRow(member: MemberByAdmin): AdminCustomerRow 
     name: toDisplayName(member),
     phone: member.memberPhone || "-",
     email: member.memberEmail,
-    avatar: member.memberAvatar || "/assets/images/faces/propic(1).png",
+    avatar: resolveCustomerAvatar(member.memberAvatar),
     balance: 0,
-    orders: 0,
+    orders: Number(member.ordersCount || 0),
+    memberType: member.memberType,
     memberStatus: member.memberStatus
   };
 }
