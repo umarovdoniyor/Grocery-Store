@@ -176,6 +176,7 @@ export interface ProductSummary {
   title: string;
   slug: string;
   thumbnail: string;
+  featuredRank?: number | null;
   ratingAvg?: number;
   reviewsCount?: number;
   price: number;

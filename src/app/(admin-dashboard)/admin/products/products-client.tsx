@@ -50,6 +50,25 @@ export default function ProductsClient() {
     loadProducts();
   }, [query, status]);
 
+  const triggerStorefrontRevalidation = async () => {
+    const token =
+      typeof window !== "undefined" ? window.localStorage.getItem("accessToken") || "" : "";
+
+    if (!token) return;
+
+    try {
+      await fetch("/api/revalidate-storefront", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+    } catch (revalidateError) {
+      console.warn("Failed to revalidate storefront pages:", revalidateError);
+    }
+  };
+
   const handleTogglePublished = async (product: AdminProductRow) => {
     setUpdatingProductId(product.id);
 
@@ -69,6 +88,7 @@ export default function ProductsClient() {
         item.id === product.id ? { ...item, published: response.published as boolean } : item
       )
     );
+    await triggerStorefrontRevalidation();
     setUpdatingProductId(null);
   };
 
@@ -112,6 +132,7 @@ export default function ProductsClient() {
           : item
       )
     );
+    await triggerStorefrontRevalidation();
     setUpdatingFeaturedProductId(null);
   };
 
@@ -141,6 +162,7 @@ export default function ProductsClient() {
           : item
       )
     );
+    await triggerStorefrontRevalidation();
     setUpdatingFeaturedProductId(null);
   };
 

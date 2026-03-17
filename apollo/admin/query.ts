@@ -270,6 +270,9 @@ export const GET_PRODUCTS_BY_ADMIN = gql`
         views
         likes
         ordersCount
+        isFeatured
+        featuredRank
+        featuredAt
         createdAt
         updatedAt
       }

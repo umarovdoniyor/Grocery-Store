@@ -81,7 +81,9 @@ async function getVendorAvatarMap(): Promise<Map<string, string>> {
 async function getVendorShopImageMap(): Promise<Map<string, string>> {
   const response = await getVendors({
     page: 1,
-    limit: 100
+    limit: 50,
+    status: "ACTIVE",
+    sortBy: "NEWEST"
   });
 
   if (!response.success || !response.list) {

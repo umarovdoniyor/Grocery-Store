@@ -61,6 +61,7 @@ export default function ProductRow({
 }: RowProps) {
   const { category, name, price, image, brand, id, published, featured, featuredRank, slug } =
     product;
+  const isVisibleOnHome = Boolean(featured && published);
   const isBrandImage = brand?.startsWith("/") || brand?.startsWith("http");
   const [rankDraft, setRankDraft] = useState(
     featuredRank && Number.isFinite(Number(featuredRank)) ? String(featuredRank) : ""
@@ -130,42 +131,54 @@ export default function ProductRow({
 
       {showFeaturedToggle && (
         <StyledTableCell align="left">
-          <FlexBox alignItems="center" gap={1}>
-            {isUpdatingFeatured ? (
-              <CircularProgress size={18} color="warning" />
-            ) : (
-              <BazaarSwitch
-                color="warning"
-                checked={Boolean(featured)}
-                onChange={() => onToggleFeatured?.(product)}
+          <Box>
+            <FlexBox alignItems="center" gap={1}>
+              {isUpdatingFeatured ? (
+                <CircularProgress size={18} color="warning" />
+              ) : (
+                <BazaarSwitch
+                  color="warning"
+                  checked={Boolean(featured)}
+                  onChange={() => onToggleFeatured?.(product)}
+                />
+              )}
+
+              <TextField
+                size="small"
+                type="number"
+                placeholder="Rank"
+                value={rankDraft}
+                onChange={(event) => setRankDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    applyFeaturedRank();
+                  }
+                }}
+                onBlur={applyFeaturedRank}
+                disabled={!featured || isUpdatingFeatured}
+                slotProps={{ htmlInput: { min: 1 } }}
+                sx={{ width: 90 }}
               />
-            )}
 
-            <TextField
-              size="small"
-              type="number"
-              placeholder="Rank"
-              value={rankDraft}
-              onChange={(event) => setRankDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  applyFeaturedRank();
-                }
-              }}
-              onBlur={applyFeaturedRank}
-              disabled={!featured || isUpdatingFeatured}
-              slotProps={{ htmlInput: { min: 1 } }}
-              sx={{ width: 90 }}
-            />
+              <StyledIconButton
+                onClick={applyFeaturedRank}
+                disabled={!featured || isUpdatingFeatured || !rankDraft.trim()}
+              >
+                <Done />
+              </StyledIconButton>
+            </FlexBox>
 
-            <StyledIconButton
-              onClick={applyFeaturedRank}
-              disabled={!featured || isUpdatingFeatured || !rankDraft.trim()}
-            >
-              <Done />
-            </StyledIconButton>
-          </FlexBox>
+            <Typography variant="caption" sx={{ display: "block", mt: 0.75 }}>
+              {isVisibleOnHome ? (
+                <>
+                  Visible on Home. <Link href="/" target="_blank">Open</Link>
+                </>
+              ) : (
+                "Hidden on Home (requires Featured + Published)."
+              )}
+            </Typography>
+          </Box>
         </StyledTableCell>
       )}
 

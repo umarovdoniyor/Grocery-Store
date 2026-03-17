@@ -17,6 +17,7 @@ import User2 from "icons/User2";
 import CategoryOutlined from "icons/CategoryOutline";
 import ShoppingBagOutlined from "icons/ShoppingBagOutlined";
 import {
+  getFeaturedProducts,
   getGroceryProducts,
   getPopularProducts,
   getTrendingProducts,
@@ -31,14 +32,21 @@ type Props = {
 // =====================================================
 
 export default async function GroceryOnePageView({ selected }: Props) {
-  const [products, popularProducts, trendingProducts, grocery1NavList, layoutData] =
-    await Promise.all([
-      getGroceryProducts(selected?.slug),
-      getPopularProducts(),
-      getTrendingProducts(),
-      getGrocery1Navigation(),
-      getLayoutData()
-    ]);
+  const [
+    products,
+    featuredProducts,
+    popularProducts,
+    trendingProducts,
+    grocery1NavList,
+    layoutData
+  ] = await Promise.all([
+    getGroceryProducts(selected?.slug),
+    getFeaturedProducts(),
+    getPopularProducts(),
+    getTrendingProducts(),
+    getGrocery1Navigation(),
+    getLayoutData()
+  ]);
 
   const mobileIconMap = {
     Home,
@@ -71,6 +79,9 @@ export default async function GroceryOnePageView({ selected }: Props) {
           <Section4 products={products} title={selected.title} parentCategory={selected.parent} />
         ) : (
           <Fragment>
+            {/* FEATURED PRODUCTS AREA */}
+            <Section3 title="Featured Products" products={featuredProducts} />
+
             {/* POPULAR PRODUCTS AREA */}
             <Section3 title="Popular Products" products={popularProducts} />
 
