@@ -46,7 +46,7 @@ export default function SideNavbar({
             if (item.child) return <Accordion item={item} key={ind} />;
 
             return (
-              <Link key={item.title} href={item.href!} scroll={false}>
+              <Link key={item.title} href={item.href!}>
                 <div className="linkList">
                   <ListItem item={item} />
                 </div>

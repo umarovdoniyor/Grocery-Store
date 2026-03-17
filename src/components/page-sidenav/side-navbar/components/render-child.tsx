@@ -9,7 +9,7 @@ type Child = { title: string; href: string; icon?: string; image?: string };
 
 export const renderChild = (child: Child[], active: string) => {
   return child.map(({ title, href }, index) => (
-    <Link href={href} key={index} scroll={false}>
+    <Link href={href} key={index}>
       <StyledList active={active === title}>
         {child[index].image ? (
           <Box

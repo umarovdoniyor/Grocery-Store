@@ -342,10 +342,10 @@ export const getGrocery1Navigation = cache(async () => {
       icon: parent.icon || undefined,
       image: parent.image || undefined,
       title: parent.name,
-      href: `/grocery-1/${parent.slug}`,
+      href: `/grocery-1/${parent.slug}#products`,
       child: (parent.children || []).map((child) => ({
         title: child.name,
-        href: `/grocery-1/${child.slug}`,
+        href: `/grocery-1/${child.slug}#products`,
         icon: child.icon || undefined,
         image: child.image || undefined
       }))
@@ -364,7 +364,7 @@ export const getGrocery1Navigation = cache(async () => {
   const categoryItems = (categoriesResponse.list || []).map((item) => ({
     icon: "CategoryOutline",
     title: item.name,
-    href: `/grocery-1/${item.slug}`
+    href: `/grocery-1/${item.slug}#products`
   }));
 
   const nav: CategoryNavList[] = [
