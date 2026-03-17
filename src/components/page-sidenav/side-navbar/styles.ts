@@ -40,7 +40,7 @@ export const StyledList = styled("div", {
   display: "flex",
   gap: theme.spacing(1),
   cursor: "pointer",
-  padding: "4px 20px",
+  padding: "4px 20px 4px 36px",
   alignItems: "center",
   transition: "all 0.2s",
   color: theme.palette.grey[700],
@@ -58,7 +58,7 @@ export const StyledList = styled("div", {
 export const Circle = styled("span")(({ theme }) => ({
   width: 4,
   height: 4,
-  marginLeft: "2rem",
+  marginLeft: 0,
   marginRight: 0,
   borderRadius: "3px",
   backgroundColor: theme.palette.grey[600]
