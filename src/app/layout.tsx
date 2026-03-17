@@ -23,6 +23,7 @@ import { AuthProvider } from "contexts/AuthContext";
 // GLOBAL CUSTOM COMPONENTS
 import RTL from "components/rtl";
 import ProgressBar from "components/progress";
+import SnackbarProvider from "components/SnackbarProvider";
 
 // IMPORT i18n SUPPORT FILE
 import "i18n";
@@ -42,12 +43,14 @@ export default function RootLayout({ children, modal }: RootLayoutProps) {
           <CartProvider>
             <SettingsProvider>
               <ThemeProvider>
-                <RTL>
-                  {modal}
-                  {children}
-                </RTL>
+                <SnackbarProvider>
+                  <RTL>
+                    {modal}
+                    {children}
+                  </RTL>
 
-                <ProgressBar />
+                  <ProgressBar />
+                </SnackbarProvider>
               </ThemeProvider>
             </SettingsProvider>
           </CartProvider>

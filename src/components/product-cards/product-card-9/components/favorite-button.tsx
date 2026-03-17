@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import { useSnackbar } from "notistack";
 import { addToWishlist, getWishlistStatus, removeFromWishlist } from "../../../../../libs/wishlist";
 import { useAuth } from "contexts/AuthContext";
 
@@ -16,6 +17,7 @@ export default function FavoriteButton({ productId }: Props) {
   const [isFavorite, setFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     let mounted = true;
@@ -38,7 +40,12 @@ export default function FavoriteButton({ productId }: Props) {
   }, [isAuthenticated, productId]);
 
   const handleFavorite = async () => {
-    if (loading || !isAuthenticated || !productId) return;
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please log in to like products.", { variant: "info" });
+      return;
+    }
+
+    if (loading || !productId) return;
 
     setLoading(true);
 

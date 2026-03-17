@@ -27,7 +27,8 @@ export default function ColumnList({ list, children, banner, minWidth = 760 }: P
           <Grid container spacing={4}>
             {list.map((item, ind) => (
               <Grid size={{ md: 3 }} key={ind}>
-                <div
+                <NavLink
+                  href={item.href}
                   className="title-link"
                   style={{ display: "flex", alignItems: "center", gap: 8 }}
                 >
@@ -55,7 +56,7 @@ export default function ColumnList({ list, children, banner, minWidth = 760 }: P
                     </Box>
                   ) : null}
                   {item.title}
-                </div>
+                </NavLink>
 
                 {item.children?.map((sub, ind) => (
                   <NavLink

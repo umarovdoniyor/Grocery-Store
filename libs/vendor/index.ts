@@ -87,6 +87,8 @@ export interface VendorProductSummary {
   title: string;
   slug: string;
   thumbnail: string;
+  ratingAvg?: number;
+  reviewsCount?: number;
   price: number;
   salePrice?: number;
   stockQty: number;

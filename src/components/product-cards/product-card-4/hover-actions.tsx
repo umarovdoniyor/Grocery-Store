@@ -8,6 +8,7 @@ import Favorite from "@mui/icons-material/Favorite";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import RemoveRedEye from "@mui/icons-material/RemoveRedEye";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import { useSnackbar } from "notistack";
 // GLOBAL CUSTOM HOOKS
 import useCart from "hooks/useCart";
 import { useAuth } from "contexts/AuthContext";
@@ -27,6 +28,7 @@ export default function HoverActions({ product, onLikesChange }: Props) {
 
   const { dispatch } = useCart();
   const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
   const [isFavorite, setFavorite] = useState(Boolean(meLiked));
@@ -65,7 +67,12 @@ export default function HoverActions({ product, onLikesChange }: Props) {
     event.preventDefault();
     event.stopPropagation();
 
-    if (!id || favoriteLoading || !isAuthenticated) return;
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please log in to like products.", { variant: "info" });
+      return;
+    }
+
+    if (!id || favoriteLoading) return;
 
     setFavoriteLoading(true);
     const result = await toggleLike({ likeGroup: "PRODUCT", likeRefId: id });

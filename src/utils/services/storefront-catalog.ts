@@ -13,6 +13,7 @@ import {
   getVendors,
   type VendorProductSummary
 } from "../../../libs/vendor";
+import { toPublicImageUrl } from "../../../libs/upload";
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 const DEFAULT_COLORS = ["#1C1C1C", "#FF7A7A", "#FFC672", "#84FFB5", "#70F6FF", "#6B7AFF"];
@@ -30,15 +31,46 @@ const mapSort = (sort?: string): ProductSortBy | undefined => {
   return undefined;
 };
 
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
 const normalizeThumbnail = (thumbnail?: string | null): string => {
-  const value = (thumbnail || "").trim();
+  const value = (thumbnail || "").replace(/\\/g, "/").trim();
   if (!value) return DEFAULT_THUMBNAIL;
 
   // Some seeded backend entries use non-image placeholder URLs on example.com,
   // which causes Next image optimization to fail with 500.
   if (value.includes("example.com")) return DEFAULT_THUMBNAIL;
 
-  return value;
+  if (value.startsWith("/assets/")) return value;
+
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    try {
+      const parsed = new URL(value);
+      return parsed.host ? value : DEFAULT_THUMBNAIL;
+    } catch {
+      return DEFAULT_THUMBNAIL;
+    }
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return value.startsWith("/") ? value : `/${value}`;
+
+  return toPublicImageUrl(value, apiBase);
 };
 
 const mapProduct = (item: ProductSummary): Product => {
@@ -57,6 +89,8 @@ const mapProduct = (item: ProductSummary): Product => {
     discount,
     rating: Number(item.ratingAvg || 0),
     reviewsCount: Number(item.reviewsCount || 0),
+    likes: Number(item.likes || 0),
+    views: Number(item.views || 0),
     categories: [],
     status: item.status,
     published: item.status === "PUBLISHED"
@@ -77,7 +111,10 @@ const mapVendorProduct = (item: VendorProductSummary): Product => {
     images: [normalizeThumbnail(item.thumbnail)],
     price,
     discount,
-    rating: 0,
+    rating: Number(item.ratingAvg || 0),
+    reviewsCount: Number(item.reviewsCount || 0),
+    likes: Number(item.likes || 0),
+    views: Number(item.views || 0),
     categories: [],
     status: item.status as Product["status"],
     published: item.status === "PUBLISHED"

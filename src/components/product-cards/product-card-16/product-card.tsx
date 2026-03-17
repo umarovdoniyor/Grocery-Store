@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import RemoveRedEye from "@mui/icons-material/RemoveRedEye";
+import { useSnackbar } from "notistack";
 // GLOBAL CUSTOM COMPONENTS
 import LazyImage from "components/LazyImage";
 import { FlexBox } from "components/flex-box";
@@ -42,6 +43,7 @@ export default function ProductCard16({ product }: Props) {
     meLiked
   } = product;
   const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const hasReviewData = Number(rating || 0) > 0 || Number(reviewsCount || 0) > 0;
   const formattedViews = new Intl.NumberFormat("en", {
     notation: "compact",
@@ -91,7 +93,12 @@ export default function ProductCard16({ product }: Props) {
     event.preventDefault();
     event.stopPropagation();
 
-    if (!id || favoriteLoading || !isAuthenticated) return;
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please log in to like products.", { variant: "info" });
+      return;
+    }
+
+    if (!id || favoriteLoading) return;
 
     setFavoriteLoading(true);
     const result = await toggleLike({ likeGroup: "PRODUCT", likeRefId: id });
@@ -123,7 +130,17 @@ export default function ProductCard16({ product }: Props) {
       <div className="content">
         <div>
           <Link href={`/products/${slug}`}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 1,
+                minHeight: 48,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden"
+              }}
+            >
               {title}
             </Typography>
           </Link>
@@ -147,7 +164,7 @@ export default function ProductCard16({ product }: Props) {
               gap={0.5}
               onClick={handleFavorite}
               aria-disabled={favoriteLoading}
-              sx={{ cursor: isAuthenticated ? "pointer" : "default" }}
+              sx={{ cursor: "pointer" }}
             >
               {isFavorite ? (
                 <Favorite sx={{ fontSize: 14, color: "error.main" }} />

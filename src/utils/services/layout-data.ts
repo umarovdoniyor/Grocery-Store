@@ -74,14 +74,15 @@ function buildGroupedChildrenForCategoryList(parent: CategoryTreeNode): Category
   if (!hasThirdLevel) {
     return [
       {
-        title: "Sub Categories",
+        title: `All ${parent.name}`,
         href: toCategoryLink(parent.slug),
-        children: children.map((child) => ({
-          title: child.name,
-          href: toCategoryLink(child.slug),
-          ...toVisual(child)
-        }))
-      }
+        ...toVisual(parent)
+      },
+      ...children.map((child) => ({
+        title: child.name,
+        href: toCategoryLink(child.slug),
+        ...toVisual(child)
+      }))
     ];
   }
 
@@ -93,11 +94,18 @@ function buildGroupedChildrenForCategoryList(parent: CategoryTreeNode): Category
       href: toCategoryLink(child.slug),
       ...toVisual(child),
       children: thirdLevel.length
-        ? thirdLevel.map((leaf) => ({
-            title: leaf.name,
-            href: toCategoryLink(leaf.slug),
-            ...toVisual(leaf)
-          }))
+        ? [
+            {
+              title: `All ${child.name}`,
+              href: toCategoryLink(child.slug),
+              ...toVisual(child)
+            },
+            ...thirdLevel.map((leaf) => ({
+              title: leaf.name,
+              href: toCategoryLink(leaf.slug),
+              ...toVisual(leaf)
+            }))
+          ]
         : [{ title: `All ${child.name}`, href: toCategoryLink(child.slug), ...toVisual(child) }]
     };
   });
@@ -126,16 +134,16 @@ function buildGroupedChildrenForHeaderNav(
   const hasThirdLevel = children.some((child) => (child.children || []).length > 0);
 
   if (!hasThirdLevel) {
-    return [
-      {
-        title: "Sub Categories",
-        child: children.map((child) => ({
+    return children.map((child) => ({
+      title: child.name,
+      child: [
+        {
           title: child.name,
           url: toCategoryLink(child.slug),
           ...toVisual(child)
-        }))
-      }
-    ];
+        }
+      ]
+    }));
   }
 
   return children.map((child) => {
@@ -144,11 +152,18 @@ function buildGroupedChildrenForHeaderNav(
     return {
       title: child.name,
       child: thirdLevel.length
-        ? thirdLevel.map((leaf) => ({
-            title: leaf.name,
-            url: toCategoryLink(leaf.slug),
-            ...toVisual(leaf)
-          }))
+        ? [
+            {
+              title: `All ${child.name}`,
+              url: toCategoryLink(child.slug),
+              ...toVisual(child)
+            },
+            ...thirdLevel.map((leaf) => ({
+              title: leaf.name,
+              url: toCategoryLink(leaf.slug),
+              ...toVisual(leaf)
+            }))
+          ]
         : [
             {
               title: `All ${child.name}`,

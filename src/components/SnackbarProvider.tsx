@@ -1,3 +1,5 @@
+"use client";
+
 import { PropsWithChildren } from "react";
 import { styled } from "@mui/material/styles";
 import { SnackbarProvider as NotistackProvider } from "notistack";

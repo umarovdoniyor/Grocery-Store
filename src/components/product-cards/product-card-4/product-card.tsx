@@ -36,7 +36,13 @@ export default function ProductCard4({ product }: Props) {
 
         {/* PRODUCT IMAGE / THUMBNAIL */}
         <Link href={`/products/${slug}`}>
-          <LazyImage alt={title} src={thumbnail} width={450} height={450} />
+          <LazyImage
+            alt={title}
+            src={thumbnail}
+            width={450}
+            height={450}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
         </Link>
 
         {/* HOVER ACTION ICONS */}

@@ -46,7 +46,7 @@ export const HoverWrapper = styled("div")(({ theme }) => ({
 }));
 
 export const ImageWrapper = styled("div")(({ theme }) => ({
-  minHeight: 288,
+  height: 288,
   display: "grid",
   overflow: "hidden",
   textAlign: "center",

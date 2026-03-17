@@ -658,6 +658,8 @@ export const GET_VENDOR_PRODUCTS = gql`
         title
         slug
         thumbnail
+        ratingAvg
+        reviewsCount
         price
         salePrice
         stockQty
