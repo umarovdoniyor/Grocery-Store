@@ -84,9 +84,7 @@ export function NavigationList({ navigation }: Props) {
             title={nav.title}
             menuList={nav.child}
             isOpen={activeMenu === nav.title}
-            onToggle={() =>
-              setActiveMenu((prev) => (prev === nav.title ? null : nav.title))
-            }
+            onToggle={() => setActiveMenu((prev) => (prev === nav.title ? null : nav.title))}
           />
         );
       }
