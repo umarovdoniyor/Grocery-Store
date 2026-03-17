@@ -3,7 +3,7 @@ import type { OrderStatus } from "models/Order.model";
 import type User from "models/User.model";
 import { updateMyVendorOrderItemStatus, type VendorOrderItemStatus } from "../../../libs/vendor";
 import { initializeApollo } from "../../../apollo/client";
-import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
+import { GET_MY_VENDOR_ORDER_BY_ID, GET_MY_VENDOR_ORDERS } from "../../../apollo/user/query";
 
 interface MyOrderItem {
   _id: string;
@@ -90,12 +90,10 @@ const mapVendorOrdersError = (message?: string) => {
   return message;
 };
 
-function mapMyOrderToVendorUi(order: MyOrder, vendorId: string): Order | null {
-  const vendorItems = (order.items || []).filter((item) => item.vendorId === vendorId);
-  if (!vendorItems.length) return null;
-
+function mapVendorOrderToUi(order: MyOrder): Order {
   const createdAt = new Date(order.createdAt);
   const deliveredAt = order.deliveredAt ? new Date(order.deliveredAt) : createdAt;
+  const vendorItems = order.items || [];
   const vendorTotal = vendorItems.reduce((sum, item) => sum + Number(item.lineTotal || 0), 0);
 
   return {
@@ -135,16 +133,14 @@ export async function fetchVendorOrdersForUi(
     const apolloClient = await initializeApollo();
 
     const { data } = await apolloClient.query({
-      query: GET_MY_ORDERS,
+      query: GET_MY_VENDOR_ORDERS,
       variables: { input: { page: 1, limit: 100 } },
       fetchPolicy: "network-only"
     });
 
-    const list: MyOrder[] = data?.getMyOrders?.list || [];
+    const list: MyOrder[] = data?.getMyVendorOrders?.list || [];
 
-    const orders = list
-      .map((order) => mapMyOrderToVendorUi(order, vendorId))
-      .filter((order): order is Order => Boolean(order));
+    const orders = list.map(mapVendorOrderToUi);
 
     return { orders };
   } catch (error: any) {
@@ -164,18 +160,18 @@ export async function fetchVendorOrderByIdForUi(
     const apolloClient = await initializeApollo();
 
     const { data } = await apolloClient.query({
-      query: GET_MY_ORDER_BY_ID,
+      query: GET_MY_VENDOR_ORDER_BY_ID,
       variables: { orderId },
       fetchPolicy: "network-only"
     });
 
-    const order: MyOrder | null = data?.getMyOrderById || null;
+    const order: MyOrder | null = data?.getMyVendorOrderById || null;
 
     if (!order) {
       return { order: null, error: "Order not found." };
     }
 
-    const mapped = mapMyOrderToVendorUi(order, vendorId);
+    const mapped = mapVendorOrderToUi(order);
     if (!mapped) {
       return { order: null, error: "You do not have access to this order." };
     }

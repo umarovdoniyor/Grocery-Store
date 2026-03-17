@@ -509,6 +509,115 @@ export const GET_MY_ORDER_BY_ID = gql`
   }
 `;
 
+export const GET_MY_VENDOR_ORDERS = gql`
+  query GetMyVendorOrders($input: VendorOrdersInquiryInput!) {
+    getMyVendorOrders(input: $input) {
+      list {
+        _id
+        orderNo
+        memberId
+        status
+        paymentMethod
+        paymentStatus
+        subtotal
+        discountAmount
+        deliveryFee
+        taxAmount
+        totalAmount
+        currency
+        addressFullName
+        addressPhone
+        addressLine1
+        addressLine2
+        addressCity
+        addressState
+        addressPostalCode
+        addressCountry
+        note
+        placedAt
+        canceledAt
+        deliveredAt
+        items {
+          _id
+          orderId
+          memberId
+          productId
+          vendorId
+          status
+          quantity
+          unitPrice
+          salePrice
+          appliedPrice
+          lineTotal
+          productSnapshotTitle
+          productSnapshotThumbnail
+          productSnapshotUnit
+          productSnapshotSku
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_MY_VENDOR_ORDER_BY_ID = gql`
+  query GetMyVendorOrderById($orderId: String!) {
+    getMyVendorOrderById(orderId: $orderId) {
+      _id
+      orderNo
+      memberId
+      status
+      paymentMethod
+      paymentStatus
+      subtotal
+      discountAmount
+      deliveryFee
+      taxAmount
+      totalAmount
+      currency
+      addressFullName
+      addressPhone
+      addressLine1
+      addressLine2
+      addressCity
+      addressState
+      addressPostalCode
+      addressCountry
+      note
+      placedAt
+      canceledAt
+      deliveredAt
+      createdAt
+      updatedAt
+      items {
+        _id
+        orderId
+        memberId
+        productId
+        vendorId
+        status
+        quantity
+        unitPrice
+        salePrice
+        appliedPrice
+        lineTotal
+        productSnapshotTitle
+        productSnapshotThumbnail
+        productSnapshotUnit
+        productSnapshotSku
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 export const GET_CATEGORIES = gql`
   query GetCategories($input: CategoryInquiry) {
     getCategories(input: $input) {
