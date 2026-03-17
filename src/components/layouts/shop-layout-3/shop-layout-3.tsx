@@ -88,7 +88,7 @@ export default function ShopLayout3({
         </Header>
       </Sticky>
 
-      <Divider />
+      <Divider sx={{ borderColor: "rgba(90, 112, 64, 0.14)" }} />
 
       {children}
 

@@ -7,10 +7,30 @@ import { NavLink } from "components/nav-link";
 
 // COMMON STYLED OBJECT
 export const NAV_LINK_STYLES = {
-  fontWeight: 500,
+  fontWeight: 600,
+  fontSize: "0.92rem",
+  color: "#2e3f22",
+  letterSpacing: "0.01em",
   cursor: "pointer",
+  position: "relative",
   transition: "color 150ms ease-in-out",
-  "&:hover": { color: "primary.main" },
+  "&::after": {
+    left: 0,
+    right: 0,
+    bottom: -10,
+    content: '""',
+    margin: "auto",
+    width: "0%",
+    height: "2.5px",
+    borderRadius: 3,
+    position: "absolute",
+    background: "linear-gradient(90deg, #7a974f, #567235)",
+    transition: "width 180ms ease"
+  },
+  "&:hover": {
+    color: "#25361b",
+    "&::after": { width: "100%" }
+  },
   "&:last-child": { marginRight: 0 }
 };
 

@@ -75,14 +75,21 @@ export function SearchInput1({ categories }: Props) {
     sx: {
       border: 0,
       padding: 0,
-      borderRadius: 1,
-      borderColor: "transparent",
+      borderRadius: 999,
+      border: "1px solid rgba(93, 112, 68, 0.3)",
       overflow: "hidden",
-      backgroundColor: "grey.50",
+      backgroundColor: "rgba(255, 255, 255, 0.98)",
+      boxShadow: "0 6px 18px rgba(33, 49, 26, 0.1)",
       "& .MuiOutlinedInput-notchedOutline": {
-        border: 1,
-        borderRadius: 1,
+        border: 0,
         borderColor: "transparent"
+      },
+      "&:hover": {
+        borderColor: "rgba(86, 114, 53, 0.45)"
+      },
+      "&.Mui-focused": {
+        borderColor: "rgba(86, 114, 53, 0.62)",
+        boxShadow: "0 0 0 3px rgba(122, 151, 79, 0.18)"
       }
     },
     endAdornment: (
@@ -97,9 +104,15 @@ export function SearchInput1({ categories }: Props) {
           aria-label="Search products"
           size="small"
           onClick={handleSearch}
-          sx={{ ml: 1, px: 2, borderLeft: "1px solid", borderColor: "grey.200", borderRadius: 0 }}
+          sx={{
+            ml: 1,
+            px: 2,
+            borderLeft: "1px solid",
+            borderColor: "rgba(93, 112, 68, 0.25)",
+            borderRadius: 0
+          }}
         >
-          <Search sx={{ fontSize: 17, color: "grey.400" }} />
+          <Search sx={{ fontSize: 17, color: "#4f6d2f" }} />
         </IconButton>
       </Box>
     )
