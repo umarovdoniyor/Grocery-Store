@@ -18,6 +18,7 @@ import {
   resolveCartThumbnail,
   updateCartItemQtyServer
 } from "utils/services/cart";
+import { useAuth } from "contexts/AuthContext";
 
 // =================================================================================
 type InitialState = { cart: CartItem[] };
@@ -100,6 +101,8 @@ const reducer = (state: InitialState, action: CartActionType) => {
 export default function CartProvider({ children }: PropsWithChildren) {
   const [state, dispatchLocal] = useReducer(reducer, INITIAL_STATE);
   const latestSyncIdRef = useRef(0);
+  const { isAuthenticated } = useAuth();
+  const wasAuthenticatedRef = useRef(isAuthenticated);
 
   const dispatch = useCallback(
     (action: CartActionType) => {
@@ -194,6 +197,35 @@ export default function CartProvider({ children }: PropsWithChildren) {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const wasAuthenticated = wasAuthenticatedRef.current;
+
+    // Clear stale in-memory cart immediately after explicit logout.
+    if (wasAuthenticated && !isAuthenticated) {
+      dispatchLocal({ type: "CLEAR_CART" });
+      latestSyncIdRef.current += 1;
+    }
+
+    // Hydrate cart when a user logs in during the current session.
+    if (!wasAuthenticated && isAuthenticated) {
+      getMyCartItems().then((result) => {
+        if (!mounted || !result.success) return;
+
+        dispatchLocal({
+          type: "HYDRATE_CART",
+          payloads: result.items || []
+        });
+      });
+    }
+
+    wasAuthenticatedRef.current = isAuthenticated;
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated]);
 
   const contextValue = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 

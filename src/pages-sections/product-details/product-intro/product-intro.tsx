@@ -24,6 +24,7 @@ export default function ProductIntro({ product }: Props) {
   const comparePrice =
     discountPercent > 0 ? basePrice / (1 - Math.min(discountPercent, 99) / 100) : null;
   const code = product.sku || product.slug || product.id || "-";
+  const unit = product.unit ? String(product.unit) : "-";
   const categoryLabel = product.categories?.length ? product.categories.join(", ") : "-";
   const reviewCount = product.reviewsCount ?? product.reviews?.length ?? 0;
   const viewCount = Number(product.views || 0);
@@ -49,6 +50,10 @@ export default function ProductIntro({ product }: Props) {
 
           <Typography variant="body1">
             Product Code: <strong>{code}</strong>
+          </Typography>
+
+          <Typography variant="body1">
+            Unit: <strong>{unit}</strong>
           </Typography>
 
           {/* PRODUCT BRAND */}

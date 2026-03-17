@@ -102,6 +102,7 @@ const mapDetailToProduct = (item: ProductDetail): Product => {
     id: item._id,
     slug: item.slug,
     title: item.title,
+    unit: item.unit,
     thumbnail,
     images: normalizedImages,
     price,
