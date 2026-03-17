@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Card from "@mui/material/Card";
 import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
@@ -21,16 +22,19 @@ type Props = { navigation: Menu[] };
 // ==============================================================
 
 export function NavigationList({ navigation }: Props) {
-  const [openRootMenu, setOpenRootMenu] = useState<string | null>(null);
+  const pathname = usePathname();
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => setOpenRootMenu(null);
+    const handleScroll = () => {
+      setActiveMenu(null);
+    };
 
     const handleClickOutside = (event: MouseEvent) => {
       if (!rootRef.current) return;
       if (!rootRef.current.contains(event.target as Node)) {
-        setOpenRootMenu(null);
+        setActiveMenu(null);
       }
     };
 
@@ -42,6 +46,10 @@ export function NavigationList({ navigation }: Props) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    setActiveMenu(null);
+  }, [pathname]);
 
   const renderNestLevel = (children: MenuItemWithChild[]) => {
     return children.map((nav) => {
@@ -70,12 +78,22 @@ export function NavigationList({ navigation }: Props) {
 
       // SHOW CATEGORY BASED MEGA MENU WITH SUB ITEMS
       if (nav.megaMenuWithSub) {
-        return <CategoryBasedMenu key={nav.title} title={nav.title} menuList={nav.child} />;
+        return (
+          <CategoryBasedMenu
+            key={nav.title}
+            title={nav.title}
+            menuList={nav.child}
+            isOpen={activeMenu === nav.title}
+            onToggle={() =>
+              setActiveMenu((prev) => (prev === nav.title ? null : nav.title))
+            }
+          />
+        );
       }
 
       // SHOW LIST MENU WITH CHILD
       if (nav.child && nav.megaMenu === false && nav.megaMenuWithSub === false) {
-        const isOpen = openRootMenu === nav.title;
+        const isOpen = activeMenu === nav.title;
 
         return (
           <FlexBox key={nav.title} alignItems="center" position="relative" flexDirection="column">
@@ -85,7 +103,7 @@ export function NavigationList({ navigation }: Props) {
               sx={NAV_LINK_STYLES}
               onClick={(event) => {
                 event.stopPropagation();
-                setOpenRootMenu((prev) => (prev === nav.title ? null : nav.title));
+                setActiveMenu((prev) => (prev === nav.title ? null : nav.title));
               }}
             >
               {nav.title}{" "}
@@ -107,7 +125,21 @@ export function NavigationList({ navigation }: Props) {
                   mt: 2.5,
                   py: 1,
                   minWidth: 100,
-                  overflow: "unset"
+                  overflow: "unset",
+                  borderRadius: 3,
+                  border: "1px solid",
+                  borderColor: "rgba(90, 112, 64, 0.15)",
+                  background: "linear-gradient(180deg, #ffffff 0%, #fcfbf6 100%)",
+                  boxShadow: "0 14px 30px rgba(33, 49, 26, 0.12)",
+                  "& .MuiMenuItem-root": {
+                    color: "#334327",
+                    fontWeight: 500,
+                    transition: "all 180ms ease",
+                    "&:hover": {
+                      color: "#2f421f",
+                      backgroundColor: "rgba(111, 143, 68, 0.1)"
+                    }
+                  }
                 }}
               >
                 {renderNestLevel(nav.child)}

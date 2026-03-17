@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 // CUSTOM COMPONENTS
 import { SubChildList } from "./sub-child-list";
@@ -13,49 +13,30 @@ import { Wrapper, StyledCard, CategoryList, MenusContainer, CategoryListItem } f
 interface Props {
   title: string;
   menuList: CategoryMenuItem[];
+  isOpen: boolean;
+  onToggle: () => void;
 }
 // ===============================================================
 
-export function CategoryBasedMenu({ title, menuList }: Props) {
+export function CategoryBasedMenu({ title, menuList, isOpen, onToggle }: Props) {
   const [selected, setSelected] = useState(menuList[0].title);
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const list = menuList.reduce<string[]>((prev, curr) => [...prev, curr.title], []);
   const childList = menuList.find((item) => item.title === selected);
 
-  useEffect(() => {
-    const handleScroll = () => setOpen(false);
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!rootRef.current) return;
-      if (!rootRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    window.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
-    <Wrapper ref={rootRef} active={open ? 1 : 0}>
+    <Wrapper active={isOpen ? 1 : 0}>
       <div
         className="menu-title"
         onClick={(event) => {
           event.stopPropagation();
-          setOpen((prev) => !prev);
+          onToggle();
         }}
       >
         {title} <KeyboardArrowDown className="icon" />
       </div>
 
-      <MenusContainer className="menu-list" sx={{ display: open ? "block" : "none" }}>
+      <MenusContainer className="menu-list" sx={{ display: isOpen ? "block" : "none" }}>
         <StyledCard>
           {/* MAIN CATEGORIES SECTION */}
           <CategoryList>

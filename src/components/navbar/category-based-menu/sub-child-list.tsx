@@ -15,7 +15,17 @@ export function SubChildList({ subChildren }: { subChildren: CategoryMenuItem })
         {subChildren.child.map((item, key) => (
           <div key={key}>
             {/* NAV / CATEGORY TITLE */}
-            <Typography variant="h6" sx={{ my: 3 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                my: 3,
+                color: "#2f421f",
+                fontWeight: 700,
+                letterSpacing: "0.01em",
+                pb: 0.75,
+                borderBottom: "1px solid rgba(90, 112, 64, 0.14)"
+              }}
+            >
               {item.title}
             </Typography>
 
