@@ -7,6 +7,7 @@ export interface WishlistProductSummary {
   slug: string;
   title: string;
   thumbnail?: string;
+  categoryIds?: string[];
   price: number;
   salePrice?: number;
   status?: string;

@@ -17,21 +17,14 @@ type Props = { item: CartModel };
 // =========================================================
 
 export default function CartItem({ item }: Props) {
-  const { id, title, price, thumbnail, slug, qty } = item;
+  const { title, price, thumbnail, slug, qty } = item;
 
   const { dispatch } = useCart();
 
   const handleCartAmountChange = (amount: number) => () => {
     dispatch({
       type: "CHANGE_CART_AMOUNT",
-      payload: {
-        id,
-        title,
-        price,
-        thumbnail,
-        slug,
-        qty: amount
-      }
+      payload: { ...item, qty: amount }
     });
   };
 

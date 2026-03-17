@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 // MUI
@@ -17,20 +19,11 @@ import { FlexBetween } from "components/flex-box";
 import OverlayScrollbar from "components/overlay-scrollbar";
 // CUSTOM UTILS LIBRARY FUNCTION
 import { currency } from "lib";
-// CUSTOM DATA MODEL
-import { CartItem } from "contexts/CartContext";
 
 export default function MiniCart() {
   const router = useRouter();
-  const { state, dispatch } = useCart();
+  const { state } = useCart();
   const CART_LENGTH = state.cart.length;
-
-  const handleCartAmountChange = (amount: number, product: CartItem) => () => {
-    dispatch({
-      type: "CHANGE_CART_AMOUNT",
-      payload: { ...product, qty: amount }
-    });
-  };
 
   const getTotalPrice = () => {
     return state.cart.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -52,7 +45,7 @@ export default function MiniCart() {
         {CART_LENGTH > 0 ? (
           <OverlayScrollbar>
             {state.cart.map((item) => (
-              <MiniCartItem item={item} key={item.id} onCart={handleCartAmountChange} />
+              <MiniCartItem item={item} key={item.id} />
             ))}
           </OverlayScrollbar>
         ) : (

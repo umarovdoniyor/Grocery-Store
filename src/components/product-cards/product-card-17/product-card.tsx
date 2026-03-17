@@ -20,10 +20,11 @@ interface Props {
 
 export default function ProductCard17({ product, bgWhite = false }: Props) {
   const { slug, title, price, thumbnail, images, discount, categories } = product;
+  const hasHoverImage = images.length > 1;
 
   return (
     <StyledCard elevation={0} bgWhite={bgWhite}>
-      <ImageWrapper>
+      <ImageWrapper className={hasHoverImage ? "has-hover-image" : undefined}>
         <Discount discount={discount} />
         <HoverActions product={product} />
 
@@ -33,12 +34,12 @@ export default function ProductCard17({ product, bgWhite = false }: Props) {
             height={750}
             src={thumbnail}
             alt={`Thumbnail for ${title}`}
-            className={images.length > 1 ? "thumbnail" : ""}
+            className="thumbnail"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            loading={images.length > 1 ? "lazy" : "eager"}
+            loading={hasHoverImage ? "lazy" : "eager"}
           />
 
-          {images.length > 1 && (
+          {hasHoverImage && (
             <Image
               width={750}
               height={750}

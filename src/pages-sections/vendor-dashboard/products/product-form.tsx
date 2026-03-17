@@ -358,10 +358,7 @@ export default function ProductForm({
       salePrice: values.sale_price ? Number(values.sale_price) : undefined,
       stockQty: Number(values.stock),
       minOrderQty: minOrderQtyValue,
-      tags: values.tags
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      tags: splitCommaValues(values.tags),
       images: imageList,
       thumbnail: sanitizeSubmittedUrl(values.thumbnail) || undefined,
       status: values.status as ProductStatus

@@ -6,9 +6,12 @@ import {
   UPDATE_CART_ITEM_QTY
 } from "../../../apollo/user/mutation";
 import { GET_MY_CART } from "../../../apollo/user/query";
+import { toPublicImageUrl } from "../../../libs/upload";
 
 export interface CartItemView {
   id: string;
+  productId: string;
+  cartItemId?: string;
   qty: number;
   title: string;
   slug: string;
@@ -25,16 +28,52 @@ const toSlug = (value: string) =>
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
 
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+export const resolveCartThumbnail = (value?: string | null) => {
+  const normalized = (value || "").replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_THUMBNAIL;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return normalized;
+  }
+
+  if (normalized.startsWith("/assets/")) {
+    return normalized;
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBase);
+};
+
 const mapCartItems = (items: any[] = []): CartItemView[] =>
   items.map((item: any) => ({
     id: item.productId || item._id,
+    productId: item.productId || item._id,
+    cartItemId: item._id,
     qty: item.quantity || 1,
     title: item.productSnapshotTitle || "Product",
     slug: toSlug(item.productSnapshotTitle || item.productId || "product"),
     price: Number(item.appliedPrice ?? item.unitPrice ?? 0),
-    thumbnail: item.productSnapshotThumbnail || DEFAULT_THUMBNAIL
+    thumbnail: resolveCartThumbnail(item.productSnapshotThumbnail)
   }));
-
 export async function getMyCartItems(): Promise<{
   success: boolean;
   items?: CartItemView[];
@@ -73,7 +112,7 @@ export async function addToCartServer(input: {
 }
 
 export async function updateCartItemQtyServer(input: {
-  productId: string;
+  cartItemId: string;
   quantity: number;
 }): Promise<{ success: boolean; items?: CartItemView[]; error?: string }> {
   try {
@@ -90,7 +129,7 @@ export async function updateCartItemQtyServer(input: {
 }
 
 export async function removeCartItemServer(input: {
-  productId: string;
+  cartItemId: string;
 }): Promise<{ success: boolean; items?: CartItemView[]; error?: string }> {
   try {
     const apolloClient = await initializeApollo();

@@ -3,7 +3,10 @@ import type Payment from "models/Payment.model";
 import type User from "models/User.model";
 import type Ticket from "models/Ticket.model";
 import type Product from "models/Product.model";
+import { getCategoryById } from "../../../libs/category";
+import { getProductById } from "../../../libs/product";
 import { getMyWishlist } from "../../../libs/wishlist";
+import { toPublicImageUrl } from "../../../libs/upload";
 import { messageList, ticketList } from "__server__/__db__/ticket/data";
 
 const PAYMENT_METHODS: Payment[] = [
@@ -81,6 +84,57 @@ const buildAddressList = (user?: User | null): Address[] => {
   ];
 };
 
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveWishlistImage = (value?: string | null) => {
+  if (!value) return "";
+
+  const normalized = value.replace(/\\/g, "/").trim();
+  if (!normalized) return "";
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return normalized;
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBase);
+};
+
+const resolveCategoryNameMap = async (categoryIds: string[]): Promise<Map<string, string>> => {
+  const uniqueIds = Array.from(new Set((categoryIds || []).filter(Boolean)));
+  if (!uniqueIds.length) return new Map<string, string>();
+
+  const responses = await Promise.allSettled(
+    uniqueIds.map((categoryId) => getCategoryById(categoryId))
+  );
+  const map = new Map<string, string>();
+
+  responses.forEach((result, index) => {
+    if (result.status !== "fulfilled") return;
+    if (!result.value.success || !result.value.category?.name) return;
+    map.set(uniqueIds[index], result.value.category.name);
+  });
+
+  return map;
+};
+
 export function getCustomerAddressList(user?: User | null, page = 1) {
   const PAGE_SIZE = 5;
   const PAGE_NO = page - 1;
@@ -140,10 +194,30 @@ export async function getCustomerWishlistProducts(page = 1): Promise<{
     return { success: false, error: result.error || "Failed to fetch wishlist" };
   }
 
+  const detailResults = await Promise.allSettled(
+    (result.list || []).map((item) => getProductById(item.product._id))
+  );
+
+  const productCategoryIdsByProductId = new Map<string, string[]>();
+  detailResults.forEach((response, index) => {
+    if (response.status !== "fulfilled") return;
+    if (!response.value.success || !response.value.product) return;
+
+    productCategoryIdsByProductId.set(
+      (result.list || [])[index]?.product?._id,
+      response.value.product.categoryIds || []
+    );
+  });
+
+  const allCategoryIds = Array.from(productCategoryIdsByProductId.values()).flatMap((ids) => ids);
+  const categoryNameMap = await resolveCategoryNameMap(allCategoryIds);
+
   const products = (result.list || []).map((item) => {
     const thumbnail =
-      item.product.thumbnail ||
+      resolveWishlistImage(item.product.thumbnail) ||
       "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
+    const categoryIds = productCategoryIdsByProductId.get(item.product._id) || [];
+    const categoryNames = categoryIds.map((id) => categoryNameMap.get(id) || "").filter(Boolean);
     const price = Number(item.product.salePrice ?? item.product.price ?? 0);
     const basePrice = Number(item.product.price || 0);
     const discount =
@@ -160,7 +234,8 @@ export async function getCustomerWishlistProducts(page = 1): Promise<{
       price,
       discount,
       rating: 0,
-      categories: [],
+      categories: categoryNames,
+      categoryIds,
       status: item.product.status,
       published: item.product.status === "PUBLISHED"
     } as Product;

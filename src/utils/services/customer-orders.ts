@@ -2,6 +2,7 @@ import type Order from "models/Order.model";
 import { initializeApollo } from "../../../apollo/client";
 import { CANCEL_MY_ORDER } from "../../../apollo/user/mutation";
 import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
+import { toPublicImageUrl } from "../../../libs/upload";
 
 export const CUSTOMER_CANCELLABLE_ORDER_STATUSES = [
   "PENDING_PAYMENT",
@@ -41,6 +42,47 @@ const toDate = (value?: string | null) => {
   return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
 };
 
+const DEFAULT_ORDER_ITEM_THUMBNAIL =
+  "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveOrderItemImage = (value?: string | null) => {
+  const normalized = (value || "").replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_ORDER_ITEM_THUMBNAIL;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_ORDER_ITEM_THUMBNAIL;
+    } catch {
+      return DEFAULT_ORDER_ITEM_THUMBNAIL;
+    }
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBase);
+};
+
 const mapOrder = (order: any): Order => {
   const createdAt = toDate(order?.createdAt);
   const deliveredAt = toDate(order?.deliveredAt);
@@ -69,9 +111,7 @@ const mapOrder = (order: any): Order => {
       product_id: item?.productId || "",
       order_id: item?.orderId || order?._id || "",
       item_id: item?._id || "",
-      product_img:
-        item?.productSnapshotThumbnail ||
-        "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png",
+      product_img: resolveOrderItemImage(item?.productSnapshotThumbnail),
       product_name: item?.productSnapshotTitle || "Product",
       product_price: Number(item?.appliedPrice ?? item?.unitPrice ?? 0),
       product_quantity: Number(item?.quantity || 1),

@@ -16,14 +16,14 @@ export const StyledCard = styled(Card, {
   transition: "all 250ms ease-in-out",
   backgroundColor: theme.palette.grey[50],
   ":hover": {
-    ".thumbnail": {
+    ".has-hover-image .thumbnail": {
       display: "none"
     },
     ".hover-box": {
       opacity: 1,
       bottom: 5
     },
-    ".hover-thumbnail": {
+    ".has-hover-image .hover-thumbnail": {
       display: "flex",
       transition: "all 0.3s ease-in-out"
     }
@@ -39,6 +39,7 @@ export const ImageWrapper = styled("div")(({ theme }) => ({
   aspectRatio: 1,
   display: "grid",
   cursor: "pointer",
+  overflow: "hidden",
   textAlign: "center",
   position: "relative",
   placeItems: "center",
@@ -46,8 +47,7 @@ export const ImageWrapper = styled("div")(({ theme }) => ({
   //   height: 370
   // },
   [theme.breakpoints.down("sm")]: {
-    // display: "block",
-    height: "100%"
+    height: 320
   },
   ".hover-thumbnail": {
     // scale: 1,

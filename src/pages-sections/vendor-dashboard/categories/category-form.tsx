@@ -53,11 +53,22 @@ type CreateCategoryFormValues = {
   name: string;
   slug: string;
   description: string;
-  icon: string;
-  image: string;
+  icon?: string;
+  image?: string;
   status: "ACTIVE" | "INACTIVE";
   sortOrder: number;
-  parentId: string;
+  parentId?: string;
+};
+
+type CreateCategoryFormInput = {
+  name: string;
+  slug: string;
+  description: string;
+  icon: string | undefined;
+  image: string | undefined;
+  status: "ACTIVE" | "INACTIVE";
+  sortOrder: number;
+  parentId: string | undefined;
 };
 
 type PickerMode = "icon" | "image";
@@ -164,7 +175,7 @@ function groupOptions<T extends { label: string; tags: string[] }>(items: T[]) {
   })).filter((bucket) => bucket.items.length > 0);
 }
 
-function getDefaultValues(category?: Category | null): CreateCategoryFormValues {
+function getDefaultValues(category?: Category | null): CreateCategoryFormInput {
   return {
     name: category?.name || "",
     slug: category?.slug || "",
@@ -186,7 +197,7 @@ export default function CategoryForm({ mode = "create", category = null }: Props
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerQuery, setPickerQuery] = useState("");
 
-  const methods = useForm<CreateCategoryFormValues>({
+  const methods = useForm<CreateCategoryFormInput, unknown, CreateCategoryFormValues>({
     defaultValues: getDefaultValues(category),
     resolver: yupResolver(validationSchema)
   });

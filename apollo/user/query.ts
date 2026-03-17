@@ -329,7 +329,6 @@ export const GET_MY_CART = gql`
         salePrice
         appliedPrice
         lineTotal
-        status
         productSnapshotTitle
         productSnapshotThumbnail
         productSnapshotUnit
@@ -437,7 +436,6 @@ export const GET_MY_ORDERS = gql`
           memberId
           productId
           vendorId
-          status
           quantity
           unitPrice
           salePrice
@@ -493,7 +491,6 @@ export const GET_MY_ORDER_BY_ID = gql`
         memberId
         productId
         vendorId
-        status
         quantity
         unitPrice
         salePrice

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 // MUI
@@ -15,6 +17,8 @@ import FlexBox from "components/flex-box/flex-box";
 import { currency } from "lib";
 // CUSTOM DATA MODEL
 import { CartItem } from "contexts/CartContext";
+// GLOBAL CUSTOM HOOK
+import useCart from "hooks/useCart";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(({ theme }) => ({
@@ -56,11 +60,19 @@ const QuantityWrapper = styled("div")(({ theme }) => ({
 // ==============================================================
 interface Props {
   item: CartItem;
-  onCart: (amount: number, product: CartItem) => () => void;
 }
 // ==============================================================
 
-export default function MiniCartItem({ item, onCart }: Props) {
+export default function MiniCartItem({ item }: Props) {
+  const { dispatch } = useCart();
+
+  const handleCartAmountChange = (amount: number) => () => {
+    dispatch({
+      type: "CHANGE_CART_AMOUNT",
+      payload: { ...item, qty: amount }
+    });
+  };
+
   return (
     <StyledRoot>
       <Link href={`/products/${item.slug}`}>
@@ -84,7 +96,7 @@ export default function MiniCartItem({ item, onCart }: Props) {
               size="small"
               color="primary"
               variant="text"
-              onClick={onCart(item.qty + 1, item)}
+              onClick={handleCartAmountChange(item.qty + 1)}
             >
               <Add fontSize="small" />
             </Button>
@@ -98,13 +110,13 @@ export default function MiniCartItem({ item, onCart }: Props) {
               color="primary"
               variant="text"
               disabled={item.qty === 1}
-              onClick={onCart(item.qty - 1, item)}
+              onClick={handleCartAmountChange(item.qty - 1)}
             >
               <Remove fontSize="small" />
             </Button>
           </QuantityWrapper>
 
-          <IconButton size="small" onClick={onCart(0, item)}>
+          <IconButton size="small" onClick={handleCartAmountChange(0)}>
             <Trash sx={{ fontSize: "1rem" }} />
           </IconButton>
         </FlexBox>

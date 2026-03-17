@@ -63,6 +63,30 @@ const validationSchema = yup.object().shape({
     .required("You have to agree with our Terms and Conditions!")
 });
 
+type RegisterFormValues = {
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  email: string;
+  password: string;
+  phone?: string;
+  address?: string;
+  re_password: string;
+  agreement: boolean;
+};
+
+type RegisterFormInput = {
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  email: string;
+  password: string;
+  phone: string | undefined;
+  address: string | undefined;
+  re_password: string;
+  agreement: boolean;
+};
+
 export default function RegisterPageView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,7 +99,7 @@ export default function RegisterPageView() {
     endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />
   };
 
-  const initialValues = {
+  const initialValues: RegisterFormInput = {
     firstName: "",
     lastName: "",
     nickname: "",
@@ -87,7 +111,7 @@ export default function RegisterPageView() {
     agreement: false
   };
 
-  const methods = useForm({
+  const methods = useForm<RegisterFormInput, unknown, RegisterFormValues>({
     defaultValues: initialValues,
     resolver: yupResolver(validationSchema)
   });

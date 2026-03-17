@@ -15,6 +15,7 @@ import {
   clearCartServer,
   getMyCartItems,
   removeCartItemServer,
+  resolveCartThumbnail,
   updateCartItemQtyServer
 } from "utils/services/cart";
 
@@ -23,6 +24,8 @@ type InitialState = { cart: CartItem[] };
 
 export interface CartItem {
   id: string;
+  productId?: string;
+  cartItemId?: string;
   qty: number;
   title: string;
   slug: string;
@@ -56,22 +59,31 @@ const reducer = (state: InitialState, action: CartActionType) => {
 
       if (cartItem === undefined) return state;
 
-      const existIndex = cartList.findIndex((item) => item.id === cartItem!.id);
+      const normalizedCartItem: CartItem = {
+        ...cartItem,
+        thumbnail: resolveCartThumbnail(cartItem.thumbnail)
+      };
+
+      const existIndex = cartList.findIndex((item) => item.id === normalizedCartItem.id);
 
       // REMOVE ITEM IF QUANTITY IS LESS THAN 1
-      if (cartItem.qty < 1) {
-        const updatedCart = cartList.filter((item) => item.id !== cartItem!.id);
+      if (normalizedCartItem.qty < 1) {
+        const updatedCart = cartList.filter((item) => item.id !== normalizedCartItem.id);
         return { ...state, cart: updatedCart };
       }
 
       // IF PRODUCT ALREADY EXITS IN CART
       if (existIndex > -1) {
         const updatedCart = [...cartList];
-        updatedCart[existIndex].qty = cartItem.qty;
+        updatedCart[existIndex] = {
+          ...updatedCart[existIndex],
+          ...normalizedCartItem,
+          qty: normalizedCartItem.qty
+        };
         return { ...state, cart: updatedCart };
       }
 
-      return { ...state, cart: [...cartList, cartItem] };
+      return { ...state, cart: [...cartList, normalizedCartItem] };
 
     case "CLEAR_CART":
       return { ...state, cart: [] };
@@ -113,18 +125,29 @@ export default function CartProvider({ children }: PropsWithChildren) {
           result = await clearCartServer();
         } else if (action.type === "CHANGE_CART_AMOUNT" && action.payload) {
           const payload = action.payload;
-          const existsInCurrentState = state.cart.some((item) => item.id === payload.id);
+          const existingCartItem = state.cart.find((item) => item.id === payload.id);
 
           if (payload.qty < 1) {
-            result = await removeCartItemServer({ productId: payload.id });
-          } else if (existsInCurrentState) {
+            if (!existingCartItem?.cartItemId) {
+              const fallback = await getMyCartItems();
+              if (!fallback.success || syncId !== latestSyncIdRef.current) return;
+
+              dispatchLocal({
+                type: "HYDRATE_CART",
+                payloads: fallback.items || []
+              });
+              return;
+            }
+
+            result = await removeCartItemServer({ cartItemId: existingCartItem.cartItemId });
+          } else if (existingCartItem?.cartItemId) {
             result = await updateCartItemQtyServer({
-              productId: payload.id,
+              cartItemId: existingCartItem.cartItemId,
               quantity: payload.qty
             });
           } else {
             result = await addToCartServer({
-              productId: payload.id,
+              productId: payload.productId || payload.id,
               quantity: payload.qty
             });
           }
