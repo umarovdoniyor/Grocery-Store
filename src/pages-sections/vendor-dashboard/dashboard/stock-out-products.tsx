@@ -6,9 +6,8 @@ import Box from "@mui/material/Box";
 import { FlexBetween } from "components/flex-box";
 // LOCAL CUSTOM COMPONENT
 import DataListTable from "./table";
-import { getVendorStockOutProducts } from "utils/services/vendor-dashboard";
 // DATA TYPES
-import { StockOut } from "./types";
+import type { StockOut } from "./types";
 
 // table column list
 const tableHeading = [
@@ -17,8 +16,11 @@ const tableHeading = [
   { id: "amount", label: "Amount", alignCenter: true }
 ];
 
-export default async function StockOutProducts() {
-  const stockOutProducts: StockOut[] = await getVendorStockOutProducts();
+interface Props {
+  stockOutProducts: StockOut[];
+}
+
+export default function StockOutProducts({ stockOutProducts }: Props) {
 
   return (
     <Card>

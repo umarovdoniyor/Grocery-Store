@@ -5,7 +5,8 @@ import { payouts } from "__server__/__db__/dashboard/payouts";
 import { refundRequest } from "__server__/__db__/dashboard/refundRequests";
 import { earningHistory } from "__server__/__db__/dashboard/earning-history";
 import { getMyProducts } from "../../../libs/product";
-import { getVendorProductReviews } from "../../../libs/review";
+import { getVendorProductReviews, type ProductReviewStatus } from "../../../libs/review";
+import { toPublicImageUrl } from "../../../libs/upload";
 import { getVendorDashboardSummary } from "../../../libs/vendor";
 
 interface VendorReviewRow {
@@ -24,6 +25,22 @@ interface VendorReviewSummary {
   rating3Count: number;
   rating4Count: number;
   rating5Count: number;
+}
+
+const DEFAULT_REVIEW_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
+
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_GRAPHQL_URL || "http://localhost:3001";
+
+function resolveReviewProductImage(value?: string | null) {
+  const normalized = value?.trim();
+  if (!normalized) return DEFAULT_REVIEW_PRODUCT_IMAGE;
+
+  try {
+    return toPublicImageUrl(normalized, API_BASE);
+  } catch {
+    return DEFAULT_REVIEW_PRODUCT_IMAGE;
+  }
 }
 
 function formatMetric(value: number) {
@@ -188,11 +205,11 @@ export async function getVendorSupportTickets(): Promise<Ticket[]> {
   return ticketList;
 }
 
-export async function getVendorReviews() {
+export async function getVendorReviews(status?: ProductReviewStatus) {
   const response = await getVendorProductReviews({
     page: 1,
     limit: 50,
-    status: "PUBLISHED",
+    status,
     search: "",
     sortBy: "NEWEST"
   });
@@ -221,7 +238,7 @@ export async function getVendorReviews() {
 
     return {
       name: item.product?.title || "Product",
-      image: item.product?.thumbnail || "/assets/images/products/placeholder.png",
+      image: resolveReviewProductImage(item.product?.thumbnail),
       rating: Number(item.rating || 0),
       comment: item.comment || "-",
       customer: customerName || "Customer"

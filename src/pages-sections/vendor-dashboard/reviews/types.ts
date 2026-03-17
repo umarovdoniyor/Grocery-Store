@@ -15,3 +15,5 @@ export interface ReviewSummary {
   rating4Count: number;
   rating5Count: number;
 }
+
+export type ReviewStatusFilter = "ALL" | "PUBLISHED" | "PENDING" | "REJECTED" | "HIDDEN";

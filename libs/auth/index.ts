@@ -54,6 +54,13 @@ export function getJwtToken(): any {
 /** Purpose: Store JWT token in browser's localStorage */
 export function setJwtToken(token: string) {
   localStorage.setItem("accessToken", token);
+
+  document.cookie = [
+    `accessToken=${encodeURIComponent(token)}`,
+    "Path=/",
+    "SameSite=Lax",
+    "Max-Age=2592000"
+  ].join("; ");
 }
 
 /** =============== logIn ===============*/
@@ -249,6 +256,7 @@ export const logOut = () => {
 const deleteStorage = () => {
   // 1. Remove JWT token from localStorage under 'accessToken' key
   localStorage.removeItem("accessToken");
+  document.cookie = "accessToken=; Path=/; Max-Age=0; SameSite=Lax";
   // 2. Update logout timestamp to notify other tabs/windows
   window.localStorage.setItem("logout", Date.now().toString());
 };

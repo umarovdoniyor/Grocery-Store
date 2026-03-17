@@ -4,6 +4,7 @@ import type User from "models/User.model";
 import { updateMyVendorOrderItemStatus, type VendorOrderItemStatus } from "../../../libs/vendor";
 import { initializeApollo } from "../../../apollo/client";
 import { GET_MY_VENDOR_ORDER_BY_ID, GET_MY_VENDOR_ORDERS } from "../../../apollo/user/query";
+import { toPublicImageUrl } from "../../../libs/upload";
 
 interface MyOrderItem {
   _id: string;
@@ -90,6 +91,46 @@ const mapVendorOrdersError = (message?: string) => {
   return message;
 };
 
+const DEFAULT_ORDER_ITEM_THUMBNAIL = "/assets/images/products/placeholder.png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveVendorOrderItemImage = (value?: string | null) => {
+  const normalized = (value || "").replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_ORDER_ITEM_THUMBNAIL;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_ORDER_ITEM_THUMBNAIL;
+    } catch {
+      return DEFAULT_ORDER_ITEM_THUMBNAIL;
+    }
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBase);
+};
+
 function mapVendorOrderToUi(order: MyOrder): Order {
   const createdAt = new Date(order.createdAt);
   const deliveredAt = order.deliveredAt ? new Date(order.deliveredAt) : createdAt;
@@ -104,7 +145,7 @@ function mapVendorOrderToUi(order: MyOrder): Order {
       item_id: item._id,
       product_id: item.productId,
       order_id: item.orderId,
-      product_img: item.productSnapshotThumbnail || "/assets/images/products/placeholder.png",
+      product_img: resolveVendorOrderItemImage(item.productSnapshotThumbnail),
       product_name: item.productSnapshotTitle || "Product",
       product_price: Number(item.appliedPrice || 0),
       product_quantity: Number(item.quantity || 1),

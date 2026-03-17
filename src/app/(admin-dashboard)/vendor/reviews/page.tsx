@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ReviewsPageView } from "pages-sections/vendor-dashboard/reviews/page-view";
-import { getVendorReviews } from "utils/services/vendor-dashboard";
+import type { ProductReviewStatus } from "../../../../../libs/review";
 
 export const metadata: Metadata = {
   title: "Reviews - Bazaar Next.js E-commerce Template",
@@ -9,14 +9,20 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export default async function Reviews() {
-  const payload = await getVendorReviews();
+const REVIEW_STATUS_SET = new Set<ProductReviewStatus>(["PUBLISHED", "PENDING", "REJECTED", "HIDDEN"]);
+
+export default async function Reviews({
+  searchParams
+}: {
+  searchParams?: { status?: string } | Promise<{ status?: string }>;
+}) {
+  const query = await Promise.resolve(searchParams ?? {});
+  const rawStatus = (query.status || "").toUpperCase();
+  const selectedStatus = REVIEW_STATUS_SET.has(rawStatus as ProductReviewStatus)
+    ? (rawStatus as ProductReviewStatus)
+    : "ALL";
+
   return (
-    <ReviewsPageView
-      reviews={payload.reviews}
-      summary={payload.summary}
-      total={payload.total}
-      error={payload.error}
-    />
+    <ReviewsPageView selectedStatus={selectedStatus} />
   );
 }

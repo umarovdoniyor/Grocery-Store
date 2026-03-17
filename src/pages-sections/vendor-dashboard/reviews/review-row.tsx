@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
@@ -22,9 +21,13 @@ export default function ReviewRow({ review }: Props) {
     <StyledTableRow tabIndex={-1} role="checkbox">
       <StyledTableCell align="left">
         <FlexBox alignItems="center" gap={1.5}>
-          <Avatar variant="rounded">
-            <Image fill src={image} alt={name} sizes="(60px, 60px)" />
-          </Avatar>
+          <Avatar
+            variant="rounded"
+            src={image}
+            alt={name}
+            sx={{ width: 44, height: 44, flexShrink: 0 }}
+            imgProps={{ loading: "lazy", referrerPolicy: "no-referrer" }}
+          />
 
           <Typography variant="h6">{name}</Typography>
         </FlexBox>
