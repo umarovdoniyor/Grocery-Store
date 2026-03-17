@@ -1,14 +1,55 @@
-import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import { toPublicImageUrl } from "../../../../libs/upload";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 // STYLED COMPONENTS
 import { StatusWrapper, StyledTableCell, StyledTableRow } from "../styles";
 // DATA TYPES
 import { Seller } from "./types";
+
+const DEFAULT_SELLER_IMAGE = "/assets/images/faces/propic(1).png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveSellerDisplayImage = (value?: string | null) => {
+  const normalized = value?.replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_SELLER_IMAGE;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_SELLER_IMAGE;
+    } catch {
+      return DEFAULT_SELLER_IMAGE;
+    }
+  }
+
+  try {
+    return toPublicImageUrl(normalized, getApiBaseUrl());
+  } catch {
+    return DEFAULT_SELLER_IMAGE;
+  }
+};
 
 // ========================================================================
 type Props = {
@@ -27,15 +68,26 @@ function formatStatus(status: Seller["status"]) {
 
 export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejectSeller }: Props) {
   const { name, phone, image, shopName, status, rejectionReason, createdAt, description } = seller;
+  const resolvedImage = resolveSellerDisplayImage(image);
   const canReview = status === "PENDING";
 
   return (
     <StyledTableRow tabIndex={-1} role="checkbox">
       <StyledTableCell align="left">
         <FlexBox alignItems="center" gap={1.5}>
-          <Avatar variant="rounded">
-            <Image fill sizes="(100%, 100%)" src={image} alt={name} />
-          </Avatar>
+          <Avatar
+            variant="rounded"
+            src={resolvedImage}
+            alt={name}
+            sx={{ width: 44, height: 44, flexShrink: 0 }}
+            imgProps={{
+              loading: "lazy",
+              onError: (event) => {
+                const target = event.currentTarget as HTMLImageElement;
+                target.src = DEFAULT_SELLER_IMAGE;
+              }
+            }}
+          />
 
           <div>
             <Typography variant="h6">{name}</Typography>

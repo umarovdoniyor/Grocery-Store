@@ -1,8 +1,11 @@
 import {
+  getMembersByAdmin,
   getVendorApplicationsByAdmin,
   reviewVendorApplication,
   VendorApplicationByAdmin
 } from "../../../libs/admin";
+import { toPublicImageUrl } from "../../../libs/upload";
+import { getVendors } from "../../../libs/vendor";
 
 export interface AdminSellerRow {
   id: string;
@@ -17,14 +20,88 @@ export interface AdminSellerRow {
   createdAt: string;
 }
 
+const DEFAULT_SELLER_IMAGE = "/assets/images/faces/propic(1).png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveSellerImage = (value?: string | null) => {
+  const normalized = value?.replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_SELLER_IMAGE;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_SELLER_IMAGE;
+    } catch {
+      return DEFAULT_SELLER_IMAGE;
+    }
+  }
+
+  try {
+    return toPublicImageUrl(normalized, getApiBaseUrl());
+  } catch {
+    return DEFAULT_SELLER_IMAGE;
+  }
+};
+
+async function getVendorAvatarMap(): Promise<Map<string, string>> {
+  const response = await getMembersByAdmin({
+    page: 1,
+    limit: 500
+  });
+
+  if (!response.success || !response.list) {
+    return new Map<string, string>();
+  }
+
+  return new Map(
+    response.list
+      .filter((member) => member.memberType === "VENDOR")
+      .map((member) => [member._id, resolveSellerImage(member.memberAvatar)])
+  );
+}
+
+async function getVendorShopImageMap(): Promise<Map<string, string>> {
+  const response = await getVendors({
+    page: 1,
+    limit: 100
+  });
+
+  if (!response.success || !response.list) {
+    return new Map<string, string>();
+  }
+
+  return new Map(
+    response.list.map((vendor) => [vendor.storeName.trim().toLowerCase(), resolveSellerImage(vendor.coverImage)])
+  );
+}
+
 export function mapVendorApplicationToSellerRow(
-  application: VendorApplicationByAdmin
+  application: VendorApplicationByAdmin,
+  avatar?: string
 ): AdminSellerRow {
   return {
     id: application._id,
     name: application.storeName,
     phone: "-",
-    image: "/assets/images/faces/propic(1).png",
+    image: avatar || DEFAULT_SELLER_IMAGE,
     shopName: application.storeName,
     status: application.status,
     description: application.description,
@@ -52,8 +129,15 @@ export async function fetchAdminVendorApplicationsForUi(): Promise<{
     };
   }
 
+  const [avatarMap, shopImageMap] = await Promise.all([getVendorAvatarMap(), getVendorShopImageMap()]);
+
   return {
-    sellers: (response.list || []).map(mapVendorApplicationToSellerRow),
+    sellers: (response.list || []).map((item) =>
+      mapVendorApplicationToSellerRow(
+        item,
+        shopImageMap.get(item.storeName.trim().toLowerCase()) || avatarMap.get(item.memberId)
+      )
+    ),
     total: Number(response.total || 0)
   };
 }
@@ -83,8 +167,15 @@ export async function fetchAdminVendorApplicationsForUiByQuery(input?: {
     };
   }
 
+  const [avatarMap, shopImageMap] = await Promise.all([getVendorAvatarMap(), getVendorShopImageMap()]);
+
   return {
-    sellers: (response.list || []).map(mapVendorApplicationToSellerRow),
+    sellers: (response.list || []).map((item) =>
+      mapVendorApplicationToSellerRow(
+        item,
+        shopImageMap.get(item.storeName.trim().toLowerCase()) || avatarMap.get(item.memberId)
+      )
+    ),
     total: Number(response.total || 0)
   };
 }

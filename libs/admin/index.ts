@@ -252,6 +252,10 @@ export interface MemberByAdmin {
   memberAvatar?: string | null;
   memberType: string;
   memberStatus: string;
+  vendorProfile?: {
+    storeName?: string | null;
+    coverImageUrl?: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }

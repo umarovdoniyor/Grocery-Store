@@ -31,6 +31,8 @@ import {
   type ProductReview,
   updateReviewStatusByAdmin
 } from "../../../../../libs/review";
+import { getProductById } from "../../../../../libs/product";
+import { toPublicImageUrl } from "../../../../../libs/upload";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -47,6 +49,47 @@ type Props = { reviews?: any[] };
 
 const PLACEHOLDER_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
 type ReviewFilter = "ALL" | "PENDING" | "PUBLISHED" | "HIDDEN" | "REJECTED";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+const resolveProductImage = (value?: string | null) => {
+  const normalized = value?.replace(/\\/g, "/").trim();
+  if (!normalized) return PLACEHOLDER_PRODUCT_IMAGE;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : PLACEHOLDER_PRODUCT_IMAGE;
+    } catch {
+      return PLACEHOLDER_PRODUCT_IMAGE;
+    }
+  }
+
+  try {
+    return toPublicImageUrl(normalized, API_BASE_URL);
+  } catch {
+    return PLACEHOLDER_PRODUCT_IMAGE;
+  }
+};
 
 type AdminReviewRow = {
   id: string;
@@ -89,11 +132,30 @@ export default function ProductReviewsPageView(_: Props) {
       return;
     }
 
-    const mapped = (response.list || []).map((item: ProductReview) => {
+    const list = response.list || [];
+    const productIds = Array.from(new Set(list.map((item) => item.productId).filter(Boolean)));
+    const productMap = new Map<string, { title: string; thumbnail: string }>();
+
+    const productResults = await Promise.allSettled(productIds.map((id) => getProductById(id)));
+    productResults.forEach((result, index) => {
+      if (result.status !== "fulfilled") return;
+      if (!result.value.success || !result.value.product) return;
+
+      const product = result.value.product;
+      const productId = productIds[index];
+      productMap.set(productId, {
+        title: product.title || `Product #${productId.slice(-6)}`,
+        thumbnail: resolveProductImage(product.thumbnail)
+      });
+    });
+
+    const mapped = list.map((item: ProductReview) => {
       const customer =
         `${item.member?.memberFirstName || ""} ${item.member?.memberLastName || ""}`.trim() ||
         item.member?.memberNickname ||
         item.memberId;
+
+      const productInfo = productMap.get(item.productId);
 
       return {
         id: item._id,
@@ -101,8 +163,8 @@ export default function ProductReviewsPageView(_: Props) {
         published: item.status === "PUBLISHED",
         comment: item.comment || "",
         productId: item.productId,
-        product: `Product #${item.productId.slice(-6)}`,
-        productImage: PLACEHOLDER_PRODUCT_IMAGE,
+        product: productInfo?.title || `Product #${item.productId.slice(-6)}`,
+        productImage: productInfo?.thumbnail || PLACEHOLDER_PRODUCT_IMAGE,
         customer
       };
     });
