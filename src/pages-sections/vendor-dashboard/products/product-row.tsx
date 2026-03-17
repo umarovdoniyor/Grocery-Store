@@ -172,7 +172,10 @@ export default function ProductRow({
             <Typography variant="caption" sx={{ display: "block", mt: 0.75 }}>
               {isVisibleOnHome ? (
                 <>
-                  Visible on Home. <Link href="/" target="_blank">Open</Link>
+                  Visible on Home.{" "}
+                  <Link href="/" target="_blank">
+                    Open
+                  </Link>
                 </>
               ) : (
                 "Hidden on Home (requires Featured + Published)."
