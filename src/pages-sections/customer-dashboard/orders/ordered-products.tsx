@@ -44,11 +44,13 @@ export default function OrderedProducts({ order }: Props) {
       sx={{
         p: 0,
         mb: 4,
-        border: "1px solid",
-        borderColor: "grey.100"
+        backgroundColor: "#FAF6EF",
+        border: "1px solid rgba(43, 38, 34, 0.12)",
+        borderRadius: "4px",
+        boxShadow: "none"
       }}
     >
-      <FlexBetween px={3} py={2} flexWrap="wrap" gap={1} bgcolor="grey.50">
+      <FlexBetween px={3} py={2} flexWrap="wrap" gap={1} sx={{ backgroundColor: "#F4EEE3", borderBottom: "1px solid rgba(43,38,34,0.08)" }}>
         <Item title="Order ID:" value={id} />
         <Item title="Placed on:" value={format(new Date(createdAt), "dd MMM, yyyy")} />
         <Item
@@ -58,7 +60,7 @@ export default function OrderedProducts({ order }: Props) {
       </FlexBetween>
 
       {!order.isDelivered && (
-        <Typography px={2} py={1.5} variant="body2" color="text.secondary">
+        <Typography px={2} py={1.5} variant="body2" sx={{ color: "#8B6A4A" }}>
           Reviews are available after the order is marked as delivered.
         </Typography>
       )}
@@ -69,31 +71,36 @@ export default function OrderedProducts({ order }: Props) {
         return (
           <FlexBetween px={2} py={1} flexWrap="wrap" key={`${item.product_id || ind}`} gap={1}>
             <FlexBox gap={2} alignItems="center">
-              <Avatar variant="rounded" sx={{ height: 60, width: 60, backgroundColor: "grey.50" }}>
+              <Avatar variant="rounded" sx={{ height: 60, width: 60, borderRadius: "4px", backgroundColor: "#EDE8DF" }}>
                 <Image fill alt={item.product_name} src={item.product_img} sizes="(60px, 60px)" />
               </Avatar>
 
               <div>
-                <Typography noWrap variant="h6">
+                <Typography noWrap variant="h6" sx={{ color: "#2B2622" }}>
                   {item.product_name}
                 </Typography>
 
-                <Typography lineHeight={2} variant="body1" color="text.secondary">
+                <Typography lineHeight={2} variant="body1" sx={{ color: "#7A6C60" }}>
                   {currency(item.product_price)} x {item.product_quantity}
                 </Typography>
               </div>
             </FlexBox>
 
             {item.variant && (
-              <Typography noWrap variant="body1" color="text.secondary">
+              <Typography noWrap variant="body1" sx={{ color: "#8B6A4A" }}>
                 Product properties: {item.variant}
               </Typography>
             )}
 
             <Button
               variant="text"
-              color="primary"
               disabled={!canReview}
+              sx={{
+                color: canReview ? "#A44A3F" : "#C8B79C",
+                fontWeight: 600,
+                textTransform: "none",
+                fontSize: "0.8rem"
+              }}
               onClick={() =>
                 canReview &&
                 setSelectedReviewItem({
@@ -130,7 +137,11 @@ export default function OrderedProducts({ order }: Props) {
         </DialogContent>
 
         <DialogActions>
-          <Button variant="outlined" onClick={() => setSelectedReviewItem(null)}>
+          <Button
+            variant="outlined"
+            onClick={() => setSelectedReviewItem(null)}
+            sx={{ borderColor: "rgba(43,38,34,0.3)", color: "#2B2622", textTransform: "none" }}
+          >
             Close
           </Button>
         </DialogActions>
@@ -142,11 +153,11 @@ export default function OrderedProducts({ order }: Props) {
 function Item({ title, value }: { title: string; value: string }) {
   return (
     <FlexBox gap={1} alignItems="center">
-      <Typography variant="body1" color="text.secondary">
+      <Typography variant="body1" sx={{ color: "#8B6A4A", fontWeight: 600, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>
         {title}
       </Typography>
 
-      <Typography variant="body1">{value}</Typography>
+      <Typography variant="body1" sx={{ color: "#2B2622", fontWeight: 500 }}>{value}</Typography>
     </FlexBox>
   );
 }

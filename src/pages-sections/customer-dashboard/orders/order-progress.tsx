@@ -44,33 +44,36 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: 20,
   height: 20,
   position: "absolute",
-  color: theme.palette.primary.main,
-  backgroundColor: theme.palette.primary.light,
+  color: "#F4EEE3",
+  backgroundColor: "#2B2622",
   boxShadow: theme.shadows[1],
   "& svg": { fontSize: 16 }
 }));
 
-const StyledStatusAvatar = styled(Avatar)(({ theme }) => ({
+const StyledStatusAvatar = styled(Avatar)(() => ({
   width: 64,
   height: 64,
+  borderRadius: "4px",
   transition: "all 0.3s ease",
   "&.completed": {
-    color: theme.palette.common.white,
-    backgroundColor: theme.palette.primary.main
+    color: "#F4EEE3",
+    backgroundColor: "#2B2622"
   },
   "&.pending": {
-    color: theme.palette.primary.main,
-    backgroundColor: theme.palette.grey[100]
+    color: "#8B6A4A",
+    backgroundColor: "#EDE8DF"
   }
 }));
 
-const DeliveryDateBox = styled("div")(({ theme }) => ({
+const DeliveryDateBox = styled("div")(() => ({
   textAlign: "center",
-  padding: "0.5rem 1rem",
-  transition: "all 0.3s ease",
-  color: theme.palette.primary.main,
-  borderRadius: Number(theme.shape.borderRadius) * 3,
-  backgroundColor: theme.palette.primary.light
+  padding: "0.5rem 1.25rem",
+  color: "#A44A3F",
+  borderRadius: "4px",
+  border: "1px solid rgba(164, 74, 63, 0.25)",
+  backgroundColor: "rgba(164, 74, 63, 0.07)",
+  fontSize: "0.875rem",
+  fontWeight: 500
 }));
 
 // ==============================================================
@@ -98,8 +101,10 @@ export default function OrderProgress({ status, deliveredAt, isDelivered }: Prop
       sx={{
         mb: 4,
         p: "2rem 1.5rem",
-        border: "1px solid",
-        borderColor: "grey.100"
+        backgroundColor: "#FAF6EF",
+        border: "1px solid rgba(43, 38, 34, 0.12)",
+        borderRadius: "4px",
+        boxShadow: "none"
       }}
     >
       <StyledFlexbox>
@@ -125,7 +130,7 @@ export default function OrderProgress({ status, deliveredAt, isDelivered }: Prop
             </Box>
 
             {ind < activeIcons.length - 1 && (
-              <Box className="line" bgcolor={ind < statusIndex ? "primary.main" : "grey.100"} />
+              <Box className="line" sx={{ backgroundColor: ind < statusIndex ? "#2B2622" : "#C8B79C" }} />
             )}
           </Fragment>
         ))}
