@@ -7,6 +7,47 @@ import {
   OrderByAdmin,
   updateOrderStatusByAdmin
 } from "../../../libs/admin";
+import { toPublicImageUrl } from "../../../libs/upload";
+
+const DEFAULT_ORDER_ITEM_THUMBNAIL = "/assets/images/products/placeholder.png";
+
+const getApiBaseUrl = () => {
+  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:3007/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+};
+
+const resolveAdminOrderItemImage = (value?: string | null) => {
+  const normalized = (value || "").replace(/\\/g, "/").trim();
+  if (!normalized) return DEFAULT_ORDER_ITEM_THUMBNAIL;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const parsed = new URL(normalized);
+      return parsed.host ? normalized : DEFAULT_ORDER_ITEM_THUMBNAIL;
+    } catch {
+      return DEFAULT_ORDER_ITEM_THUMBNAIL;
+    }
+  }
+
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  return toPublicImageUrl(normalized, apiBase);
+};
 
 function toUiOrderStatus(status: string): OrderStatus {
   if (status === "DELIVERED") return "Delivered";
@@ -50,7 +91,7 @@ export function mapAdminOrderToUi(order: OrderByAdmin): Order {
     user: toPlaceholderUser(order.memberId),
     tax: order.taxAmount,
     items: order.items.map((item) => ({
-      product_img: item.productSnapshotThumbnail || "/assets/images/products/placeholder.png",
+      product_img: resolveAdminOrderItemImage(item.productSnapshotThumbnail),
       product_name: item.productSnapshotTitle,
       product_price: item.appliedPrice,
       product_quantity: item.quantity,
