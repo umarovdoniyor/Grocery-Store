@@ -124,7 +124,17 @@ export default function ShopDetailsPageView({
       {/* SHOP INTRODUCTION AREA */}
       <ShopIntroCard shop={shop} />
 
-      <FlexBetween flexWrap="wrap" gap={2} mb={3}>
+      <FlexBetween
+        flexWrap="wrap"
+        gap={2}
+        mb={3}
+        sx={{
+          p: 2,
+          borderRadius: 3,
+          border: "1px solid rgba(90, 112, 64, 0.14)",
+          backgroundColor: "#f7f4ea"
+        }}
+      >
         <Typography variant="body1" sx={{ color: "grey.600" }}>
           Showing {firstIndex}-{lastIndex} of {totalProducts} Products
         </Typography>
@@ -138,15 +148,40 @@ export default function ShopDetailsPageView({
             onKeyDown={(event) => {
               if (event.key === "Enter") handleSearch();
             }}
-            sx={{ minWidth: { xs: "100%", md: 260 } }}
+            sx={{
+              minWidth: { xs: "100%", md: 280 },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+                "& fieldset": { borderColor: "rgba(90,112,64,0.25)" },
+                "&:hover fieldset": { borderColor: "rgba(90,112,64,0.5)" },
+                "&.Mui-focused fieldset": { borderColor: "#5a7a30" }
+              }
+            }}
           />
 
-          <Button variant="outlined" onClick={handleSearch} sx={{ whiteSpace: "nowrap" }}>
+          <Button
+            variant="outlined"
+            onClick={handleSearch}
+            sx={{
+              whiteSpace: "nowrap",
+              borderRadius: 999,
+              borderColor: "rgba(90,112,64,0.42)",
+              color: "#4f6d2f",
+              fontWeight: 600,
+              textTransform: "none",
+              "&:hover": { borderColor: "#4f6d2f", backgroundColor: "rgba(79,109,47,0.06)" }
+            }}
+          >
             Search
           </Button>
 
           {searchValue ? (
-            <Button variant="text" onClick={handleClearSearch} sx={{ whiteSpace: "nowrap" }}>
+            <Button
+              variant="text"
+              onClick={handleClearSearch}
+              sx={{ whiteSpace: "nowrap", color: "#5f6f4c", textTransform: "none" }}
+            >
               Clear
             </Button>
           ) : null}
@@ -162,7 +197,16 @@ export default function ShopDetailsPageView({
             size="small"
             value={sortValue}
             onChange={(event) => handleSortChange(event.target.value)}
-            sx={{ minWidth: 180 }}
+            sx={{
+              minWidth: 190,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+                "& fieldset": { borderColor: "rgba(90,112,64,0.25)" },
+                "&:hover fieldset": { borderColor: "rgba(90,112,64,0.5)" },
+                "&.Mui-focused fieldset": { borderColor: "#5a7a30" }
+              }
+            }}
           >
             {SORT_OPTIONS.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -183,9 +227,10 @@ export default function ShopDetailsPageView({
                 py: 8,
                 px: 3,
                 textAlign: "center",
-                borderRadius: 2,
+                borderRadius: 3,
                 border: "1px dashed",
-                borderColor: "divider"
+                borderColor: "rgba(90,112,64,0.28)",
+                backgroundColor: "#f7f4ea"
               }}
             >
               <Typography variant="h6" sx={{ mb: 1 }}>
@@ -199,7 +244,11 @@ export default function ShopDetailsPageView({
             </Box>
           )}
 
-          <FlexBetween flexWrap="wrap" mt={5}>
+          <FlexBetween
+            flexWrap="wrap"
+            mt={5}
+            sx={{ pt: 2, borderTop: "1px solid rgba(90, 112, 64, 0.14)" }}
+          >
             <Typography variant="body1" sx={{ color: "grey.600" }}>
               Showing {firstIndex}-{lastIndex} of {totalProducts} Products
             </Typography>
@@ -210,6 +259,17 @@ export default function ShopDetailsPageView({
               page={page}
               count={pageCount}
               onChange={handlePageChange}
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  borderColor: "rgba(90,112,64,0.22)",
+                  color: "#5f6f4c"
+                },
+                "& .Mui-selected": {
+                  color: "#fff",
+                  borderColor: "#5a7a30",
+                  backgroundColor: "#5a7a30"
+                }
+              }}
             />
           </FlexBetween>
         </Grid>

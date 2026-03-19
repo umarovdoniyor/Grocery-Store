@@ -135,6 +135,8 @@ export default function ProductCard16({ product }: Props) {
               sx={{
                 mb: 1,
                 minHeight: 48,
+                fontWeight: 700,
+                color: "#1f2a1a",
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
@@ -169,16 +171,16 @@ export default function ProductCard16({ product }: Props) {
               {isFavorite ? (
                 <Favorite sx={{ fontSize: 14, color: "error.main" }} />
               ) : (
-                <FavoriteBorder sx={{ fontSize: 14, color: "text.secondary" }} />
+                <FavoriteBorder sx={{ fontSize: 14, color: "#5f6f4c" }} />
               )}
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
                 {formattedLikes}
               </Typography>
             </FlexBox>
 
             <FlexBox alignItems="center" gap={0.5}>
-              <RemoveRedEye sx={{ fontSize: 14, color: "text.secondary" }} />
-              <Typography variant="caption" color="text.secondary">
+              <RemoveRedEye sx={{ fontSize: 14, color: "#5f6f4c" }} />
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
                 {formattedViews} views
               </Typography>
             </FlexBox>

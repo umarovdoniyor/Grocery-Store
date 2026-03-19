@@ -46,8 +46,25 @@ export default function ShopIntroCard({ shop }: Props) {
   ];
 
   return (
-    <Card sx={{ mb: 4, pb: 2.5 }}>
-      <Box height="202px" sx={{ background: `url(${coverPicture}) center/cover` }} />
+    <Card
+      sx={{
+        mb: 4,
+        pb: 2.5,
+        borderRadius: 3,
+        overflow: "hidden",
+        border: "1px solid rgba(90, 112, 64, 0.16)",
+        boxShadow: "0 10px 28px rgba(33, 49, 26, 0.08)",
+        backgroundColor: "#f7f4ea"
+      }}
+    >
+      <Box
+        height="216px"
+        sx={{
+          backgroundImage: `linear-gradient(180deg, rgba(20, 34, 12, 0.28) 0%, rgba(20, 34, 12, 0.42) 100%), url(${coverPicture})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover"
+        }}
+      />
 
       <FlexBox mt={-8} px={3.75} flexWrap="wrap">
         <Avatar
@@ -58,8 +75,9 @@ export default function ShopIntroCard({ shop }: Props) {
             mr: "37px",
             width: "120px",
             height: "120px",
-            border: "2px solid",
-            borderColor: "grey.100"
+            border: "3px solid",
+            borderColor: "#fff",
+            boxShadow: "0 8px 24px rgba(20, 34, 12, 0.18)"
           }}
         />
 
@@ -73,12 +91,13 @@ export default function ShopIntroCard({ shop }: Props) {
           <FlexBetween flexWrap="wrap" mt={0.375} mb={3}>
             <Box
               my={1}
-              p="4px 16px"
-              borderRadius="4px"
+              p="6px 16px"
+              borderRadius="999px"
               display="inline-block"
-              bgcolor="secondary.main"
+              bgcolor="rgba(255,255,255,0.88)"
+              border="1px solid rgba(90, 112, 64, 0.18)"
             >
-              <Typography variant="h3" sx={{ color: "grey.100" }}>
+              <Typography variant="h3" sx={{ color: "#2d411f", fontWeight: 700 }}>
                 {name}
               </Typography>
             </Box>
@@ -86,8 +105,24 @@ export default function ShopIntroCard({ shop }: Props) {
             <FlexBox my={1} gap={1.5}>
               {socials.map(({ Icon, url }, index) =>
                 url ? (
-                  <a href={url} target="_blank" rel="noreferrer noopener" key={index}>
-                    <Icon sx={{ fontSize: 27 }} />
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    key={index}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 999,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#3f5a27",
+                      background: "rgba(255,255,255,0.88)",
+                      border: "1px solid rgba(90, 112, 64, 0.18)"
+                    }}
+                  >
+                    <Icon sx={{ fontSize: 20 }} />
                   </a>
                 ) : null
               )}
@@ -115,14 +150,30 @@ export default function ShopIntroCard({ shop }: Props) {
               <Button
                 component="a"
                 href={contactHref}
-                variant="outlined"
+                variant="contained"
                 color="primary"
-                sx={{ my: 1.5 }}
+                sx={{
+                  my: 1.5,
+                  px: 2.25,
+                  borderRadius: 999,
+                  fontWeight: 700,
+                  textTransform: "none",
+                  background: "linear-gradient(135deg, #6f8f44 0%, #4f6d2f 100%)",
+                  boxShadow: "0 8px 18px rgba(51, 80, 30, 0.25)",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #64813d 0%, #446127 100%)"
+                  }
+                }}
               >
                 {contactLabel}
               </Button>
             ) : (
-              <Button variant="outlined" color="primary" disabled sx={{ my: 1.5 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled
+                sx={{ my: 1.5, borderRadius: 999 }}
+              >
                 {contactLabel}
               </Button>
             )}
