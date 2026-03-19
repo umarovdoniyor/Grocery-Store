@@ -132,22 +132,26 @@ export default function UserAnalytics({ user }: Props) {
       {
         title: String(orderSummary.total),
         subtitle: "All Orders",
-        tooltip: "Total orders linked to your account"
+        tooltip: "Total orders linked to your account",
+        accent: "#2B2622"
       },
       {
         title: String(orderSummary.awaitingPayment),
         subtitle: "Awaiting Payments",
-        tooltip: "Orders currently in pending payment status"
+        tooltip: "Orders currently in pending payment status",
+        accent: "#A44A3F"
       },
       {
         title: String(orderSummary.awaitingShipment),
         subtitle: "Awaiting Shipment",
-        tooltip: "Paid/confirmed orders waiting to be shipped"
+        tooltip: "Paid/confirmed orders waiting to be shipped",
+        accent: "#5D6B3F"
       },
       {
         title: String(orderSummary.awaitingDelivery),
         subtitle: "Awaiting Delivery",
-        tooltip: "Shipped orders that are still in transit"
+        tooltip: "Shipped orders that are still in transit",
+        accent: "#8B6A4A"
       }
     ],
     [orderSummary]
@@ -162,39 +166,62 @@ export default function UserAnalytics({ user }: Props) {
             gap: 2,
             height: "100%",
             display: "flex",
-            border: "1px solid",
+            border: "1px solid rgba(43, 38, 34, 0.18)",
             alignItems: "center",
             padding: "1rem 1.5rem",
-            borderColor: "grey.100"
+            borderRadius: "6px",
+            backgroundColor: "#2B2622",
+            boxShadow: "4px 4px 0px rgba(164, 74, 63, 0.35)"
           }}
         >
           <Avatar
             variant="rounded"
             src={avatarSrc}
             alt={user.name.firstName}
-            sx={{ height: 65, width: 65 }}
+            sx={{
+              height: 66,
+              width: 66,
+              borderRadius: "4px",
+              border: "2px solid rgba(200, 183, 156, 0.5)",
+              boxShadow: "none"
+            }}
           />
 
           <FlexBetween flexWrap="wrap" flex={1}>
             <div>
-              <Typography variant="h5">{`${user.name.firstName} ${user.name.lastName}`}</Typography>
+              <Typography variant="h5" sx={{ color: "#F4EEE3", fontWeight: 700 }}>
+                {`${user.name.firstName} ${user.name.lastName}`}
+              </Typography>
 
               <FlexBox alignItems="center" gap={1}>
-                <Typography variant="body1" color="text.secondary">
+                <Typography variant="body1" sx={{ color: "#C8B79C" }}>
                   Balance:
                 </Typography>
 
-                <Typography fontWeight={500} lineHeight={2} variant="body1" color="primary">
+                <Typography
+                  fontWeight={700}
+                  lineHeight={2}
+                  variant="body1"
+                  sx={{ color: "#C8B79C" }}
+                >
                   {currency(balance)}
                 </Typography>
               </FlexBox>
             </div>
 
             <Typography
-              variant="body1"
-              letterSpacing={3}
-              color="text.secondary"
+              variant="caption"
+              letterSpacing={1.8}
               textTransform="uppercase"
+              sx={{
+                px: 1.2,
+                py: 0.45,
+                borderRadius: "3px",
+                border: "1px solid #A44A3F",
+                color: "#F4EEE3",
+                fontWeight: 600,
+                backgroundColor: "rgba(164, 74, 63, 0.2)"
+              }}
             >
               {type}
             </Typography>
@@ -214,20 +241,25 @@ export default function UserAnalytics({ user }: Props) {
                   alignItems: "center",
                   flexDirection: "column",
                   padding: "1rem 1.25rem",
-                  borderColor: "grey.100",
-                  borderStyle: "solid",
-                  borderWidth: 1
+                  borderRadius: "4px",
+                  border: `1px solid ${item.accent}`,
+                  borderLeft: `3px solid ${item.accent}`,
+                  backgroundColor: "#F4EEE3",
+                  boxShadow: "none",
+                  transition: "background-color 180ms ease",
+                  "&:hover": {
+                    backgroundColor: "#ede4d5"
+                  }
                 }}
               >
-                <Typography variant="h3" color="primary">
+                <Typography variant="h3" sx={{ color: item.accent, fontWeight: 700 }}>
                   {item.title}
                 </Typography>
 
                 <Typography
                   fontSize={13}
                   variant="body1"
-                  color="text.secondary"
-                  sx={{ textAlign: "center" }}
+                  sx={{ textAlign: "center", color: "#7A6C60", fontWeight: 500 }}
                 >
                   {item.subtitle}
                 </Typography>
