@@ -11,10 +11,14 @@ import { currency } from "lib";
 interface Props {
   total: number;
   discount: number;
+  uiMode?: "vendor" | "admin";
 }
 // ==============================================================
 
-export default function TotalSummery({ total, discount }: Props) {
+export default function TotalSummery({ total, discount, uiMode = "vendor" }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+
   return (
     <Card
       sx={{
@@ -57,10 +61,10 @@ export default function TotalSummery({ total, discount }: Props) {
                   borderColor: "#D1D5DB"
                 },
                 "&:hover fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 }
               }
             }}
@@ -87,10 +91,10 @@ export default function TotalSummery({ total, discount }: Props) {
                   borderColor: "#D1D5DB"
                 },
                 "&:hover fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 }
               }
             }}
@@ -104,7 +108,7 @@ export default function TotalSummery({ total, discount }: Props) {
         <Typography variant="h6" sx={{ color: "#1F2937" }}>
           Total
         </Typography>
-        <Typography variant="h6" sx={{ color: "#0F766E" }}>
+        <Typography variant="h6" sx={{ color: accentDark }}>
           {currency(total)}
         </Typography>
       </FlexBetween>

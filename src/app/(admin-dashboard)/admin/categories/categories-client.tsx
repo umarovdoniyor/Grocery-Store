@@ -104,6 +104,7 @@ export default function CategoriesClient() {
   return (
     <CategoriesPageView
       categories={categories}
+      uiMode="admin"
       updatingCategoryId={updatingCategoryId}
       removingCategoryId={removingCategoryId}
       onToggleStatus={handleToggleStatus}

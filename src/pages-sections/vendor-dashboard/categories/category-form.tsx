@@ -76,6 +76,7 @@ type PickerMode = "icon" | "image";
 type Props = {
   mode?: "create" | "edit";
   category?: Category | null;
+  uiMode?: "vendor" | "admin";
 };
 
 const GROUP_ORDER = [
@@ -188,7 +189,15 @@ function getDefaultValues(category?: Category | null): CreateCategoryFormInput {
   };
 }
 
-export default function CategoryForm({ mode = "create", category = null }: Props) {
+export default function CategoryForm({
+  mode = "create",
+  category = null,
+  uiMode = "vendor"
+}: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const accentSoft = uiMode === "admin" ? "rgba(79, 70, 229, 0.08)" : "rgba(20, 184, 166, 0.08)";
+
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [parents, setParents] = useState<Category[]>([]);
@@ -318,171 +327,259 @@ export default function CategoryForm({ mode = "create", category = null }: Props
   });
 
   return (
-    <Card className="p-3">
+    <Card
+      sx={{
+        p: 3,
+        borderRadius: "10px",
+        border: "1px solid #D1D5DB",
+        boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)"
+      }}
+    >
       <FormProvider methods={methods} onSubmit={handleSubmitForm}>
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert
+            severity="error"
+            sx={{
+              mb: 2,
+              color: "#991B1B",
+              border: "1px solid #FCA5A5",
+              backgroundColor: "#FEF2F2"
+            }}
+          >
             {error}
           </Alert>
         )}
 
-        <Grid container spacing={3}>
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="name"
-              label="Name"
-              color="info"
-              size="medium"
-              placeholder="Name"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="slug"
-              label="Slug"
-              color="info"
-              size="medium"
-              placeholder="bakery"
-            />
-          </Grid>
-
-          <Grid size={12}>
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              name="description"
-              label="Description"
-              color="info"
-              size="medium"
-              placeholder="Category description"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="icon"
-              label="Icon"
-              color="info"
-              size="medium"
-              placeholder="Emoji or icon key"
-            />
-            <Button
-              sx={{ mt: 1 }}
-              variant="outlined"
-              color="info"
-              onClick={() => openPicker("icon")}
-              disabled={isSubmitting}
-            >
-              Choose Icon
-            </Button>
-            {watchedIcon && (
-              <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontSize={24}>{watchedIcon}</Typography>
-                <Typography variant="caption" color="success.main" fontWeight={500}>
-                  Selected
-                </Typography>
-              </Box>
-            )}
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="image"
-              label="Image URL"
-              color="info"
-              size="medium"
-              placeholder="URL or local image path"
-            />
-            <Button
-              sx={{ mt: 1 }}
-              variant="outlined"
-              color="info"
-              onClick={() => openPicker("image")}
-              disabled={isSubmitting}
-            >
-              Choose Image
-            </Button>
-            {watchedImage && (
-              <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1.5 }}>
-                <Box
-                  sx={{ width: 40, height: 40, borderRadius: 1, overflow: "hidden", flexShrink: 0 }}
-                >
-                  <Box
-                    component="img"
-                    src={watchedImage}
-                    alt="Selected"
-                    sx={{ width: 40, height: 40, objectFit: "cover" }}
-                  />
-                </Box>
-                <Typography variant="caption" color="success.main" fontWeight={500}>
-                  Selected
-                </Typography>
-              </Box>
-            )}
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField select fullWidth color="info" size="medium" name="status" label="Status">
-              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-              <MenuItem value="INACTIVE">INACTIVE</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              type="number"
-              name="sortOrder"
-              label="Sort Order"
-              color="info"
-              size="medium"
-              placeholder="1"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              select
-              fullWidth
-              color="info"
-              size="medium"
-              name="parentId"
-              label="Parent Category (Optional)"
-              disabled={loadingParents}
-            >
-              <MenuItem value="">None</MenuItem>
-              {parents.map((parent) => (
-                <MenuItem key={parent._id} value={parent._id}>
-                  {parent.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid size={12}>
-            <Button loading={isSubmitting} variant="contained" color="info" type="submit">
-              {mode === "edit" ? "Update category" : "Save category"}
-            </Button>
-          </Grid>
-
-          {watchedName && !watchedSlug && (
-            <Grid size={12}>
-              <Alert severity="info" sx={{ mt: 1 }}>
-                Tip: add a slug value (for example: {watchedName.toLowerCase().replace(/\s+/g, "-")}
-                )
-              </Alert>
+        <Box
+          sx={{
+            "& .MuiInputLabel-root": {
+              zIndex: 1,
+              color: "#6B7280"
+            },
+            "& .MuiInputLabel-shrink": {
+              px: 0.5,
+              bgcolor: "#F8FAFC"
+            },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              backgroundColor: "#F8FAFC",
+              "& fieldset": {
+                borderColor: "#D1D5DB"
+              },
+              "&:hover fieldset": {
+                borderColor: accentColor
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: accentColor
+              }
+            },
+            "& .MuiInputBase-input": {
+              color: "#1F2937"
+            }
+          }}
+        >
+          <Grid container spacing={3}>
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="name"
+                label="Name"
+                color="info"
+                size="medium"
+                placeholder="Name"
+              />
             </Grid>
-          )}
-        </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="slug"
+                label="Slug"
+                color="info"
+                size="medium"
+                placeholder="bakery"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                name="description"
+                label="Description"
+                color="info"
+                size="medium"
+                placeholder="Category description"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="icon"
+                label="Icon"
+                color="info"
+                size="medium"
+                placeholder="Emoji or icon key"
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 1,
+                  color: accentDark,
+                  borderColor: accentColor,
+                  "&:hover": {
+                    borderColor: accentDark,
+                    backgroundColor: accentSoft
+                  }
+                }}
+                onClick={() => openPicker("icon")}
+                disabled={isSubmitting}
+              >
+                Choose Icon
+              </Button>
+              {watchedIcon && (
+                <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography fontSize={24}>{watchedIcon}</Typography>
+                  <Typography variant="caption" sx={{ color: accentDark }} fontWeight={500}>
+                    Selected
+                  </Typography>
+                </Box>
+              )}
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="image"
+                label="Image URL"
+                color="info"
+                size="medium"
+                placeholder="URL or local image path"
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 1,
+                  color: accentDark,
+                  borderColor: accentColor,
+                  "&:hover": {
+                    borderColor: accentDark,
+                    backgroundColor: accentSoft
+                  }
+                }}
+                onClick={() => openPicker("image")}
+                disabled={isSubmitting}
+              >
+                Choose Image
+              </Button>
+              {watchedImage && (
+                <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      overflow: "hidden",
+                      flexShrink: 0
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={watchedImage}
+                      alt="Selected"
+                      sx={{ width: 40, height: 40, objectFit: "cover" }}
+                    />
+                  </Box>
+                  <Typography variant="caption" sx={{ color: accentDark }} fontWeight={500}>
+                    Selected
+                  </Typography>
+                </Box>
+              )}
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField select fullWidth color="info" size="medium" name="status" label="Status">
+                <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+                <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                type="number"
+                name="sortOrder"
+                label="Sort Order"
+                color="info"
+                size="medium"
+                placeholder="1"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                select
+                fullWidth
+                color="info"
+                size="medium"
+                name="parentId"
+                label="Parent Category (Optional)"
+                disabled={loadingParents}
+              >
+                <MenuItem value="">None</MenuItem>
+                {parents.map((parent) => (
+                  <MenuItem key={parent._id} value={parent._id}>
+                    {parent.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid size={12}>
+              <Button
+                loading={isSubmitting}
+                variant="contained"
+                type="submit"
+                sx={{
+                  backgroundColor: accentColor,
+                  color: "#F8FAFC",
+                  "&:hover": {
+                    backgroundColor: accentDark
+                  }
+                }}
+              >
+                {mode === "edit" ? "Update category" : "Save category"}
+              </Button>
+            </Grid>
+
+            {watchedName && !watchedSlug && (
+              <Grid size={12}>
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  Tip: add a slug value (for example:{" "}
+                  {watchedName.toLowerCase().replace(/\s+/g, "-")})
+                </Alert>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
       </FormProvider>
 
-      <Dialog open={pickerOpen} onClose={() => setPickerOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        maxWidth="md"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "10px",
+              border: "1px solid #D1D5DB"
+            }
+          }
+        }}
+      >
         <Box p={3}>
           <Typography variant="h6" mb={2}>
             {pickerMode === "icon" ? "Choose Icon" : "Choose Image"}
@@ -524,9 +621,17 @@ export default function CategoryForm({ mode = "create", category = null }: Props
                           <Button
                             fullWidth
                             variant="outlined"
-                            color="info"
+                            sx={{
+                              justifyContent: "flex-start",
+                              py: 1.25,
+                              color: accentDark,
+                              borderColor: accentColor,
+                              "&:hover": {
+                                borderColor: accentDark,
+                                backgroundColor: accentSoft
+                              }
+                            }}
                             onClick={() => handlePickValue(option.value)}
-                            sx={{ justifyContent: "flex-start", py: 1.25 }}
                           >
                             <Stack direction="row" spacing={1} alignItems="center">
                               <Typography fontSize={20}>{option.value}</Typography>
@@ -566,9 +671,17 @@ export default function CategoryForm({ mode = "create", category = null }: Props
                           <Button
                             fullWidth
                             variant="outlined"
-                            color="info"
+                            sx={{
+                              justifyContent: "flex-start",
+                              py: 1.25,
+                              color: accentDark,
+                              borderColor: accentColor,
+                              "&:hover": {
+                                borderColor: accentDark,
+                                backgroundColor: accentSoft
+                              }
+                            }}
                             onClick={() => handlePickValue(option.value)}
-                            sx={{ justifyContent: "flex-start", py: 1.25 }}
                           >
                             <Stack direction="row" spacing={1.25} alignItems="center">
                               <Box

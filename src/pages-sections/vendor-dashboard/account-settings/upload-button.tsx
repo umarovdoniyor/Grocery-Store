@@ -7,6 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 // ==============================================================
 type Props = {
   id: string;
+  uiMode?: "vendor" | "admin";
   style?: SxProps<Theme>;
   onFileChange?: (file: File) => void | Promise<void>;
   disabled?: boolean;
@@ -16,11 +17,18 @@ type Props = {
 
 export default function UploadButton({
   id,
+  uiMode = "vendor",
   style = {},
   onFileChange,
   disabled = false,
   loading = false
 }: Props) {
+  const isAdminMode = uiMode === "admin";
+  const accentMain = isAdminMode ? "#4F46E5" : "#14B8A6";
+  const accentDark = isAdminMode ? "#4338CA" : "#0F766E";
+  const accentBorder = isAdminMode ? "#C7D2FE" : "#99F6E4";
+  const accentSoft = isAdminMode ? "rgba(238, 242, 255, 0.9)" : "rgba(240, 253, 250, 0.9)";
+
   const handleInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !onFileChange) {
@@ -44,19 +52,19 @@ export default function UploadButton({
             height: "auto",
             borderRadius: "50%",
             minWidth: 0,
-            border: "1px solid #99F6E4",
-            bgcolor: "rgba(240, 253, 250, 0.9)",
+            border: `1px solid ${accentBorder}`,
+            bgcolor: accentSoft,
             ...style,
             ":hover": {
-              backgroundColor: "#CCFBF1",
-              borderColor: "#14B8A6"
+              backgroundColor: isAdminMode ? "#E0E7FF" : "#CCFBF1",
+              borderColor: accentMain
             }
           }}
         >
           {loading ? (
-            <CircularProgress size={16} sx={{ color: "#0F766E" }} />
+            <CircularProgress size={16} sx={{ color: accentDark }} />
           ) : (
-            <CameraAlt fontSize="small" sx={{ color: "#0F766E" }} />
+            <CameraAlt fontSize="small" sx={{ color: accentDark }} />
           )}
         </Button>
       </label>

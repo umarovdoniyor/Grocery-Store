@@ -15,6 +15,7 @@ const DEFAULT_CUSTOMER_AVATAR = "/assets/images/faces/propic(1).png";
 // ========================================================================
 type Props = {
   customer: any;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   onToggleMemberStatus: (customer: any) => void;
   onSoftDeleteMember: (customer: any) => void;
@@ -23,10 +24,15 @@ type Props = {
 
 export default function CustomerRow({
   customer,
+  uiMode = "vendor",
   isUpdating,
   onToggleMemberStatus,
   onSoftDeleteMember
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const accentSoft = uiMode === "admin" ? "rgba(79, 70, 229, 0.08)" : "rgba(20, 184, 166, 0.08)";
+
   const { email, name, phone, avatar, balance, orders, memberType, memberStatus } = customer;
 
   const statusLabel = memberStatus === "ACTIVE" ? "Accepted" : "Rejected";
@@ -42,7 +48,14 @@ export default function CustomerRow({
             variant="rounded"
             src={avatar}
             alt={name}
-            sx={{ width: 44, height: 44, flexShrink: 0 }}
+            sx={{
+              width: 44,
+              height: 44,
+              flexShrink: 0,
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              backgroundColor: "#F8FAFC"
+            }}
             imgProps={{
               loading: "lazy",
               onError: (event) => {
@@ -84,10 +97,17 @@ export default function CustomerRow({
         <Button
           size="small"
           variant="outlined"
-          color="info"
           loading={Boolean(isUpdating)}
           disabled={Boolean(isUpdating)}
           onClick={() => onToggleMemberStatus(customer)}
+          sx={{
+            color: accentDark,
+            borderColor: accentColor,
+            "&:hover": {
+              borderColor: accentDark,
+              backgroundColor: accentSoft
+            }
+          }}
         >
           {actionLabel}
         </Button>

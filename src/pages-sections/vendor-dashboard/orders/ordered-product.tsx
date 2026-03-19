@@ -17,12 +17,20 @@ type Status = "PACKING" | "SHIPPED" | "DELIVERED";
 
 type Props = {
   product: Order["items"][0];
+  uiMode?: "vendor" | "admin";
   updating?: boolean;
   onUpdateStatus?: (itemId: string, status: Status) => void;
 };
 // ==============================================================
 
-export default function OrderedProduct({ product, updating = false, onUpdateStatus }: Props) {
+export default function OrderedProduct({
+  product,
+  uiMode = "vendor",
+  updating = false,
+  onUpdateStatus
+}: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+
   const { item_id, product_img, product_name, product_price, product_quantity, status } =
     product || {};
 
@@ -106,10 +114,10 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
                   borderColor: "#D1D5DB"
                 },
                 "&:hover fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentColor
                 }
               },
               "& .MuiInputBase-input": {

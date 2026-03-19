@@ -82,14 +82,21 @@ export default function NotificationsPopover() {
             <Fade {...TransitionProps} timeout={150}>
               <Paper sx={{ p: 2, backgroundColor: "#1F2937", border: "1px solid #4B5563" }}>
                 <Stack spacing={1.5}>
-                  <Typography variant="h6" sx={{ color: "#F3F4F6" }}>Notifications</Typography>
+                  <Typography variant="h6" sx={{ color: "#F3F4F6" }}>
+                    Notifications
+                  </Typography>
 
                   <Typography variant="body2" sx={{ color: "#9CA3AF" }}>
                     {helperText}
                   </Typography>
 
                   <FlexBox justifyContent="flex-end">
-                    <Button LinkComponent={Link} href={targetPath} sx={{ color: "#14B8A6" }} size="small">
+                    <Button
+                      LinkComponent={Link}
+                      href={targetPath}
+                      sx={{ color: "#14B8A6" }}
+                      size="small"
+                    >
                       Open Related Page
                     </Button>
                   </FlexBox>

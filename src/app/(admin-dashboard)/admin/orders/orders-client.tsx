@@ -72,6 +72,7 @@ export default function OrdersClient() {
   return (
     <OrdersPageView
       orders={orders}
+      uiMode="admin"
       showCreateButton={false}
       updatingOrderId={updatingOrderId}
       onMarkDelivered={handleMarkDelivered}

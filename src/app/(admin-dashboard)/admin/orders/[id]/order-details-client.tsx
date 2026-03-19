@@ -65,6 +65,7 @@ export default function OrderDetailsClient({ id }: Props) {
   return (
     <OrderDetailsPageView
       order={order}
+      uiMode="admin"
       isUpdatingStatus={isUpdatingStatus}
       onMarkDelivered={handleMarkDelivered}
     />

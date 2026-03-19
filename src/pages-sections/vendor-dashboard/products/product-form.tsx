@@ -122,6 +122,10 @@ export default function ProductForm({
   productId,
   basePath = "/admin/products"
 }: Props) {
+  const isAdminUi = basePath.startsWith("/admin");
+  const accentColor = isAdminUi ? "#4F46E5" : "#14B8A6";
+  const accentDark = isAdminUi ? "#4338CA" : "#0F766E";
+
   const router = useRouter();
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [formError, setFormError] = useState<string | null>(null);
@@ -434,10 +438,10 @@ export default function ProductForm({
                 borderColor: "#D1D5DB"
               },
               "&:hover fieldset": {
-                borderColor: "#14B8A6"
+                borderColor: accentColor
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#14B8A6"
+                borderColor: accentColor
               }
             },
             "& .MuiInputBase-input": {
@@ -446,317 +450,321 @@ export default function ProductForm({
           }}
         >
           <Grid container spacing={3}>
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="name"
-              label="Name"
-              color="info"
-              size="medium"
-              placeholder="Name"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              select
-              fullWidth
-              color="info"
-              size="medium"
-              name="category"
-              placeholder="Category"
-              label="Select Category"
-            >
-              {categories.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="brand"
-              color="info"
-              size="medium"
-              label="Brand"
-              placeholder="Brand"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="sku"
-              color="info"
-              size="medium"
-              label="SKU"
-              placeholder="SKU"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField select fullWidth color="info" size="medium" name="unit" label="Unit">
-              <MenuItem value="PCS">PCS</MenuItem>
-              <MenuItem value="KG">KG</MenuItem>
-              <MenuItem value="G">G</MenuItem>
-              <MenuItem value="L">L</MenuItem>
-              <MenuItem value="ML">ML</MenuItem>
-              <MenuItem value="PACK">PACK</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField select fullWidth color="info" size="medium" name="status" label="Status">
-              <MenuItem value="DRAFT">DRAFT</MenuItem>
-              <MenuItem value="PUBLISHED">PUBLISHED</MenuItem>
-              <MenuItem value="ARCHIVED">ARCHIVED</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid size={12}>
-            <TextField
-              rows={6}
-              multiline
-              fullWidth
-              color="info"
-              size="medium"
-              name="description"
-              label="Description"
-              placeholder="Description"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="stock"
-              color="info"
-              size="medium"
-              label="Stock"
-              placeholder="Stock"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="min_order_qty"
-              color="info"
-              size="medium"
-              type="number"
-              label="Minimum Order Qty"
-              placeholder="Minimum Order Qty"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="tags"
-              label="Tags"
-              color="info"
-              size="medium"
-              placeholder="Tags"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              name="price"
-              color="info"
-              size="medium"
-              type="number"
-              label="Regular Price"
-              placeholder="Regular Price"
-            />
-          </Grid>
-
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <TextField
-              fullWidth
-              color="info"
-              size="medium"
-              type="number"
-              name="sale_price"
-              label="Sale Price"
-              placeholder="Sale Price"
-            />
-          </Grid>
-
-          <Grid size={12}>
-            <Stack spacing={1.5}>
+            <Grid size={{ sm: 6, xs: 12 }}>
               <TextField
                 fullWidth
-                name="thumbnail"
+                name="name"
+                label="Name"
                 color="info"
                 size="medium"
-                label="Thumbnail URL"
-                placeholder="https://..."
+                placeholder="Name"
               />
+            </Grid>
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
-                <Button
-                  component="label"
-                  variant="outlined"
-                  disabled={uploadingThumbnail || isSubmitting}
-                  sx={{
-                    color: "#0F766E",
-                    borderColor: "#14B8A6",
-                    "&:hover": {
-                      borderColor: "#0F766E",
-                      backgroundColor: "rgba(20, 184, 166, 0.08)"
-                    }
-                  }}
-                >
-                  {uploadingThumbnail ? <CircularProgress size={18} /> : "Upload Thumbnail"}
-                  <input
-                    hidden
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleThumbnailUpload}
-                  />
-                </Button>
-
-                <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                  Upload fills the thumbnail field automatically.
-                </Typography>
-              </Stack>
-
-              {thumbnailValue && (
-                <Stack spacing={1}>
-                  <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                    Thumbnail preview
-                  </Typography>
-
-                  <Box
-                    component="img"
-                    src={toPreviewSrc(thumbnailValue)}
-                    alt="Thumbnail preview"
-                    sx={{
-                      width: 120,
-                      height: 120,
-                      objectFit: "cover",
-                        borderRadius: "8px",
-                      border: "1px solid",
-                        borderColor: "#D1D5DB"
-                    }}
-                  />
-                </Stack>
-              )}
-            </Stack>
-          </Grid>
-
-          <Grid size={12}>
-            <Stack spacing={1.5}>
+            <Grid size={{ sm: 6, xs: 12 }}>
               <TextField
-                rows={3}
+                select
+                fullWidth
+                color="info"
+                size="medium"
+                name="category"
+                placeholder="Category"
+                label="Select Category"
+              >
+                {categories.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="brand"
+                color="info"
+                size="medium"
+                label="Brand"
+                placeholder="Brand"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="sku"
+                color="info"
+                size="medium"
+                label="SKU"
+                placeholder="SKU"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField select fullWidth color="info" size="medium" name="unit" label="Unit">
+                <MenuItem value="PCS">PCS</MenuItem>
+                <MenuItem value="KG">KG</MenuItem>
+                <MenuItem value="G">G</MenuItem>
+                <MenuItem value="L">L</MenuItem>
+                <MenuItem value="ML">ML</MenuItem>
+                <MenuItem value="PACK">PACK</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField select fullWidth color="info" size="medium" name="status" label="Status">
+                <MenuItem value="DRAFT">DRAFT</MenuItem>
+                <MenuItem value="PUBLISHED">PUBLISHED</MenuItem>
+                <MenuItem value="ARCHIVED">ARCHIVED</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={12}>
+              <TextField
+                rows={6}
                 multiline
                 fullWidth
-                name="images"
                 color="info"
                 size="medium"
-                label="Image URLs (comma-separated)"
-                placeholder="https://img1.jpg, https://img2.jpg"
+                name="description"
+                label="Description"
+                placeholder="Description"
               />
+            </Grid>
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
-                <Button
-                  component="label"
-                  variant="outlined"
-                  disabled={uploadingGallery || isSubmitting}
-                  sx={{
-                    color: "#0F766E",
-                    borderColor: "#14B8A6",
-                    "&:hover": {
-                      borderColor: "#0F766E",
-                      backgroundColor: "rgba(20, 184, 166, 0.08)"
-                    }
-                  }}
-                >
-                  {uploadingGallery ? <CircularProgress size={18} /> : "Upload Gallery Images"}
-                  <input
-                    hidden
-                    multiple
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleGalleryUpload}
-                  />
-                </Button>
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="stock"
+                color="info"
+                size="medium"
+                label="Stock"
+                placeholder="Stock"
+              />
+            </Grid>
 
-                <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                  Uploaded paths are appended to the images field.
-                </Typography>
-              </Stack>
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="min_order_qty"
+                color="info"
+                size="medium"
+                type="number"
+                label="Minimum Order Qty"
+                placeholder="Minimum Order Qty"
+              />
+            </Grid>
 
-              {galleryPreviewImages.length > 0 && (
-                <Stack spacing={1}>
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="tags"
+                label="Tags"
+                color="info"
+                size="medium"
+                placeholder="Tags"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                name="price"
+                color="info"
+                size="medium"
+                type="number"
+                label="Regular Price"
+                placeholder="Regular Price"
+              />
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <TextField
+                fullWidth
+                color="info"
+                size="medium"
+                type="number"
+                name="sale_price"
+                label="Sale Price"
+                placeholder="Sale Price"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <Stack spacing={1.5}>
+                <TextField
+                  fullWidth
+                  name="thumbnail"
+                  color="info"
+                  size="medium"
+                  label="Thumbnail URL"
+                  placeholder="https://..."
+                />
+
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    disabled={uploadingThumbnail || isSubmitting}
+                    sx={{
+                      color: accentDark,
+                      borderColor: accentColor,
+                      "&:hover": {
+                        borderColor: accentDark,
+                        backgroundColor: isAdminUi
+                          ? "rgba(79, 70, 229, 0.08)"
+                          : "rgba(20, 184, 166, 0.08)"
+                      }
+                    }}
+                  >
+                    {uploadingThumbnail ? <CircularProgress size={18} /> : "Upload Thumbnail"}
+                    <input
+                      hidden
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleThumbnailUpload}
+                    />
+                  </Button>
+
                   <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                    Gallery preview ({galleryPreviewImages.length})
+                    Upload fills the thumbnail field automatically.
                   </Typography>
+                </Stack>
 
-                  <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
-                    {galleryPreviewImages.map((src, index) => (
-                      <Box
-                        key={`${src}-${index}`}
-                        sx={{
-                          width: 88,
-                          height: 88,
-                          borderRadius: "8px",
-                          border: "1px solid",
-                          borderColor: "#D1D5DB",
-                          position: "relative",
-                          overflow: "hidden"
-                        }}
-                      >
+                {thumbnailValue && (
+                  <Stack spacing={1}>
+                    <Typography variant="body2" sx={{ color: "#6B7280" }}>
+                      Thumbnail preview
+                    </Typography>
+
+                    <Box
+                      component="img"
+                      src={toPreviewSrc(thumbnailValue)}
+                      alt="Thumbnail preview"
+                      sx={{
+                        width: 120,
+                        height: 120,
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                        border: "1px solid",
+                        borderColor: "#D1D5DB"
+                      }}
+                    />
+                  </Stack>
+                )}
+              </Stack>
+            </Grid>
+
+            <Grid size={12}>
+              <Stack spacing={1.5}>
+                <TextField
+                  rows={3}
+                  multiline
+                  fullWidth
+                  name="images"
+                  color="info"
+                  size="medium"
+                  label="Image URLs (comma-separated)"
+                  placeholder="https://img1.jpg, https://img2.jpg"
+                />
+
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    disabled={uploadingGallery || isSubmitting}
+                    sx={{
+                      color: accentDark,
+                      borderColor: accentColor,
+                      "&:hover": {
+                        borderColor: accentDark,
+                        backgroundColor: isAdminUi
+                          ? "rgba(79, 70, 229, 0.08)"
+                          : "rgba(20, 184, 166, 0.08)"
+                      }
+                    }}
+                  >
+                    {uploadingGallery ? <CircularProgress size={18} /> : "Upload Gallery Images"}
+                    <input
+                      hidden
+                      multiple
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleGalleryUpload}
+                    />
+                  </Button>
+
+                  <Typography variant="body2" sx={{ color: "#6B7280" }}>
+                    Uploaded paths are appended to the images field.
+                  </Typography>
+                </Stack>
+
+                {galleryPreviewImages.length > 0 && (
+                  <Stack spacing={1}>
+                    <Typography variant="body2" sx={{ color: "#6B7280" }}>
+                      Gallery preview ({galleryPreviewImages.length})
+                    </Typography>
+
+                    <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                      {galleryPreviewImages.map((src, index) => (
                         <Box
-                          component="img"
-                          src={src}
-                          alt={`Gallery preview ${index + 1}`}
-                          sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRemoveGalleryImage(index)}
+                          key={`${src}-${index}`}
                           sx={{
-                            top: 4,
-                            right: 4,
-                            position: "absolute",
-                            bgcolor: "rgba(0,0,0,0.55)",
-                            color: "common.white",
-                            "&:hover": { bgcolor: "rgba(0,0,0,0.75)" }
+                            width: 88,
+                            height: 88,
+                            borderRadius: "8px",
+                            border: "1px solid",
+                            borderColor: "#D1D5DB",
+                            position: "relative",
+                            overflow: "hidden"
                           }}
                         >
-                          <Close sx={{ fontSize: 14 }} />
-                        </IconButton>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Stack>
-              )}
-            </Stack>
-          </Grid>
+                          <Box
+                            component="img"
+                            src={src}
+                            alt={`Gallery preview ${index + 1}`}
+                            sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
 
-          <Grid size={{ sm: 6, xs: 12 }}>
-            <Button
-              loading={isSubmitting}
-              variant="contained"
-              type="submit"
-              sx={{
-                backgroundColor: "#14B8A6",
-                color: "#F8FAFC",
-                "&:hover": {
-                  backgroundColor: "#0F766E"
-                }
-              }}
-            >
-              {mode === "edit" ? "Update Product" : "Create Product"}
-            </Button>
-          </Grid>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleRemoveGalleryImage(index)}
+                            sx={{
+                              top: 4,
+                              right: 4,
+                              position: "absolute",
+                              bgcolor: "rgba(0,0,0,0.55)",
+                              color: "common.white",
+                              "&:hover": { bgcolor: "rgba(0,0,0,0.75)" }
+                            }}
+                          >
+                            <Close sx={{ fontSize: 14 }} />
+                          </IconButton>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Stack>
+                )}
+              </Stack>
+            </Grid>
+
+            <Grid size={{ sm: 6, xs: 12 }}>
+              <Button
+                loading={isSubmitting}
+                variant="contained"
+                type="submit"
+                sx={{
+                  backgroundColor: accentColor,
+                  color: "#F8FAFC",
+                  "&:hover": {
+                    backgroundColor: accentDark
+                  }
+                }}
+              >
+                {mode === "edit" ? "Update Product" : "Create Product"}
+              </Button>
+            </Grid>
           </Grid>
         </Box>
       </FormProvider>

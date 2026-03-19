@@ -24,6 +24,7 @@ interface Review {
 
 type Props = {
   review: Review;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   onTogglePublish?: (id: string, checked: boolean) => void;
   onHideReview?: (id: string) => void;
@@ -34,12 +35,17 @@ type Props = {
 
 export default function ReviewRow({
   review,
+  uiMode = "vendor",
   isUpdating = false,
   onTogglePublish,
   onHideReview,
   onRejectReview,
   onQuickApprove
 }: Props) {
+  const isAdminMode = uiMode === "admin";
+  const accentMain = isAdminMode ? "#4F46E5" : "#14B8A6";
+  const accentDark = isAdminMode ? "#4338CA" : "#0F766E";
+
   const { id, customer, product, comment, published, productImage } = review;
 
   return (
@@ -92,15 +98,48 @@ export default function ReviewRow({
             disabled={isUpdating || published}
             title="Quick Approve"
             onClick={() => onQuickApprove?.(id)}
+            sx={{
+              color: accentDark,
+              borderColor: accentMain,
+              backgroundColor: isAdminMode ? "#EEF2FF" : "#F0FDFA",
+              "&:hover": {
+                borderColor: accentDark,
+                backgroundColor: isAdminMode ? "#E0E7FF" : "#CCFBF1"
+              }
+            }}
           >
             <CheckCircle />
           </StyledIconButton>
 
-          <StyledIconButton disabled={isUpdating} onClick={() => onHideReview?.(id)}>
+          <StyledIconButton
+            disabled={isUpdating}
+            onClick={() => onHideReview?.(id)}
+            sx={{
+              color: "#B45309",
+              borderColor: "#F59E0B",
+              backgroundColor: "#FFFBEB",
+              "&:hover": {
+                borderColor: "#D97706",
+                backgroundColor: "#FEF3C7"
+              }
+            }}
+          >
             <Delete />
           </StyledIconButton>
 
-          <StyledIconButton disabled={isUpdating} onClick={() => onRejectReview?.(id)}>
+          <StyledIconButton
+            disabled={isUpdating}
+            onClick={() => onRejectReview?.(id)}
+            sx={{
+              color: "#991B1B",
+              borderColor: "#FCA5A5",
+              backgroundColor: "#FEF2F2",
+              "&:hover": {
+                borderColor: "#EF4444",
+                backgroundColor: "#FEE2E2"
+              }
+            }}
+          >
             <Block />
           </StyledIconButton>
         </FlexBox>

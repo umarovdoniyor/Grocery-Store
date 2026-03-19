@@ -286,7 +286,11 @@ export default function SettingsForm() {
               }
             }}
           >
-            {uploadingCover ? <CircularProgress size={18} sx={{ color: "#0F766E" }} /> : "Upload Shop Cover"}
+            {uploadingCover ? (
+              <CircularProgress size={18} sx={{ color: "#0F766E" }} />
+            ) : (
+              "Upload Shop Cover"
+            )}
             <input hidden type="file" accept="image/*" onChange={handleCoverUpload} />
           </Button>
 

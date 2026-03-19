@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import UploadButton from "./upload-button";
 
 type Props = {
+  uiMode?: "vendor" | "admin";
   avatarSrc: string;
   coverSrc: string;
   onAvatarUpload: (file: File) => void | Promise<void>;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function CoverPicSection({
+  uiMode = "vendor",
   avatarSrc,
   coverSrc,
   onAvatarUpload,
@@ -21,6 +23,8 @@ export default function CoverPicSection({
   uploadingAvatar = false,
   uploadingCover = false
 }: Props) {
+  const isAdminMode = uiMode === "admin";
+
   return (
     <Box
       mb={3}
@@ -48,6 +52,7 @@ export default function CoverPicSection({
           badgeContent={
             <UploadButton
               id="profile-image"
+              uiMode={uiMode}
               style={{ bgcolor: "grey.300" }}
               onFileChange={onAvatarUpload}
               loading={uploadingAvatar}
@@ -62,7 +67,7 @@ export default function CoverPicSection({
               height: 80,
               borderRadius: "10px",
               border: "4px solid",
-              borderColor: "#F8FAFC"
+              borderColor: isAdminMode ? "#EEF2FF" : "#F8FAFC"
             }}
           />
         </Badge>
@@ -71,6 +76,7 @@ export default function CoverPicSection({
       <Box position="absolute" top={20} right={20}>
         <UploadButton
           id="cover-image"
+          uiMode={uiMode}
           onFileChange={onCoverUpload}
           loading={uploadingCover}
           style={{ bgcolor: "grey.100" }}

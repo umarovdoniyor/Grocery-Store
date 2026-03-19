@@ -54,6 +54,7 @@ const resolveSellerDisplayImage = (value?: string | null) => {
 // ========================================================================
 type Props = {
   seller: Seller;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   onApproveSeller: (seller: Seller) => void;
   onRejectSeller: (seller: Seller) => void;
@@ -66,7 +67,17 @@ function formatStatus(status: Seller["status"]) {
   return "Pending";
 }
 
-export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejectSeller }: Props) {
+export default function SellerRow({
+  seller,
+  uiMode = "vendor",
+  isUpdating,
+  onApproveSeller,
+  onRejectSeller
+}: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const accentSoft = uiMode === "admin" ? "rgba(79, 70, 229, 0.08)" : "rgba(20, 184, 166, 0.08)";
+
   const { name, phone, image, shopName, status, rejectionReason, createdAt, description } = seller;
   const resolvedImage = resolveSellerDisplayImage(image);
   const canReview = status === "PENDING";
@@ -79,7 +90,14 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
             variant="rounded"
             src={resolvedImage}
             alt={name}
-            sx={{ width: 44, height: 44, flexShrink: 0 }}
+            sx={{
+              width: 44,
+              height: 44,
+              flexShrink: 0,
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              backgroundColor: "#F8FAFC"
+            }}
             imgProps={{
               loading: "lazy",
               onError: (event) => {
@@ -90,8 +108,10 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
           />
 
           <div>
-            <Typography variant="h6">{name}</Typography>
-            <Typography variant="body1" sx={{ color: "grey.600" }}>
+            <Typography variant="h6" sx={{ color: "#1F2937" }}>
+              {name}
+            </Typography>
+            <Typography variant="body1" sx={{ color: "#6B7280" }}>
               {phone}
             </Typography>
           </div>
@@ -110,11 +130,11 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
 
       <StyledTableCell align="left">
         {status === "REJECTED" ? (
-          <Typography variant="caption" color="error.main">
+          <Typography variant="caption" sx={{ color: "#B91C1C" }}>
             {rejectionReason || "Rejected by admin"}
           </Typography>
         ) : (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: "#6B7280" }}>
             {description || "No description provided"}
           </Typography>
         )}
@@ -122,15 +142,21 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
 
       <StyledTableCell align="center">
         {isUpdating ? (
-          <CircularProgress size={18} color="info" />
+          <CircularProgress size={18} sx={{ color: accentColor }} />
         ) : (
           <FlexBox justifyContent="center" gap={1} flexWrap="wrap">
             <Button
               size="small"
               variant="contained"
-              color="success"
               disabled={!canReview}
               onClick={() => onApproveSeller(seller)}
+              sx={{
+                backgroundColor: accentColor,
+                color: "#F8FAFC",
+                "&:hover": {
+                  backgroundColor: accentDark
+                }
+              }}
             >
               Approve
             </Button>
@@ -138,9 +164,16 @@ export default function SellerRow({ seller, isUpdating, onApproveSeller, onRejec
             <Button
               size="small"
               variant="outlined"
-              color="error"
               disabled={!canReview}
               onClick={() => onRejectSeller(seller)}
+              sx={{
+                color: accentDark,
+                borderColor: accentColor,
+                "&:hover": {
+                  borderColor: accentDark,
+                  backgroundColor: accentSoft
+                }
+              }}
             >
               Reject
             </Button>

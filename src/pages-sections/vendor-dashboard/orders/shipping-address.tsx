@@ -5,7 +5,12 @@ import TextField from "@mui/material/TextField";
 type Props = { address: string };
 // ==============================================================
 
-export default function ShippingAddress({ address }: Props) {
+export default function ShippingAddress({
+  address,
+  uiMode = "vendor"
+}: Props & { uiMode?: "vendor" | "admin" }) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+
   return (
     <Card
       sx={{
@@ -40,10 +45,10 @@ export default function ShippingAddress({ address }: Props) {
               borderColor: "#D1D5DB"
             },
             "&:hover fieldset": {
-              borderColor: "#14B8A6"
+              borderColor: accentColor
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#14B8A6"
+              borderColor: accentColor
             }
           }
         }}
@@ -72,10 +77,10 @@ export default function ShippingAddress({ address }: Props) {
               borderColor: "#D1D5DB"
             },
             "&:hover fieldset": {
-              borderColor: "#14B8A6"
+              borderColor: accentColor
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#14B8A6"
+              borderColor: accentColor
             }
           }
         }}

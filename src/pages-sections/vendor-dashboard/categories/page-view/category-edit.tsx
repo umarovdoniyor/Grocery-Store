@@ -53,7 +53,7 @@ export default function EditCategoryPageView() {
       ) : error ? (
         <AsyncState error={error} />
       ) : (
-        <CategoryForm mode="edit" category={category} />
+        <CategoryForm mode="edit" category={category} uiMode="admin" />
       )}
     </PageWrapper>
   );

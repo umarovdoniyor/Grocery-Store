@@ -15,6 +15,7 @@ import Order from "models/Order.model";
 // ==============================================================
 type Props = {
   order: Order;
+  uiMode?: "vendor" | "admin";
   isUpdatingStatus?: boolean;
   onMarkDelivered?: () => void;
   updatingItemId?: string | null;
@@ -24,11 +25,15 @@ type Props = {
 
 export default function OrderDetailsPageView({
   order,
+  uiMode = "vendor",
   isUpdatingStatus = false,
   onMarkDelivered,
   updatingItemId = null,
   onUpdateItemStatus
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+
   const canMarkDelivered =
     Boolean(onMarkDelivered) && order.status !== "Delivered" && order.status !== "Cancelled";
   const canUpdateItems = order.status !== "Delivered" && order.status !== "Cancelled";
@@ -46,13 +51,19 @@ export default function OrderDetailsPageView({
             }}
           >
             {/* ADD PRODUCT & CHANGE ORDER STATUS ACTION  */}
-            <OrderActions id={order.id} createdAt={order.createdAt} status={order.status} />
+            <OrderActions
+              id={order.id}
+              createdAt={order.createdAt}
+              status={order.status}
+              uiMode={uiMode}
+            />
 
             {/* ORDERED PRODUCT LIST */}
             {order.items.map((item, index) => (
               <OrderedProduct
                 product={item}
                 key={index}
+                uiMode={uiMode}
                 updating={updatingItemId === item.item_id}
                 onUpdateStatus={canUpdateItems ? onUpdateItemStatus : undefined}
               />
@@ -62,12 +73,12 @@ export default function OrderDetailsPageView({
 
         {/* SHIPPING ADDRESS & CUSTOMER NOTES */}
         <Grid size={{ md: 6, xs: 12 }}>
-          <ShippingAddress address={order.shippingAddress} />
+          <ShippingAddress address={order.shippingAddress} uiMode={uiMode} />
         </Grid>
 
         {/* TOTAL SUMMERY OF ORDER */}
         <Grid size={{ md: 6, xs: 12 }}>
-          <TotalSummery total={order.totalPrice} discount={order.discount} />
+          <TotalSummery total={order.totalPrice} discount={order.discount} uiMode={uiMode} />
         </Grid>
 
         {/* CHANGE BUTTON */}
@@ -78,10 +89,10 @@ export default function OrderDetailsPageView({
               loading={isUpdatingStatus}
               onClick={onMarkDelivered}
               sx={{
-                backgroundColor: "#14B8A6",
+                backgroundColor: accentColor,
                 color: "#F8FAFC",
                 "&:hover": {
-                  backgroundColor: "#0F766E"
+                  backgroundColor: accentDark
                 }
               }}
             >

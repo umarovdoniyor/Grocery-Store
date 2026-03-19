@@ -107,7 +107,14 @@ type ModerationTarget = {
   status: "PUBLISHED" | "HIDDEN" | "REJECTED";
 };
 
-export default function ProductReviewsPageView(_: Props) {
+export default function ProductReviewsPageView({
+  uiMode = "vendor"
+}: Props & { uiMode?: "vendor" | "admin" }) {
+  const isAdminMode = uiMode === "admin";
+  const accentMain = isAdminMode ? "#4F46E5" : "#14B8A6";
+  const accentDark = isAdminMode ? "#4338CA" : "#0F766E";
+  const accentSoft = isAdminMode ? "#EEF2FF" : "#F0FDFA";
+
   const [statusFilter, setStatusFilter] = useState<ReviewFilter>("ALL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -298,16 +305,16 @@ export default function ProductReviewsPageView(_: Props) {
           border: "1px solid #D1D5DB",
           boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
           "& .MuiTableHead-root": {
-            backgroundColor: "#F0FDFA"
+            backgroundColor: accentSoft
           },
           "& .MuiTableSortLabel-root": {
             color: "#374151"
           },
           "& .MuiTableSortLabel-root.Mui-active": {
-            color: "#0F766E"
+            color: accentDark
           },
           "& .MuiTableSortLabel-icon": {
-            color: "#14B8A6 !important"
+            color: `${accentMain} !important`
           }
         }}
       >
@@ -323,10 +330,10 @@ export default function ProductReviewsPageView(_: Props) {
               fontWeight: 600
             },
             "& .MuiTab-root.Mui-selected": {
-              color: "#0F766E"
+              color: accentDark
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#14B8A6"
+              backgroundColor: accentMain
             }
           }}
         >
@@ -341,7 +348,7 @@ export default function ProductReviewsPageView(_: Props) {
           <Box
             sx={{ py: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}
           >
-            <CircularProgress size={20} sx={{ color: "#14B8A6" }} />
+            <CircularProgress size={20} sx={{ color: accentMain }} />
             <Typography variant="body2" sx={{ color: "#6B7280" }}>
               Loading reviews...
             </Typography>
@@ -360,6 +367,7 @@ export default function ProductReviewsPageView(_: Props) {
                 <TableBody>
                   {filteredList.map((review) => (
                     <ReviewRow
+                      uiMode={uiMode}
                       review={review}
                       key={review.id}
                       isUpdating={updatingId === review.id}
@@ -385,12 +393,12 @@ export default function ProductReviewsPageView(_: Props) {
               color: "#1F2937"
             },
             "& .MuiPaginationItem-page.Mui-selected": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentMain
             },
             "& .MuiPaginationItem-previousNext": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentMain
             }
           }}
         >
@@ -457,10 +465,10 @@ export default function ProductReviewsPageView(_: Props) {
                   borderColor: "#D1D5DB"
                 },
                 "&:hover fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentMain
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentMain
                 }
               }
             }}
@@ -481,10 +489,10 @@ export default function ProductReviewsPageView(_: Props) {
             onClick={handleModerationConfirm}
             disabled={!moderationReason.trim() || Boolean(updatingId)}
             sx={{
-              backgroundColor: "#14B8A6",
+              backgroundColor: accentMain,
               color: "#F8FAFC",
               "&:hover": {
-                backgroundColor: "#0F766E"
+                backgroundColor: accentDark
               }
             }}
           >

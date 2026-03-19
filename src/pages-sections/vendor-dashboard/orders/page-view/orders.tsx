@@ -24,6 +24,7 @@ type Props = {
   orders: Order[];
   basePath?: string;
   showCreateButton?: boolean;
+  uiMode?: "vendor" | "admin";
   updatingOrderId?: string | null;
   onMarkDelivered?: (orderId: string) => void;
 };
@@ -33,9 +34,14 @@ export default function OrdersPageView({
   orders,
   basePath = "/admin/orders",
   showCreateButton = true,
+  uiMode = "vendor",
   updatingOrderId = null,
   onMarkDelivered
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const headTint = uiMode === "admin" ? "#EEF2FF" : "#F0FDFA";
+
   // RESHAPE THE ORDER LIST BASED TABLE HEAD CELL ID
   const filteredOrders = orders.map((item) => ({
     id: item.id,
@@ -64,16 +70,16 @@ export default function OrdersPageView({
           border: "1px solid #D1D5DB",
           boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
           "& .MuiTableHead-root": {
-            backgroundColor: "#F0FDFA"
+            backgroundColor: headTint
           },
           "& .MuiTableSortLabel-root": {
             color: "#374151"
           },
           "& .MuiTableSortLabel-root.Mui-active": {
-            color: "#0F766E"
+            color: accentDark
           },
           "& .MuiTableSortLabel-icon": {
-            color: "#14B8A6 !important"
+            color: `${accentColor} !important`
           }
         }}
       >
@@ -92,6 +98,7 @@ export default function OrdersPageView({
                   <OrderRow
                     order={order}
                     basePath={basePath}
+                    uiMode={uiMode}
                     key={order.id}
                     isUpdating={updatingOrderId === order.id}
                     onMarkDelivered={onMarkDelivered}
@@ -110,12 +117,12 @@ export default function OrdersPageView({
               color: "#1F2937"
             },
             "& .MuiPaginationItem-page.Mui-selected": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentColor
             },
             "& .MuiPaginationItem-previousNext": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentColor
             }
           }}
         >

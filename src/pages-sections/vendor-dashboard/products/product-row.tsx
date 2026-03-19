@@ -36,6 +36,7 @@ export interface ProductRowItem {
 type RowProps = {
   product: ProductRowItem;
   basePath?: string;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   isUpdatingFeatured?: boolean;
   isRemoving?: boolean;
@@ -50,6 +51,7 @@ type RowProps = {
 export default function ProductRow({
   product,
   basePath = "/admin/products",
+  uiMode = "vendor",
   isUpdating,
   isUpdatingFeatured,
   isRemoving,
@@ -59,6 +61,9 @@ export default function ProductRow({
   onUpdateFeaturedRank,
   onRemoveProduct
 }: RowProps) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+
   const { category, name, price, image, brand, id, published, featured, featuredRank, slug } =
     product;
   const isVisibleOnHome = Boolean(featured && published);
@@ -128,7 +133,7 @@ export default function ProductRow({
 
       <StyledTableCell align="left">
         {isUpdating ? (
-          <CircularProgress size={18} sx={{ color: "#14B8A6" }} />
+          <CircularProgress size={18} sx={{ color: accentColor }} />
         ) : (
           <BazaarSwitch
             color="info"
@@ -143,7 +148,7 @@ export default function ProductRow({
           <Box>
             <FlexBox alignItems="center" gap={1}>
               {isUpdatingFeatured ? (
-                <CircularProgress size={18} sx={{ color: "#0F766E" }} />
+                <CircularProgress size={18} sx={{ color: accentDark }} />
               ) : (
                 <BazaarSwitch
                   color="warning"
@@ -176,10 +181,10 @@ export default function ProductRow({
                       borderColor: "#D1D5DB"
                     },
                     "&:hover fieldset": {
-                      borderColor: "#14B8A6"
+                      borderColor: accentColor
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "#14B8A6"
+                      borderColor: accentColor
                     }
                   }
                 }}
@@ -197,7 +202,7 @@ export default function ProductRow({
               {isVisibleOnHome ? (
                 <>
                   Visible on Home.{" "}
-                  <Link href="/" target="_blank" style={{ color: "#0F766E" }}>
+                  <Link href="/" target="_blank" style={{ color: accentDark }}>
                     Open
                   </Link>
                 </>

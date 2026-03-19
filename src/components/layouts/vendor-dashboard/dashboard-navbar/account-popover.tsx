@@ -101,7 +101,9 @@ export default function AccountPopover() {
         }}
       >
         <Box px={2} pt={1}>
-          <Typography variant="h6" sx={{ color: "#F3F4F6" }}>{displayName}</Typography>
+          <Typography variant="h6" sx={{ color: "#F3F4F6" }}>
+            {displayName}
+          </Typography>
           <Typography variant="body1" sx={{ fontSize: 12, color: "#9CA3AF" }}>
             {displayRole}
           </Typography>

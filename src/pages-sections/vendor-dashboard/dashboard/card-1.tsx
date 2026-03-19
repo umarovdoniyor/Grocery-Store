@@ -14,18 +14,27 @@ interface Props {
   amount1: string | number;
   amount2: string | number;
   percentage: string | number;
+  accentColor?: string;
 }
 // ========================================================
 
 export default function Card1(props: Props) {
-  const { title, amount1, amount2, percentage, status = "up", color = "info.main" } = props;
+  const {
+    title,
+    amount1,
+    amount2,
+    percentage,
+    status = "up",
+    color = "info.main",
+    accentColor = "#14B8A6"
+  } = props;
 
   return (
-    <Card 
+    <Card
       className="p-1"
       sx={{
-        borderTop: "3px solid #14B8A6",
-        boxShadow: "0 1px 3px rgba(20, 184, 166, 0.1)"
+        borderTop: `3px solid ${accentColor}`,
+        boxShadow: `0 1px 3px ${accentColor}1a`
       }}
     >
       <Typography variant="h6" sx={{ mb: 1, color: "text.secondary" }}>

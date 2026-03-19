@@ -102,6 +102,7 @@ export default function CustomersClient() {
   return (
     <CustomersPageView
       customers={customers}
+      uiMode="admin"
       showCreateButton={false}
       updatingMemberId={updatingMemberId}
       onToggleMemberStatus={handleToggleMemberStatus}

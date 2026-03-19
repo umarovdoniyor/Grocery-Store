@@ -177,6 +177,7 @@ export default function ProductsClient() {
   return (
     <ProductsPageView
       products={products}
+      uiMode="admin"
       showCreateButton={false}
       showFeaturedToggle
       updatingProductId={updatingProductId}

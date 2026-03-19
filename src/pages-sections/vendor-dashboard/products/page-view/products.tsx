@@ -31,6 +31,7 @@ type Props = {
   products: ProductRowItem[];
   basePath?: string;
   showCreateButton?: boolean;
+  uiMode?: "vendor" | "admin";
   showFeaturedToggle?: boolean;
   updatingProductId?: string | null;
   updatingFeaturedProductId?: string | null;
@@ -46,6 +47,7 @@ export default function ProductsPageView({
   products,
   basePath = "/admin/products",
   showCreateButton = true,
+  uiMode = "vendor",
   showFeaturedToggle = false,
   updatingProductId,
   updatingFeaturedProductId,
@@ -55,6 +57,10 @@ export default function ProductsPageView({
   onUpdateFeaturedRank,
   onRemoveProduct
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const headTint = uiMode === "admin" ? "#EEF2FF" : "#F0FDFA";
+
   const reshapedProducts = products;
   const tableHeading = showFeaturedToggle
     ? [
@@ -77,6 +83,7 @@ export default function ProductsPageView({
         buttonText="Add Product"
         url={`${basePath}/create`}
         searchPlaceholder="Search Product..."
+        uiMode={uiMode}
         showButton={showCreateButton}
       />
 
@@ -86,16 +93,16 @@ export default function ProductsPageView({
           border: "1px solid #D1D5DB",
           boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
           "& .MuiTableHead-root": {
-            backgroundColor: "#F0FDFA"
+            backgroundColor: headTint
           },
           "& .MuiTableSortLabel-root": {
             color: "#374151"
           },
           "& .MuiTableSortLabel-root.Mui-active": {
-            color: "#0F766E"
+            color: accentDark
           },
           "& .MuiTableSortLabel-icon": {
-            color: "#14B8A6 !important"
+            color: `${accentColor} !important`
           }
         }}
       >
@@ -115,6 +122,7 @@ export default function ProductsPageView({
                     key={index}
                     product={product}
                     basePath={basePath}
+                    uiMode={uiMode}
                     isUpdating={updatingProductId === product.id}
                     isUpdatingFeatured={updatingFeaturedProductId === product.id}
                     isRemoving={removingProductId === product.id}
@@ -138,12 +146,12 @@ export default function ProductsPageView({
               color: "#1F2937"
             },
             "& .MuiPaginationItem-page.Mui-selected": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentColor
             },
             "& .MuiPaginationItem-previousNext": {
-              color: "#0F766E",
-              borderColor: "#14B8A6"
+              color: accentDark,
+              borderColor: accentColor
             }
           }}
         >

@@ -21,6 +21,7 @@ interface Category {
 
 type Props = {
   category: Category;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   isRemoving?: boolean;
   onToggleStatus: (category: Category) => void;
@@ -30,11 +31,14 @@ type Props = {
 
 export default function CategoryRow({
   category,
+  uiMode = "vendor",
   isUpdating,
   isRemoving,
   onToggleStatus,
   onRemoveCategory
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+
   const { image, name, parentName, active, id, slug } = category;
 
   return (
@@ -61,7 +65,7 @@ export default function CategoryRow({
 
       <StyledTableCell align="left">
         {isUpdating ? (
-          <CircularProgress size={18} color="info" />
+          <CircularProgress size={18} sx={{ color: accentColor }} />
         ) : (
           <BazaarSwitch color="info" checked={active} onChange={() => onToggleStatus(category)} />
         )}

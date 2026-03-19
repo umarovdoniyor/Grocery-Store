@@ -13,6 +13,7 @@ import { StatusWrapper, StyledIconButton, StyledTableCell, StyledTableRow } from
 type RowProps = {
   order: any;
   basePath?: string;
+  uiMode?: "vendor" | "admin";
   isUpdating?: boolean;
   onMarkDelivered?: (orderId: string) => void;
 };
@@ -21,9 +22,13 @@ type RowProps = {
 export default function OrderRow({
   order,
   basePath = "/admin/orders",
+  uiMode = "vendor",
   isUpdating = false,
   onMarkDelivered
 }: RowProps) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+
   const { amount, id, qty, purchaseDate, billingAddress, status } = order;
   const canMarkDelivered =
     Boolean(onMarkDelivered) && status !== "Delivered" && status !== "Cancelled";
@@ -56,11 +61,12 @@ export default function OrderRow({
             sx={{
               ml: 1,
               minWidth: 120,
-              color: "#0F766E",
-              borderColor: "#14B8A6",
+              color: accentDark,
+              borderColor: accentColor,
               "&:hover": {
-                borderColor: "#0F766E",
-                backgroundColor: "rgba(20, 184, 166, 0.08)"
+                borderColor: accentDark,
+                backgroundColor:
+                  uiMode === "admin" ? "rgba(79, 70, 229, 0.08)" : "rgba(20, 184, 166, 0.08)"
               }
             }}
           >

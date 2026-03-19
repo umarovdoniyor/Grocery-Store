@@ -18,6 +18,7 @@ interface Props {
   buttonText: string;
   searchPlaceholder: string;
   showButton?: boolean;
+  uiMode?: "vendor" | "admin";
 }
 // ===============================================================
 
@@ -25,8 +26,14 @@ export default function SearchArea({
   url = "/",
   buttonText = "Add Product",
   searchPlaceholder = "Search Product...",
-  showButton = true
+  showButton = true,
+  uiMode = "vendor"
 }: Props) {
+  const accentColor = uiMode === "admin" ? "#4F46E5" : "#14B8A6";
+  const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const accentRing =
+    uiMode === "admin" ? "0 0 0 3px rgba(79, 70, 229, 0.14)" : "0 0 0 3px rgba(20, 184, 166, 0.14)";
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -69,8 +76,8 @@ export default function SearchArea({
           backgroundColor: "#FFFFFF",
           boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
           "&:focus-within": {
-            borderColor: "#14B8A6",
-            boxShadow: "0 0 0 3px rgba(20, 184, 166, 0.14)"
+            borderColor: accentColor,
+            boxShadow: accentRing
           }
         }}
       >
@@ -87,7 +94,7 @@ export default function SearchArea({
             color: "#374151",
             backgroundColor: "transparent",
             "& .MuiSvgIcon-root": {
-              color: "#14B8A6"
+              color: accentColor
             }
           }}
         />
@@ -102,10 +109,10 @@ export default function SearchArea({
           component={Link}
           sx={{
             minHeight: 44,
-            backgroundColor: "#14B8A6",
+            backgroundColor: accentColor,
             color: "#F8FAFC",
             "&:hover": {
-              backgroundColor: "#0F766E"
+              backgroundColor: accentDark
             }
           }}
         >

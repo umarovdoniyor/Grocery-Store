@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductReviews() {
-  return <ProductReviewsPageView />;
+  return <ProductReviewsPageView uiMode="admin" />;
 }

@@ -110,6 +110,7 @@ export default function SellersClient() {
   return (
     <SellersPageView
       sellers={sellers}
+      uiMode="admin"
       showCreateButton={false}
       updatingSellerId={updatingSellerId}
       onApproveSeller={handleApproveSeller}

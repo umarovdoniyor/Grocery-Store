@@ -65,16 +65,32 @@ export default function AdminDashboardPageView() {
   return (
     <div className="pt-2 pb-2">
       {error && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
+        <Alert
+          severity="warning"
+          sx={{
+            mb: 2,
+            border: "1px solid #FCD34D",
+            backgroundColor: "#FFFBEB",
+            color: "#92400E"
+          }}
+        >
           {error}
         </Alert>
       )}
 
       {isLoading && (
-        <MuiCard sx={{ p: 4, mb: 2 }}>
+        <MuiCard
+          sx={{
+            p: 4,
+            mb: 2,
+            borderRadius: "10px",
+            border: "1px solid #D1D5DB",
+            boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)"
+          }}
+        >
           <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
-            <CircularProgress size={22} />
-            <Typography variant="body2" color="text.secondary">
+            <CircularProgress size={22} sx={{ color: "#4F46E5" }} />
+            <Typography variant="body2" sx={{ color: "#6B7280" }}>
               Loading dashboard data...
             </Typography>
           </Stack>
@@ -88,6 +104,7 @@ export default function AdminDashboardPageView() {
               <Card1
                 title={item.title}
                 color={item.color}
+                accentColor="#4F46E5"
                 amount1={item.amount1}
                 amount2={item.amount2}
                 percentage={item.percentage}
@@ -98,14 +115,34 @@ export default function AdminDashboardPageView() {
         </Grid>
 
         <Grid size={12}>
-          <MuiCard>
+          <MuiCard
+            sx={{
+              borderRadius: "10px",
+              border: "1px solid #D1D5DB",
+              boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
+              "& .MuiTableHead-root": {
+                backgroundColor: "#EEF2FF"
+              },
+              "& .MuiTableSortLabel-root": {
+                color: "#374151"
+              },
+              "& .MuiTableSortLabel-root.Mui-active": {
+                color: "#4338CA"
+              },
+              "& .MuiTableSortLabel-icon": {
+                color: "#4F46E5 !important"
+              }
+            }}
+          >
             <Box px={3} py={2.5}>
-              <Typography variant="h5">Low Stock Products</Typography>
+              <Typography variant="h5" sx={{ color: "#1F2937" }}>
+                Low Stock Products
+              </Typography>
             </Box>
 
             {stockOutProducts.length === 0 ? (
               <Box px={3} pb={3}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "#6B7280" }}>
                   No low-stock products right now.
                 </Typography>
               </Box>

@@ -9,6 +9,7 @@ interface Props {
   id: string;
   status: string;
   createdAt: Date;
+  uiMode?: "vendor" | "admin";
 }
 // ==============================================================
 
@@ -20,7 +21,12 @@ const getColor = (status: string) => {
   return "default" as const;
 };
 
-export default function OrderActions({ id, createdAt, status }: Props) {
+export default function OrderActions({ id, createdAt, status, uiMode = "vendor" }: Props) {
+  const successBg = uiMode === "admin" ? "#E0E7FF" : "#CCFBF1";
+  const successColor = uiMode === "admin" ? "#4338CA" : "#0F766E";
+  const infoBg = uiMode === "admin" ? "#E0E7FF" : "#CFFAFE";
+  const infoColor = uiMode === "admin" ? "#4338CA" : "#155E75";
+
   return (
     <div>
       <FlexBox flexWrap="wrap" alignItems="center" columnGap={4} rowGap={1}>
@@ -42,12 +48,12 @@ export default function OrderActions({ id, createdAt, status }: Props) {
               ml: 1,
               borderRadius: "6px",
               "&.MuiChip-colorSuccess": {
-                backgroundColor: "#CCFBF1",
-                color: "#0F766E"
+                backgroundColor: successBg,
+                color: successColor
               },
               "&.MuiChip-colorInfo": {
-                backgroundColor: "#CFFAFE",
-                color: "#155E75"
+                backgroundColor: infoBg,
+                color: infoColor
               },
               "&.MuiChip-colorSecondary": {
                 backgroundColor: "#E5E7EB",

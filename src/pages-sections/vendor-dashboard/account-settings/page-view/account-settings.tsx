@@ -76,7 +76,16 @@ const toImageSrc = (value?: string | null) => {
   return toPublicImageUrl(value, apiBase);
 };
 
-export default function AccountSettingsPageView() {
+export default function AccountSettingsPageView({
+  uiMode = "vendor"
+}: {
+  uiMode?: "vendor" | "admin";
+}) {
+  const isAdminMode = uiMode === "admin";
+  const accentMain = isAdminMode ? "#4F46E5" : "#14B8A6";
+  const accentDark = isAdminMode ? "#4338CA" : "#0F766E";
+  const accentSoft = isAdminMode ? "#EEF2FF" : "#F0FDFA";
+
   const { user, updateMemberProfile } = useAuth();
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
@@ -216,6 +225,7 @@ export default function AccountSettingsPageView() {
       >
         {/* COVER SECTION */}
         <CoverPicSection
+          uiMode={uiMode}
           avatarSrc={avatarSrc}
           coverSrc={coverSrc}
           onAvatarUpload={handleAvatarUpload}
@@ -229,9 +239,9 @@ export default function AccountSettingsPageView() {
             severity="info"
             sx={{
               mb: 2,
-              border: "1px solid #99F6E4",
-              backgroundColor: "#F0FDFA",
-              color: "#115E59"
+              border: `1px solid ${isAdminMode ? "#C7D2FE" : "#99F6E4"}`,
+              backgroundColor: accentSoft,
+              color: isAdminMode ? "#3730A3" : "#115E59"
             }}
           >
             {shopImageNotice}
@@ -259,10 +269,10 @@ export default function AccountSettingsPageView() {
                   borderColor: "#D1D5DB"
                 },
                 "&:hover fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentMain
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#14B8A6"
+                  borderColor: accentMain
                 }
               },
               "& .MuiInputBase-input": {
@@ -308,10 +318,10 @@ export default function AccountSettingsPageView() {
                 variant="contained"
                 loading={isSubmitting}
                 sx={{
-                  backgroundColor: "#14B8A6",
+                  backgroundColor: accentMain,
                   color: "#F8FAFC",
                   "&:hover": {
-                    backgroundColor: "#0F766E"
+                    backgroundColor: accentDark
                   }
                 }}
               >

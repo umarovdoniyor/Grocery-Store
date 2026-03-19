@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -25,7 +26,13 @@ export default function StockOutProducts({ stockOutProducts }: Props) {
     <Card sx={{ borderTop: "3px solid #14B8A6" }}>
       <FlexBetween px={3} py={2.5}>
         <Typography variant="h5">Stock Out Products</Typography>
-        <Button size="small" sx={{ borderColor: "#14B8A6", color: "#14B8A6" }} variant="outlined">
+        <Button
+          size="small"
+          variant="outlined"
+          component={Link}
+          href="/vendor/products"
+          sx={{ borderColor: "#14B8A6", color: "#14B8A6" }}
+        >
           All Products
         </Button>
       </FlexBetween>
