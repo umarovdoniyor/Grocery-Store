@@ -25,15 +25,20 @@ const StyledRoot = styled("div")(({ theme }) => ({
   gap: "1rem",
   display: "flex",
   alignItems: "center",
-  padding: "1rem 1.5rem",
-  borderBottom: `1px dashed ${theme.palette.divider}`
+  padding: "0.95rem 1.15rem",
+  margin: "0.55rem 0.85rem",
+  borderRadius: 12,
+  border: "1px solid rgba(27,63,75,0.12)",
+  backgroundColor: "rgba(255,255,255,0.86)",
+  boxShadow: "0 6px 14px rgba(22, 59, 70, 0.05)"
 }));
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: 80,
-  height: 80,
-  borderRadius: 6,
-  backgroundColor: theme.palette.grey[100]
+  width: 74,
+  height: 74,
+  borderRadius: 10,
+  border: "1px solid rgba(27,63,75,0.12)",
+  backgroundColor: "#e9f1f1"
 }));
 
 const ContentWrapper = styled("div")(() => ({
@@ -47,12 +52,14 @@ const QuantityWrapper = styled("div")(({ theme }) => ({
   gap: "0.5rem",
   display: "flex",
   alignItems: "center",
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: 6,
+  border: "1px solid rgba(27,63,75,0.2)",
+  borderRadius: 8,
+  backgroundColor: "#fff",
   "& .MuiButtonBase-root": {
     height: 24,
     width: 24,
-    borderRadius: 6,
+    borderRadius: 7,
+    color: "#1f5b67",
     "& svg": { fontSize: 16 }
   }
 }));
@@ -86,7 +93,7 @@ export default function MiniCartItem({ item }: Props) {
           {item.title}
         </Typography>
 
-        <Typography variant="body1" fontWeight={500} sx={{ mt: 0.25, mb: 1.5 }}>
+        <Typography variant="body1" fontWeight={700} sx={{ mt: 0.25, mb: 1.25, color: "#1f5b67" }}>
           {currency(item.price * item.qty)}
         </Typography>
 
@@ -101,7 +108,7 @@ export default function MiniCartItem({ item }: Props) {
               <Add fontSize="small" />
             </Button>
 
-            <Typography variant="body1" fontSize={13}>
+            <Typography variant="body1" fontSize={13} sx={{ color: "#2c4f59", fontWeight: 600 }}>
               {item.qty}
             </Typography>
 
@@ -116,7 +123,18 @@ export default function MiniCartItem({ item }: Props) {
             </Button>
           </QuantityWrapper>
 
-          <IconButton size="small" onClick={handleCartAmountChange(0)}>
+          <IconButton
+            size="small"
+            onClick={handleCartAmountChange(0)}
+            sx={{
+              width: 28,
+              height: 28,
+              color: "#a04d5f",
+              backgroundColor: "rgba(160,77,95,0.08)",
+              border: "1px solid rgba(160,77,95,0.18)",
+              "&:hover": { backgroundColor: "rgba(160,77,95,0.14)" }
+            }}
+          >
             <Trash sx={{ fontSize: "1rem" }} />
           </IconButton>
         </FlexBox>
