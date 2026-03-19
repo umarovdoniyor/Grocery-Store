@@ -35,10 +35,23 @@ export default function AddToCart({ product }: Props) {
   return (
     <Button
       color="primary"
-      variant="outlined"
+      variant="contained"
       loading={isLoading}
       onClick={handleAddToCart}
-      sx={{ padding: "3px", alignSelf: "self-end" }}
+      sx={{
+        padding: 0,
+        minWidth: 32,
+        width: 32,
+        height: 32,
+        borderRadius: "8px",
+        alignSelf: "self-end",
+        background: "linear-gradient(135deg, #6f8f44 0%, #4f6d2f 100%)",
+        boxShadow: "0 4px 10px rgba(51,80,30,0.2)",
+        "&:hover": {
+          background: "linear-gradient(135deg, #64813d 0%, #446127 100%)",
+          boxShadow: "0 6px 14px rgba(51,80,30,0.3)"
+        }
+      }}
     >
       <Add fontSize="small" />
     </Button>

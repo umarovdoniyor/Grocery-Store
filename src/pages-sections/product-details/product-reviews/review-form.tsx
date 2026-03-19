@@ -239,13 +239,24 @@ export default function ReviewForm({ productId, onReviewChanged, onSubmitted }: 
         color="primary"
         type="submit"
         disabled={!isLoggedIn || isLoadingExisting || isRemoving}
+        sx={{
+          borderRadius: 999,
+          fontWeight: 700,
+          textTransform: "none",
+          px: 3,
+          background: "linear-gradient(135deg, #6f8f44 0%, #4f6d2f 100%)",
+          boxShadow: "0 6px 16px rgba(51,80,30,0.2)",
+          "&:hover": {
+            background: "linear-gradient(135deg, #64813d 0%, #446127 100%)"
+          }
+        }}
       >
         {existingReviewId ? "Update Review" : "Submit"}
       </Button>
 
       {existingReviewId && (
         <Button
-          sx={{ ml: 1.5 }}
+          sx={{ ml: 1.5, borderRadius: 999, fontWeight: 600, textTransform: "none" }}
           variant="outlined"
           color="error"
           onClick={handleRemoveReview}

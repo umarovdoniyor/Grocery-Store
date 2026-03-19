@@ -1,5 +1,6 @@
 import Link from "next/link";
 // MUI
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
@@ -42,26 +43,30 @@ export default function ProductIntro({ product }: Props) {
         </Grid>
 
         <Grid size={{ lg: 5, md: 5, xs: 12 }}>
-          <Typography variant="h1">{product.title}</Typography>
-
-          <Typography variant="body1">
-            Category: <strong>{categoryLabel}</strong>
+          <Typography
+            variant="h1"
+            sx={{ fontSize: { xs: 22, md: 26 }, fontWeight: 700, color: "#1f2a1a", mb: 1.5, lineHeight: 1.25 }}
+          >
+            {product.title}
           </Typography>
 
-          <Typography variant="body1">
-            Product Code: <strong>{code}</strong>
-          </Typography>
-
-          <Typography variant="body1">
-            Unit: <strong>{unit}</strong>
-          </Typography>
-
-          {/* PRODUCT BRAND */}
-          {product.brand && (
-            <p className="brand">
-              Brand: <strong>{product.brand}</strong>
-            </p>
-          )}
+          {/* META PILLS */}
+          <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+            <Box sx={{ fontSize: 12, px: 1.5, py: 0.4, borderRadius: 999, bgcolor: "rgba(111,143,68,0.12)", color: "#3d5a20", fontWeight: 500 }}>
+              {categoryLabel}
+            </Box>
+            <Box sx={{ fontSize: 12, px: 1.5, py: 0.4, borderRadius: 999, bgcolor: "rgba(0,0,0,0.05)", color: "text.secondary", fontWeight: 500 }}>
+              SKU: {code}
+            </Box>
+            <Box sx={{ fontSize: 12, px: 1.5, py: 0.4, borderRadius: 999, bgcolor: "rgba(0,0,0,0.05)", color: "text.secondary", fontWeight: 500 }}>
+              Unit: {unit}
+            </Box>
+            {product.brand && (
+              <Box sx={{ fontSize: 12, px: 1.5, py: 0.4, borderRadius: 999, bgcolor: "rgba(0,0,0,0.05)", color: "text.secondary", fontWeight: 500 }}>
+                Brand: {product.brand}
+              </Box>
+            )}
+          </Box>
 
           {/* PRODUCT RATING */}
           <div className="rating">
@@ -79,25 +84,22 @@ export default function ProductIntro({ product }: Props) {
 
           {/* PRICE & STOCK */}
           <div className="price">
-            <Typography variant="h2" sx={{ color: "primary.main", mb: 0.5, lineHeight: 1 }}>
-              {currency(basePrice)}
+            <Box display="flex" alignItems="baseline" gap={1.5} mb={0.75}>
+              <Typography sx={{ fontSize: 28, fontWeight: 700, color: "#3d6b2a", lineHeight: 1 }}>
+                {currency(basePrice)}
+              </Typography>
               {comparePrice && (
-                <Typography
-                  component="span"
-                  sx={{
-                    ml: 1,
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "text.secondary",
-                    textDecoration: "line-through"
-                  }}
-                >
+                <Typography sx={{ fontSize: 16, fontWeight: 400, color: "text.disabled", textDecoration: "line-through" }}>
                   {currency(comparePrice)}
                 </Typography>
               )}
-            </Typography>
-
-            <p>Stock Available</p>
+              {discountPercent > 0 && (
+                <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", bgcolor: "#e05c2a", borderRadius: 999, px: 1, py: 0.25, lineHeight: 1.6 }}>
+                  -{discountPercent}%
+                </Typography>
+              )}
+            </Box>
+            <Typography variant="body2" sx={{ color: "#4a7c35", fontWeight: 500 }}>✓ In Stock</Typography>
           </div>
 
           {/* ADD TO CART BUTTON */}

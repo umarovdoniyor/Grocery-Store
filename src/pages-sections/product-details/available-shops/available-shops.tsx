@@ -27,7 +27,7 @@ export default async function AvailableShops({ categoryId, categoryName, exclude
 
   return (
     <div className="mb-4">
-      <Typography variant="h3" sx={{ mb: 3 }}>
+      <Typography variant="h6" sx={{ mb: 2.5, fontWeight: 700, color: "#1f2a1a", fontSize: 16 }}>
         {heading}
       </Typography>
 

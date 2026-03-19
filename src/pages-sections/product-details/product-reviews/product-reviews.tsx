@@ -137,32 +137,62 @@ export default function ProductReviews({
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <Typography variant="h5" sx={{ mb: 0.5 }}>
-          {displayAverage.toFixed(1)} out of 5
-        </Typography>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Rating readOnly size="small" color="warn" value={displayAverage} precision={0.1} />
-          <Typography variant="body2" color="text.secondary">
-            {knownTotal} {knownTotal === 1 ? "review" : "reviews"}
+      <div
+        style={{
+          marginBottom: 24,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap"
+        }}
+      >
+        <div>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: "#1f2a1a", fontSize: 18, mb: 0.5 }}>
+            Customer Reviews
           </Typography>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "#2f4a1f", fontSize: 24, lineHeight: 1 }}>
+              {displayAverage.toFixed(1)}
+            </Typography>
+
+            <Rating readOnly size="small" color="warn" value={displayAverage} precision={0.1} />
+
+            <Typography variant="body2" color="text.secondary">
+              {knownTotal} {knownTotal === 1 ? "review" : "reviews"}
+            </Typography>
+          </div>
+        </div>
+
+        <div style={{ minWidth: 260, width: "100%", maxWidth: 320 }}>
+          <Typography variant="body2" sx={{ mb: 0.75, color: "#5f6f4c", fontWeight: 600 }}>
+            Sort reviews
+          </Typography>
+
+          <TextField
+            select
+            size="small"
+            value={sortBy}
+            onChange={(event) => handleSortChange(event.target.value as ProductReviewSortBy)}
+            sx={{
+              width: "100%",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+                "& fieldset": { borderColor: "rgba(90,112,64,0.25)" },
+                "&:hover fieldset": { borderColor: "rgba(90,112,64,0.5)" },
+                "&.Mui-focused fieldset": { borderColor: "#5a7a30" }
+              }
+            }}
+          >
+            <MenuItem value="NEWEST">Newest</MenuItem>
+            <MenuItem value="OLDEST">Oldest</MenuItem>
+            <MenuItem value="RATING_DESC">Highest Rating</MenuItem>
+            <MenuItem value="RATING_ASC">Lowest Rating</MenuItem>
+          </TextField>
         </div>
       </div>
-
-      <TextField
-        select
-        size="small"
-        label="Sort reviews"
-        value={sortBy}
-        onChange={(event) => handleSortChange(event.target.value as ProductReviewSortBy)}
-        sx={{ mb: 3, minWidth: 220 }}
-      >
-        <MenuItem value="NEWEST">Newest</MenuItem>
-        <MenuItem value="OLDEST">Oldest</MenuItem>
-        <MenuItem value="RATING_DESC">Highest Rating</MenuItem>
-        <MenuItem value="RATING_ASC">Lowest Rating</MenuItem>
-      </TextField>
 
       {/* REVIEW LIST */}
       {items.map((review, ind) => {
@@ -184,7 +214,7 @@ export default function ProductReviews({
               </Avatar>
 
               <div>
-                <Typography variant="h5" sx={{ mb: 1 }}>
+                <Typography variant="h6" sx={{ mb: 0.25, fontWeight: 700, color: "#1f2a1a", fontSize: 15 }}>
                   {name}
                 </Typography>
 
@@ -216,13 +246,37 @@ export default function ProductReviews({
       )}
 
       {hasMore && (
-        <Button variant="outlined" onClick={handleLoadMore} disabled={loading} sx={{ mb: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={handleLoadMore}
+          disabled={loading}
+          sx={{
+            mb: 2,
+            borderRadius: 999,
+            borderColor: "rgba(90,112,64,0.4)",
+            color: "#4f6d2f",
+            fontWeight: 600,
+            textTransform: "none",
+            "&:hover": { borderColor: "#4f6d2f", backgroundColor: "rgba(79,109,47,0.06)" }
+          }}
+        >
           {loading ? "Loading..." : "Load More Reviews"}
         </Button>
       )}
 
-      <Typography variant="h3" sx={{ mt: 7, mb: 2.5 }}>
-        Write a Review for this product
+      <Typography
+        variant="h6"
+        sx={{
+          mt: 5,
+          mb: 2.5,
+          fontWeight: 700,
+          color: "#1f2a1a",
+          fontSize: 16,
+          paddingBottom: 1.5,
+          borderBottom: "2px solid rgba(90, 112, 64, 0.18)"
+        }}
+      >
+        Write a Review
       </Typography>
 
       <ReviewForm productId={productId} onReviewChanged={handleReviewChanged} />

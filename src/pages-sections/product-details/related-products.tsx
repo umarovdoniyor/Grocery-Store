@@ -15,7 +15,18 @@ export default function RelatedProducts({ products }: Props) {
 
   return (
     <div className="mb-4">
-      <Typography variant="h3" sx={{ mb: 3 }}>
+      <Typography
+        variant="h3"
+        sx={{
+          mb: 3,
+          mt: 1,
+          fontSize: 20,
+          fontWeight: 700,
+          color: "#1f2a1a",
+          paddingBottom: 1.5,
+          borderBottom: "2px solid rgba(90, 112, 64, 0.18)"
+        }}
+      >
         Related Products
       </Typography>
 

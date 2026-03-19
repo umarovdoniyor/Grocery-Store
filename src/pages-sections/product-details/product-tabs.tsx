@@ -9,13 +9,21 @@ import { styled } from "@mui/material/styles";
 // STYLED COMPONENT
 const StyledTabs = styled(Tabs)(({ theme }) => ({
   minHeight: 0,
-  marginTop: 80,
+  marginTop: 64,
   marginBottom: 24,
-  borderBottom: `1px solid ${theme.palette.divider}`,
+  borderBottom: "1px solid rgba(90, 112, 64, 0.18)",
   "& .inner-tab": {
-    minHeight: 40,
-    fontWeight: 500,
-    textTransform: "capitalize"
+    minHeight: 44,
+    fontWeight: 600,
+    fontSize: "0.9rem",
+    textTransform: "none",
+    color: theme.palette.text.secondary,
+    "&.Mui-selected": { color: "#3d6b2a" }
+  },
+  "& .MuiTabs-indicator": {
+    height: 3,
+    borderRadius: "3px 3px 0 0",
+    background: "linear-gradient(90deg, #7a974f, #567235)"
   }
 }));
 
