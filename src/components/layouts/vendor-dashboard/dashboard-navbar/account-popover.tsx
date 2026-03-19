@@ -97,12 +97,12 @@ export default function AccountPopover() {
                 transform: "translateY(-50%) rotate(45deg)"
               }
             }
-          } sx={{ color: "#F3F4F6" }}>{displayName}</Typography>
-          <Typography variant="body1" sx={{ fontSize: 12, color: "#9CA3AF
+          }
+        }}
       >
         <Box px={2} pt={1}>
-          <Typography variant="h6">{displayName}</Typography>
-          <Typography variant="body1" sx={{ fontSize: 12, color: "grey.500" }}>
+          <Typography variant="h6" sx={{ color: "#F3F4F6" }}>{displayName}</Typography>
+          <Typography variant="body1" sx={{ fontSize: 12, color: "#9CA3AF" }}>
             {displayRole}
           </Typography>
         </Box>
