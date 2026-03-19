@@ -1,6 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Prevents Turbopack from scanning entire barrel-export packages.
+    // @mui/icons-material alone has 6 000+ exports — without this every
+    // first compile compacts a massive filesystem cache (hence the 21 s message).
+    optimizePackageImports: [
+      "@mui/material",
+      "@mui/icons-material",
+      "@mui/lab",
+      "@mui/x-date-pickers",
+      "@emotion/react",
+      "@emotion/styled",
+      "date-fns",
+      "lodash"
+    ]
+  },
   images: {
     // Needed for local API media URLs during development.
     dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",

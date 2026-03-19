@@ -153,9 +153,10 @@ function createIsomorphicLink() {
 /** Purpose: Instantiate Apollo Client with appropriate settings */
 function createApolloClient() {
   return new ApolloClient({
-    ssrMode: typeof window === "undefined", // Purpose: Enable/disable server-side rendering mode (=== true on server, false in browser)
+    ssrMode: typeof window === "undefined",
     link: createIsomorphicLink(),
     cache: new InMemoryCache(),
+    connectToDevTools: process.env.NODE_ENV === "development",
     resolvers: {}
   });
 }

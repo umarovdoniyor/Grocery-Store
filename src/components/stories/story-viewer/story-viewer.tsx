@@ -1,11 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Modal from "@mui/material/Modal";
-import Stories from "react-insta-stories";
 // STYLED COMPONENTS
 import { ModalWrapper } from "./styles";
 // STORIES INTERFACES
-import { ReactInstaStoriesProps } from "react-insta-stories/dist/interfaces";
+import type { ReactInstaStoriesProps } from "react-insta-stories/dist/interfaces";
+
+// Lazy-load the heavy stories player — only fetched when the modal opens
+const Stories = dynamic(() => import("react-insta-stories"), { ssr: false });
 
 // ==============================================================
 interface Props extends ReactInstaStoriesProps {

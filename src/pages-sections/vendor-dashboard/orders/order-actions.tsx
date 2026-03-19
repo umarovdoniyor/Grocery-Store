@@ -38,14 +38,17 @@ export default function OrderActions({ id, createdAt, status, uiMode = "vendor" 
           <span>Placed on:</span> {format(new Date(createdAt), "dd MMM, yyyy")}
         </Typography>
 
-        <Typography variant="body1" sx={{ color: "#1F2937", span: { color: "#6B7280" } }}>
-          <span>Current status:</span>{" "}
+        <Typography
+          component="div"
+          variant="body1"
+          sx={{ color: "#1F2937", display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <span style={{ color: "#6B7280" }}>Current status:</span>
           <Chip
             size="small"
             label={status}
             color={getColor(status)}
             sx={{
-              ml: 1,
               borderRadius: "6px",
               "&.MuiChip-colorSuccess": {
                 backgroundColor: successBg,
