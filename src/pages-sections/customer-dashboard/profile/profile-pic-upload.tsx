@@ -128,17 +128,33 @@ export default function ProfilePicUpload({ image }: { image: string }) {
 
   return (
     <FlexBox alignItems="flex-end" mb={4}>
-      <Avatar src={preview} alt="user" sx={{ height: 60, width: 60 }} />
+      <Avatar
+        src={preview}
+        alt="user"
+        variant="rounded"
+        sx={{
+          height: 72,
+          width: 72,
+          borderRadius: "4px",
+          border: "2px solid rgba(43, 38, 34, 0.2)"
+        }}
+      />
 
       <IconButton
         size="small"
         component="label"
-        color="secondary"
         htmlFor="profile-image"
         disabled={uploading}
-        sx={{ bgcolor: "grey.300", ml: -2.5 }}
+        sx={{
+          bgcolor: "#2B2622",
+          ml: -2.5,
+          color: "#F4EEE3",
+          borderRadius: "3px",
+          "&:hover": { bgcolor: "#A44A3F" },
+          transition: "background-color 180ms ease"
+        }}
       >
-        {uploading ? <CircularProgress size={16} /> : <CameraEnhance fontSize="small" />}
+        {uploading ? <CircularProgress size={16} sx={{ color: "#F4EEE3" }} /> : <CameraEnhance fontSize="small" />}
       </IconButton>
 
       <Box

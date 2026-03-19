@@ -38,6 +38,32 @@ type FormValues = {
 type Props = { user: User };
 // ==============================================================
 
+const inputSx = {
+  backgroundColor: "#FAF6EF",
+  borderRadius: "4px",
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(43, 38, 34, 0.2)"
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(43, 38, 34, 0.4)"
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#A44A3F",
+    borderWidth: "1px"
+  }
+};
+
+const labelSx = {
+  "& .MuiInputLabel-root": {
+    color: "#8B6A4A",
+    fontWeight: 600,
+    fontSize: "0.875rem"
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#A44A3F"
+  }
+};
+
 export default function ProfileEditForm({ user }: Props) {
   const router = useRouter();
   const { updateMemberProfile } = useAuth();
@@ -88,23 +114,38 @@ export default function ProfileEditForm({ user }: Props) {
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <Grid container spacing={3}>
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="firstName" label="First Name" />
+          <TextField size="medium" fullWidth name="firstName" label="First Name"
+            slotProps={{ input: { sx: inputSx } }}
+            sx={labelSx}
+          />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="lastName" label="Last Name" />
+          <TextField size="medium" fullWidth name="lastName" label="Last Name"
+            slotProps={{ input: { sx: inputSx } }}
+            sx={labelSx}
+          />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="email" type="email" label="Email" />
+          <TextField size="medium" fullWidth name="email" type="email" label="Email"
+            slotProps={{ input: { sx: inputSx } }}
+            sx={labelSx}
+          />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth label="Phone" name="contact" />
+          <TextField size="medium" fullWidth label="Phone" name="contact"
+            slotProps={{ input: { sx: inputSx } }}
+            sx={labelSx}
+          />
         </Grid>
 
         <Grid size={12}>
-          <TextField size="medium" fullWidth label="Address" name="address" />
+          <TextField size="medium" fullWidth label="Address" name="address"
+            slotProps={{ input: { sx: inputSx } }}
+            sx={labelSx}
+          />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
@@ -119,11 +160,12 @@ export default function ProfileEditForm({ user }: Props) {
                 slots={{ textField: MuiTextField }}
                 slotProps={{
                   textField: {
-                    sx: { mb: 1 },
+                    sx: { mb: 1, ...labelSx },
                     size: "medium",
                     fullWidth: true,
                     error: Boolean(error),
-                    helperText: error?.message || ""
+                    helperText: error?.message || "",
+                    InputProps: { sx: inputSx }
                   }
                 }}
               />
@@ -136,9 +178,23 @@ export default function ProfileEditForm({ user }: Props) {
             disableElevation
             size="large"
             type="submit"
-            color="primary"
             variant="contained"
             loading={isSubmitting}
+            sx={{
+              backgroundColor: "#2B2622",
+              color: "#F4EEE3",
+              borderRadius: "4px",
+              fontWeight: 600,
+              textTransform: "none",
+              letterSpacing: "0.02em",
+              px: 4,
+              boxShadow: "3px 3px 0px #A44A3F",
+              transition: "background-color 180ms ease, box-shadow 180ms ease",
+              "&:hover": {
+                backgroundColor: "#A44A3F",
+                boxShadow: "3px 3px 0px #2B2622"
+              }
+            }}
           >
             Save Changes
           </Button>
