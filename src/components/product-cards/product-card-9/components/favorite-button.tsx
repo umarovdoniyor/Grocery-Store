@@ -65,7 +65,22 @@ export default function FavoriteButton({ productId }: Props) {
       size="small"
       onClick={handleFavorite}
       disabled={loading}
-      sx={{ position: "absolute", top: 15, right: 15, zIndex: 0 }}
+      sx={{
+        position: "absolute",
+        top: 12,
+        right: 12,
+        zIndex: 1,
+        width: 32,
+        height: 32,
+        color: "#4f6d2f",
+        backgroundColor: "rgba(255,255,255,0.9)",
+        border: "1px solid rgba(90,112,64,0.18)",
+        backdropFilter: "blur(2px)",
+        "&:hover": {
+          backgroundColor: "#fff",
+          boxShadow: "0 3px 10px rgba(33,49,26,0.18)"
+        }
+      }}
     >
       {isFavorite ? (
         <Favorite color="primary" fontSize="small" />

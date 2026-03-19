@@ -79,11 +79,11 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
   };
 
   return (
-    <div>
+    <Box>
       {!hasShopFilter && (
         <>
           {/* PRICE VARIANT FILTER */}
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1.5, fontSize: 15, fontWeight: 700, color: "#2c3f1f" }}>
             Price Range
           </Typography>
 
@@ -95,6 +95,15 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
             valueLabelDisplay="auto"
             valueLabelFormat={(v) => `$${v}`}
             onChange={(_, v) => handleChangePrice(v as number[])}
+            sx={{
+              color: "#5a7a30",
+              "& .MuiSlider-thumb": {
+                width: 15,
+                height: 15,
+                boxShadow: "0 0 0 4px rgba(90,122,48,0.16)"
+              },
+              "& .MuiSlider-track": { border: "none" }
+            }}
           />
 
           <FlexBetween>
@@ -105,6 +114,13 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
               placeholder="0"
               value={prices[0]}
               onChange={(e) => handleChangePrice([+e.target.value, prices[1]])}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "9px",
+                  backgroundColor: "#fff",
+                  "& fieldset": { borderColor: "rgba(90,112,64,0.25)" }
+                }
+              }}
             />
 
             <Typography variant="h5" sx={{ px: 1, color: "grey.600" }}>
@@ -118,15 +134,22 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
               placeholder="250"
               value={prices[1]}
               onChange={(e) => handleChangePrice([prices[0], +e.target.value])}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "9px",
+                  backgroundColor: "#fff",
+                  "& fieldset": { borderColor: "rgba(90,112,64,0.25)" }
+                }
+              }}
             />
           </FlexBetween>
 
-          <Box component={Divider} my={3} />
+          <Box component={Divider} my={3} sx={{ borderColor: "rgba(90,112,64,0.16)" }} />
         </>
       )}
 
       {/* SHOP FILTER */}
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 1.5, fontSize: 15, fontWeight: 700, color: "#2c3f1f" }}>
         Shops
       </Typography>
 
@@ -142,13 +165,23 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
       </FormGroup>
 
       {hasShopFilter && (
-        <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 2,
+            p: 1,
+            borderRadius: 2,
+            color: "#5f6f4c",
+            backgroundColor: "rgba(90,112,64,0.08)",
+            border: "1px solid rgba(90,112,64,0.16)"
+          }}
+        >
           Shop mode is active. Price, sale, rating, and color filters are hidden because the
           selected shop endpoint does not support them.
         </Typography>
       )}
 
-      {!hasShopFilter && <Box component={Divider} my={3} />}
+      {!hasShopFilter && <Box component={Divider} my={3} sx={{ borderColor: "rgba(90,112,64,0.16)" }} />}
 
       {/* SALES OPTIONS */}
       {!hasShopFilter && (
@@ -164,12 +197,12 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
         </FormGroup>
       )}
 
-      {!hasShopFilter && <Box component={Divider} my={3} />}
+      {!hasShopFilter && <Box component={Divider} my={3} sx={{ borderColor: "rgba(90,112,64,0.16)" }} />}
 
       {/* RATINGS FILTER */}
       {!hasShopFilter && (
         <>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1.5, fontSize: 15, fontWeight: 700, color: "#2c3f1f" }}>
             Ratings
           </Typography>
 
@@ -186,12 +219,12 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
         </>
       )}
 
-      {!hasShopFilter && <Box component={Divider} my={3} />}
+      {!hasShopFilter && <Box component={Divider} my={3} sx={{ borderColor: "rgba(90,112,64,0.16)" }} />}
 
       {/* COLORS VARIANT FILTER */}
       {!hasShopFilter && (
         <>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1.5, fontSize: 15, fontWeight: 700, color: "#2c3f1f" }}>
             Colors
           </Typography>
 
@@ -202,14 +235,14 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
                 bgcolor={item}
                 onClick={() => handleChangeColor(item)}
                 sx={{
-                  width: 25,
-                  height: 25,
+                  width: 24,
+                  height: 24,
                   flexShrink: 0,
-                  outlineOffset: 1,
+                  outlineOffset: 2,
                   cursor: "pointer",
-                  borderRadius: 3,
-                  outline: colors.includes(item) ? 1 : 0,
-                  outlineColor: item
+                  borderRadius: 999,
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  outline: colors.includes(item) ? "2px solid #5a7a30" : "none"
                 }}
               />
             ))}
@@ -221,14 +254,24 @@ export default function ProductFilters({ filters }: { filters: Filters }) {
         <Button
           fullWidth
           disableElevation
-          color="error"
+          color="primary"
           variant="contained"
           onClick={handleClearFilters}
-          sx={{ mt: 4 }}
+          sx={{
+            mt: 4,
+            borderRadius: 999,
+            fontWeight: 700,
+            textTransform: "none",
+            background: "linear-gradient(135deg, #6f8f44 0%, #4f6d2f 100%)",
+            boxShadow: "0 8px 18px rgba(51,80,30,0.22)",
+            "&:hover": {
+              background: "linear-gradient(135deg, #64813d 0%, #446127 100%)"
+            }
+          }}
         >
           Clear all filters
         </Button>
       )}
-    </div>
+    </Box>
   );
 }

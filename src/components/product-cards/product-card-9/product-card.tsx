@@ -20,6 +20,7 @@ type Props = { product: Product };
 
 export default function ProductCard9({ product }: Props) {
   const { id, thumbnail, title, price, discount, rating, slug, categories, reviewsCount } = product;
+  const hasReviewData = Number(rating || 0) > 0 || Number(reviewsCount || 0) > 0;
 
   return (
     <Wrapper>
@@ -42,18 +43,34 @@ export default function ProductCard9({ product }: Props) {
 
             {/* PRODUCT TITLE / NAME */}
             <Link href={`/products/${slug}`}>
-              <Typography variant="h5" sx={{ mt: 1, mb: 2 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  mt: 1,
+                  mb: 1.25,
+                  fontSize: { xs: 18, sm: 20 },
+                  fontWeight: 700,
+                  color: "#1f2a1a",
+                  lineHeight: 1.25
+                }}
+              >
                 {title}
               </Typography>
             </Link>
 
             {/* PRODUCT RATING / REVIEW  */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Rating size="small" value={rating} color="warn" readOnly />
+            {hasReviewData ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Rating size="small" value={rating} color="warn" readOnly />
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                  ({Number(reviewsCount || 0)})
+                </Typography>
+              </div>
+            ) : (
               <Typography variant="body2" color="text.secondary">
-                ({Number(reviewsCount || 0)})
+                No reviews yet
               </Typography>
-            </div>
+            )}
 
             {/* PRODUCT PRICE */}
             <ProductPrice price={price} discount={discount} />

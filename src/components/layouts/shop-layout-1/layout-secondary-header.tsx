@@ -35,7 +35,7 @@ export default function LayoutSecondaryHeader({ header }: Props) {
     return null;
 
   return (
-    <SecondaryHeader elevation={0}>
+    <SecondaryHeader elevation={0} sx={{ mt: 1.25 }}>
       <SecondaryHeader.Left>
         <CategoryList categories={header.categoryMenus} />
       </SecondaryHeader.Left>
