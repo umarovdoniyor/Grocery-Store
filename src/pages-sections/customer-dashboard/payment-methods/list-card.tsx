@@ -25,7 +25,7 @@ export default function ListCard({ exp, card_no, payment_method, id, username }:
   return (
     <TableRow elevation={0}>
       <FlexBox alignItems="center" gap={1.5}>
-        <Card sx={{ width: 42, height: 28, borderRadius: 1 }}>
+        <Card sx={{ width: 42, height: 28, borderRadius: 1, backgroundColor: "#F4EEE3", border: "1px solid rgba(43,38,34,0.1)", boxShadow: "none" }}>
           <Image
             width={42}
             height={30}
@@ -34,16 +34,16 @@ export default function ListCard({ exp, card_no, payment_method, id, username }:
           />
         </Card>
 
-        <Typography variant="h5">{username}</Typography>
+        <Typography variant="h5" sx={{ color: "#2B2622" }}>{username}</Typography>
       </FlexBox>
 
-      <Typography variant="body1" textAlign={{ xs: "right", sm: "center" }}>
+      <Typography variant="body1" textAlign={{ xs: "right", sm: "center" }} sx={{ color: "#7A6C60" }}>
         {card_no}
       </Typography>
 
-      <Typography variant="body1">{exp}</Typography>
+      <Typography variant="body1" sx={{ color: "#7A6C60" }}>{exp}</Typography>
 
-      <Typography variant="body1" color="text.secondary" textAlign="right">
+      <Typography variant="body1" textAlign="right" sx={{ color: "#8B6A4A" }}>
         <IconButton LinkComponent={Link} href={`/payment-methods/${id}`}>
           <Pencil fontSize="small" color="inherit" />
         </IconButton>

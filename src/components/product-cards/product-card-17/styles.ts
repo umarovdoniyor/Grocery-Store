@@ -29,8 +29,25 @@ export const StyledCard = styled(Card, {
     }
   },
   ...(bgWhite && {
-    backgroundColor: "white",
-    border: `1px solid ${theme.palette.grey[100]}`
+    backgroundColor: "#FAF6EF",
+    border: "1px solid rgba(43, 38, 34, 0.12)",
+    borderRadius: "4px",
+    boxShadow: "none",
+    ":hover": {
+      backgroundColor: "#F4EEE3",
+      borderColor: "rgba(43, 38, 34, 0.22)",
+      ".has-hover-image .thumbnail": {
+        display: "none"
+      },
+      ".hover-box": {
+        opacity: 1,
+        bottom: 5
+      },
+      ".has-hover-image .hover-thumbnail": {
+        display: "flex",
+        transition: "all 0.3s ease-in-out"
+      }
+    }
   })
 }));
 
@@ -69,13 +86,45 @@ export const HoverWrapper = styled("div")(() => ({
   cursor: "pointer",
   position: "absolute",
   transition: "all 0.3s ease-in-out",
-  gap: ".75rem",
+  gap: "0",
   display: "flex",
-  alignItems: "center",
-  padding: "1rem 2rem",
-  ".view-btn": { backgroundColor: "white" },
-  ".MuiButton-root": { padding: ".75rem" },
-  a: { width: "100%" }
+  flexDirection: "column",
+  alignItems: "stretch",
+  padding: 0,
+  a: { width: "100%" },
+  // Add to cart
+  "& > .MuiButton-root": {
+    borderRadius: 0,
+    fontWeight: 700,
+    letterSpacing: "0.04em",
+    textTransform: "none",
+    fontSize: "0.85rem",
+    padding: "0.85rem 1rem",
+    backgroundColor: "#2B2622",
+    color: "#F4EEE3",
+    boxShadow: "none",
+    "&:hover": {
+      backgroundColor: "#A44A3F",
+      boxShadow: "none"
+    }
+  },
+  // Quick View
+  ".view-btn": {
+    borderRadius: 0,
+    fontWeight: 600,
+    letterSpacing: "0.04em",
+    textTransform: "none",
+    fontSize: "0.82rem",
+    padding: "0.7rem 1rem",
+    backgroundColor: "#F4EEE3",
+    color: "#2B2622",
+    borderTop: "1px solid rgba(43, 38, 34, 0.12)",
+    boxShadow: "none",
+    "&:hover": {
+      backgroundColor: "#EDE8DF",
+      boxShadow: "none"
+    }
+  }
 }));
 
 export const ContentWrapper = styled("div")(({ theme }) => ({
@@ -94,10 +143,10 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   },
   ".category": {
     fontSize: 12,
-    fontWeight: 400,
+    fontWeight: 500,
     letterSpacing: 1.4,
     marginBottom: 6,
     textTransform: "uppercase",
-    color: theme.palette.grey[400]
+    color: "#8B6A4A"
   }
 }));

@@ -57,7 +57,8 @@ const labelSx = {
   "& .MuiInputLabel-root": {
     color: "#8B6A4A",
     fontWeight: 600,
-    fontSize: "0.875rem"
+    fontSize: "0.875rem",
+    zIndex: 1
   },
   "& .MuiInputLabel-root.Mui-focused": {
     color: "#A44A3F"
@@ -114,35 +115,56 @@ export default function ProfileEditForm({ user }: Props) {
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <Grid container spacing={3}>
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="firstName" label="First Name"
+          <TextField
+            size="medium"
+            fullWidth
+            name="firstName"
+            label="First Name"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="lastName" label="Last Name"
+          <TextField
+            size="medium"
+            fullWidth
+            name="lastName"
+            label="Last Name"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="email" type="email" label="Email"
+          <TextField
+            size="medium"
+            fullWidth
+            name="email"
+            type="email"
+            label="Email"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth label="Phone" name="contact"
+          <TextField
+            size="medium"
+            fullWidth
+            label="Phone"
+            name="contact"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={12}>
-          <TextField size="medium" fullWidth label="Address" name="address"
+          <TextField
+            size="medium"
+            fullWidth
+            label="Address"
+            name="address"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />

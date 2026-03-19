@@ -6,17 +6,18 @@ import { styled } from "@mui/material/styles";
 // STYLED COMPONENT
 const StyledChip = styled(Chip, {
   shouldForwardProp: (prop) => prop !== "shape"
-})<{ shape: "rounded" | "square" }>(({ shape, theme }) => ({
+})<{ shape: "rounded" | "square" }>(({ shape }) => ({
   zIndex: 1,
   top: 15,
   left: 15,
   height: 28,
   fontSize: 12,
-  borderRadius: 6,
+  borderRadius: 4,
   position: "absolute",
-  color: theme.palette.common.black,
-  border: `1px solid ${theme.palette.grey[100]}`,
-  backgroundColor: theme.palette.common.white,
+  color: "#A44A3F",
+  fontWeight: 600,
+  border: "1px solid rgba(164, 74, 63, 0.25)",
+  backgroundColor: "rgba(164, 74, 63, 0.08)",
   ...(shape === "square" && { borderRadius: 0 })
 }));
 

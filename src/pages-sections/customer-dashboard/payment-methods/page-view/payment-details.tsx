@@ -15,7 +15,7 @@ export function PaymentDetailsPageView({ payment }: Props) {
     <Fragment>
       <DashboardHeader title="Demo Payment Profile" href="/payment-methods" />
 
-      <Card sx={{ padding: { xs: 3, sm: 4 } }}>
+      <Card sx={{ padding: { xs: 3, sm: 4 }, backgroundColor: "#FAF6EF", border: "1px solid rgba(43,38,34,0.12)", borderRadius: "4px", boxShadow: "none" }}>
         <PaymentForm payment={payment} />
       </Card>
     </Fragment>
