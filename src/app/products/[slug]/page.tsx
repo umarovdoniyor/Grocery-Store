@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 // PAGE VIEW COMPONENT
@@ -6,9 +7,13 @@ import { getProductBySlug, getRelatedProductsBySlug } from "utils/services/produ
 // CUSTOM DATA MODEL
 import { SlugParams } from "models/Common";
 
+// Deduplicate: generateMetadata and the page component both call this,
+// but React cache() ensures only one fetch happens per request.
+const getCachedProduct = cache(getProductBySlug);
+
 export async function generateMetadata({ params }: SlugParams): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProduct(slug);
   if (!product) notFound();
 
   return {
@@ -22,7 +27,7 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 export default async function ProductDetails({ params }: SlugParams) {
   const { slug } = await params;
   const [product, relatedProducts] = await Promise.all([
-    getProductBySlug(slug),
+    getCachedProduct(slug),
     getRelatedProductsBySlug(slug)
   ]);
 

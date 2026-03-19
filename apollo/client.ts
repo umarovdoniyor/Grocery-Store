@@ -156,7 +156,7 @@ function createApolloClient() {
     ssrMode: typeof window === "undefined",
     link: createIsomorphicLink(),
     cache: new InMemoryCache(),
-    connectToDevTools: process.env.NODE_ENV === "development",
+    devtools: { enabled: process.env.NODE_ENV === "development" },
     resolvers: {}
   });
 }
