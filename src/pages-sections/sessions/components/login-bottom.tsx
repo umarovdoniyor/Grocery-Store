@@ -41,16 +41,26 @@ export default function LoginBottom() {
 
   return (
     <Fragment>
-      <FlexRowCenter gap={1} my={3}>
-        <Typography variant="body2" color="text.secondary">
+      <FlexRowCenter gap={1} mt={3} mb={2}>
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.95rem" }}>
           Don&apos;t have account?
         </Typography>
 
         <BoxLink title="Register" href={registerHref} />
       </FlexRowCenter>
 
-      <FlexBox gap={1} py={2} borderRadius={1} justifyContent="center" bgcolor="grey.50">
-        <Typography variant="body2" color="text.secondary">
+      <FlexBox
+        gap={1}
+        py={2}
+        px={1.5}
+        borderRadius="10px"
+        justifyContent="center"
+        sx={{
+          backgroundColor: "rgba(79, 109, 47, 0.05)",
+          border: "1px solid rgba(79, 109, 47, 0.12)"
+        }}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.95rem" }}>
           Forgot your password?
         </Typography>
 

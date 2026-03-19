@@ -36,20 +36,60 @@ export default function ResetPassword() {
 
   return (
     <Fragment>
-      <Typography variant="h3" fontWeight={700} sx={{ mb: 4, textAlign: "center" }}>
+      <Typography
+        variant="h3"
+        fontWeight={700}
+        sx={{
+          mb: 4,
+          textAlign: "center",
+          color: "#446127"
+        }}
+      >
         Reset your password
       </Typography>
 
       <FormProvider methods={methods} onSubmit={handleSubmitForm}>
         <Stack spacing={3}>
-          <TextField
-            fullWidth
-            name="email"
-            type="email"
-            label="Email"
-            size="medium"
-            placeholder="exmple@mail.com"
-          />
+          <div>
+            <Typography
+              sx={{
+                mb: 1,
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                color: "#446127",
+                letterSpacing: "0.2px"
+              }}
+            >
+              Email Address
+            </Typography>
+            <TextField
+              fullWidth
+              name="email"
+              type="email"
+              size="medium"
+              placeholder="example@mail.com"
+              slotProps={{
+                input: {
+                  sx: {
+                    borderRadius: "10px",
+                    backgroundColor: "#f8f6ec",
+                    border: "1px solid rgba(79, 109, 47, 0.15)",
+                    transition: "all 220ms ease",
+                    "&:focus-within": {
+                      borderColor: "#4f6d2f",
+                      backgroundColor: "#fefdf9",
+                      boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                    },
+                    "&.Mui-error": {
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(79, 109, 47, 0.35)"
+                      }
+                    }
+                  }
+                }
+              }}
+            />
+          </div>
 
           <Button
             fullWidth
@@ -58,6 +98,19 @@ export default function ResetPassword() {
             color="primary"
             variant="contained"
             loading={isSubmitting}
+            sx={{
+              background: "linear-gradient(135deg, #4f6d2f 0%, #5a7a30 100%)",
+              borderRadius: "10px",
+              fontWeight: 600,
+              letterSpacing: "0.3px",
+              textTransform: "none",
+              boxShadow: "0 6px 20px rgba(79, 109, 47, 0.25)",
+              transition: "all 220ms ease",
+              "&:hover": {
+                background: "linear-gradient(135deg, #446127 0%, #4f6d2f 100%)",
+                boxShadow: "0 8px 28px rgba(79, 109, 47, 0.35)"
+              }
+            }}
           >
             Reset
           </Button>
@@ -65,7 +118,7 @@ export default function ResetPassword() {
       </FormProvider>
 
       <FlexRowCenter mt={3} justifyContent="center" gap={1}>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.95rem" }}>
           Don&apos;t have an account?
         </Typography>
 

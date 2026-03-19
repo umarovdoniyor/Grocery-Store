@@ -110,7 +110,16 @@ export default function LoginPageView() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            backgroundColor: "rgba(244, 67, 54, 0.08)",
+            border: "1px solid rgba(244, 67, 54, 0.3)",
+            borderRadius: "10px",
+            color: "error.main"
+          }}
+        >
           {error}
         </Alert>
       )}
@@ -123,6 +132,26 @@ export default function LoginPageView() {
           type="text"
           size="medium"
           placeholder="example@mail.com, +1234567890, or nickname"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
+                }
+              }
+            }
+          }}
         />
       </div>
 
@@ -137,7 +166,23 @@ export default function LoginPageView() {
           type={visiblePassword ? "text" : "password"}
           slotProps={{
             input: {
-              endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />
+              endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />,
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
+                }
+              }
             }
           }}
         />
@@ -150,6 +195,19 @@ export default function LoginPageView() {
         color="primary"
         variant="contained"
         loading={isSubmitting}
+        sx={{
+          background: "linear-gradient(135deg, #4f6d2f 0%, #5a7a30 100%)",
+          borderRadius: "10px",
+          fontWeight: 600,
+          letterSpacing: "0.3px",
+          textTransform: "none",
+          boxShadow: "0 6px 20px rgba(79, 109, 47, 0.25)",
+          transition: "all 220ms ease",
+          "&:hover": {
+            background: "linear-gradient(135deg, #446127 0%, #4f6d2f 100%)",
+            boxShadow: "0 8px 28px rgba(79, 109, 47, 0.35)"
+          }
+        }}
       >
         Login
       </Button>
