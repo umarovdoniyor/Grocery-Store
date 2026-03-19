@@ -1,9 +1,4 @@
 import type Ticket from "models/Ticket.model";
-import { ticketList } from "__server__/__db__/ticket/data";
-import { payoutRequests as vendorPayoutRequests } from "__server__/__db__/vendor/data";
-import { payouts } from "__server__/__db__/dashboard/payouts";
-import { refundRequest } from "__server__/__db__/dashboard/refundRequests";
-import { earningHistory } from "__server__/__db__/dashboard/earning-history";
 import { getMyProducts } from "../../../libs/product";
 import { getVendorProductReviews, type ProductReviewStatus } from "../../../libs/review";
 import { toPublicImageUrl } from "../../../libs/upload";
@@ -204,7 +199,7 @@ export async function getVendorStockOutProducts() {
 }
 
 export async function getVendorSupportTickets(): Promise<Ticket[]> {
-  return ticketList;
+  return [];
 }
 
 export async function getVendorReviews(status?: ProductReviewStatus) {
@@ -263,17 +258,17 @@ export async function getVendorReviews(status?: ProductReviewStatus) {
 }
 
 export async function getVendorPayoutRequests() {
-  return vendorPayoutRequests;
+  return [];
 }
 
 export async function getVendorPayouts() {
-  return payouts;
+  return [];
 }
 
 export async function getVendorRefundRequests() {
-  return refundRequest;
+  return [];
 }
 
 export async function getVendorEarningHistory() {
-  return earningHistory;
+  return [];
 }

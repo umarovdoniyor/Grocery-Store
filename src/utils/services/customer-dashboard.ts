@@ -7,7 +7,6 @@ import { getCategoryById } from "../../../libs/category";
 import { getProductById } from "../../../libs/product";
 import { getMyWishlist } from "../../../libs/wishlist";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { messageList, ticketList } from "__server__/__db__/ticket/data";
 
 const PAYMENT_METHODS: Payment[] = [
   {
@@ -163,22 +162,13 @@ export function getCustomerPaymentById(id: string): Payment | null {
 }
 
 export function getCustomerTickets(page = 1): { tickets: Ticket[]; totalPages: number } {
-  const PAGE_SIZE = 5;
-  const PAGE_NO = page - 1;
-  const totalPages = Math.max(1, Math.ceil(ticketList.length / PAGE_SIZE));
-  const tickets = ticketList.slice(PAGE_NO * PAGE_SIZE, (PAGE_NO + 1) * PAGE_SIZE);
-
-  return { tickets, totalPages };
+  void page;
+  return { tickets: [], totalPages: 1 };
 }
 
 export function getCustomerTicketBySlug(slug: string): Ticket | null {
-  const found = ticketList.find((item) => item.slug === slug);
-  if (!found) return null;
-
-  return {
-    ...found,
-    conversation: messageList
-  };
+  void slug;
+  return null;
 }
 
 export async function getCustomerWishlistProducts(page = 1): Promise<{
