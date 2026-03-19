@@ -85,9 +85,26 @@ export function HeaderAccount() {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton
+        onClick={handleClick}
+        sx={{
+          borderRadius: "50%",
+          "&:hover": {
+            backgroundColor: "rgba(79, 109, 47, 0.08)"
+          }
+        }}
+      >
         {isAuthenticated && user ? (
-          <Avatar src={user.avatar} alt={user.name.firstName} sx={{ width: 32, height: 32 }} />
+          <Avatar
+            src={user.avatar}
+            alt={user.name.firstName}
+            sx={{
+              width: 32,
+              height: 32,
+              border: "1.5px solid rgba(79, 109, 47, 0.15)",
+              boxShadow: "0 0 0 2px rgba(79, 109, 47, 0.08)"
+            }}
+          />
         ) : (
           <SvgIcon fontSize="small">
             <svg viewBox="0 0 24 24">
@@ -113,11 +130,15 @@ export function HeaderAccount() {
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           slotProps={{
             paper: {
-              elevation: 3,
+              elevation: 8,
               sx: {
                 mt: 1.5,
-                minWidth: 200,
+                minWidth: 220,
                 overflow: "visible",
+                borderRadius: "12px",
+                border: "1px solid rgba(79, 109, 47, 0.12)",
+                backgroundColor: "#f8f6ec",
+                boxShadow: "0 10px 40px rgba(33, 49, 26, 0.15)",
                 "&:before": {
                   content: '""',
                   display: "block",
@@ -126,7 +147,10 @@ export function HeaderAccount() {
                   right: 14,
                   width: 10,
                   height: 10,
-                  bgcolor: "background.paper",
+                  bgcolor: "#f8f6ec",
+                  border: "1px solid rgba(79, 109, 47, 0.12)",
+                  borderRight: "none",
+                  borderBottom: "none",
                   transform: "translateY(-50%) rotate(45deg)",
                   zIndex: 0
                 }
@@ -135,12 +159,41 @@ export function HeaderAccount() {
           }}
         >
           <Box px={2} py={1.5}>
-            <Typography variant="subtitle2" fontWeight={600}>
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              sx={{
+                marginBottom: "0.5rem",
+                color: "#446127"
+              }}
+            >
               {user.name.firstName} {user.name.lastName}
             </Typography>
-            <Typography variant="caption" color="text.secondary" textTransform="capitalize">
-              {user.role}
-            </Typography>
+            <Box
+              component="span"
+              sx={{
+                display: "inline-block",
+                paddingX: "8px",
+                paddingY: "4px",
+                borderRadius: "6px",
+                backgroundColor: "rgba(79, 109, 47, 0.08)",
+                border: "1px solid rgba(79, 109, 47, 0.2)",
+                cursor: "default"
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                textTransform="capitalize"
+                sx={{
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  color: "#446127"
+                }}
+              >
+                {user.role}
+              </Typography>
+            </Box>
           </Box>
 
           <Divider />
@@ -151,7 +204,14 @@ export function HeaderAccount() {
               onClick={handleClose}
               component={Link}
               href={item.href}
-              sx={{ py: 1 }}
+              sx={{
+                py: 1,
+                color: "#444",
+                fontSize: "0.95rem",
+                "&:hover": {
+                  backgroundColor: "rgba(79, 109, 47, 0.06)"
+                }
+              }}
             >
               {item.label}
             </MenuItem>
@@ -159,7 +219,19 @@ export function HeaderAccount() {
 
           <Divider />
 
-          <MenuItem onClick={handleLogout} sx={{ py: 1, color: "error.main" }}>
+          <MenuItem
+            onClick={handleLogout}
+            sx={{
+              py: 1,
+              color: "error.main",
+              fontWeight: 500,
+              borderRadius: "8px",
+              margin: "4px 8px",
+              "&:hover": {
+                backgroundColor: "rgba(244, 67, 54, 0.08)"
+              }
+            }}
+          >
             Logout
           </MenuItem>
         </Menu>
