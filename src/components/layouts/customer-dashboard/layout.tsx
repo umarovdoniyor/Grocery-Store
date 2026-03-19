@@ -15,7 +15,7 @@ const gridStyle = {
 
 export function CustomerDashboardLayout({ children }: PropsWithChildren) {
   return (
-    <Box bgcolor="grey.50" py={{ xs: 3, sm: 4 }}>
+    <Box sx={{ backgroundColor: "#F4EEE3", py: { xs: 3, sm: 4 } }}>
       <Container>
         <Grid container spacing={3}>
           <Grid size={{ lg: 3, xs: 12 }} sx={gridStyle}>

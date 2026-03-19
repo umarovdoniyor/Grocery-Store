@@ -38,5 +38,22 @@ export default function Pagination({ count }: Props) {
 
   if (count <= 1) return null;
 
-  return <StyledPagination color="primary" count={count} onChange={handlePageChange} />;
+  return (
+    <StyledPagination
+      count={count}
+      onChange={handlePageChange}
+      sx={{
+        "& .MuiPaginationItem-root": {
+          color: "#7A6C60",
+          borderColor: "rgba(43, 38, 34, 0.2)",
+          "&.Mui-selected": {
+            backgroundColor: "#2B2622",
+            color: "#F4EEE3",
+            "&:hover": { backgroundColor: "#A44A3F" }
+          },
+          "&:hover": { backgroundColor: "rgba(43, 38, 34, 0.08)" }
+        }
+      }}
+    />
+  );
 }

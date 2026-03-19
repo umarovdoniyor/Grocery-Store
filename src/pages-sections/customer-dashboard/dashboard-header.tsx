@@ -59,18 +59,18 @@ export default function DashboardHeader({ title, href, Icon }: Props) {
     <StyledRoot>
       <div className="left">
         {Icon && (
-          <Avatar variant="rounded" className="avatar">
-            <Icon color="primary" />
+          <Avatar variant="rounded" className="avatar" sx={{ backgroundColor: "#2B2622", borderRadius: "4px" }}>
+            <Icon sx={{ color: "#F4EEE3" }} fontSize="small" />
           </Avatar>
         )}
 
         {href && (
-          <IconButton color="primary" href={href} LinkComponent={Link}>
+          <IconButton href={href} LinkComponent={Link} sx={{ color: "#2B2622" }}>
             <ChevronLeft />
           </IconButton>
         )}
 
-        <Typography noWrap variant="h2">
+        <Typography noWrap variant="h2" sx={{ color: "#2B2622" }}>
           {title}
         </Typography>
       </div>

@@ -120,10 +120,9 @@ export function Navigation() {
           <Typography
             fontSize={12}
             variant="body1"
-            fontWeight={500}
-            color="text.secondary"
+            fontWeight={600}
             textTransform="uppercase"
-            sx={{ padding: ".75rem 1.75rem" }}
+            sx={{ padding: ".75rem 1.75rem", color: "#8B6A4A", letterSpacing: "0.06em" }}
           >
             {item.title}
           </Typography>
@@ -135,7 +134,24 @@ export function Navigation() {
       ))}
 
       <Box px={4} mt={6} pb={2}>
-        <Button disableElevation variant="outlined" color="primary" fullWidth onClick={logout}>
+        <Button
+          disableElevation
+          variant="outlined"
+          fullWidth
+          onClick={logout}
+          sx={{
+            borderColor: "rgba(43, 38, 34, 0.3)",
+            color: "#2B2622",
+            fontWeight: 600,
+            textTransform: "none",
+            borderRadius: "4px",
+            "&:hover": {
+              backgroundColor: "#2B2622",
+              borderColor: "#2B2622",
+              color: "#F4EEE3"
+            }
+          }}
+        >
           Logout
         </Button>
       </Box>
