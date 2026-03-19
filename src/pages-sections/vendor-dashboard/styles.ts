@@ -10,8 +10,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   paddingTop: 10,
   fontWeight: 500,
   paddingBottom: 10,
-  color: theme.palette.text.secondary,
-  borderBottom: `1px solid ${theme.palette.divider}`
+  color: "#374151",
+  borderBottom: "1px solid #E5E7EB"
 }));
 
 const CategoryWrapper = styled(Box)(({ theme }) => ({
@@ -24,6 +24,10 @@ const CategoryWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)({
+  transition: "background-color 0.2s ease",
+  "&:hover": {
+    backgroundColor: "#F8FAFC"
+  },
   ":last-child .MuiTableCell-root": { border: 0 },
   "&.Mui-selected": {
     backgroundColor: "transparent",
@@ -32,9 +36,12 @@ const StyledTableRow = styled(TableRow)({
 });
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  color: theme.palette.grey[400],
+  color: "#6B7280",
   "& .MuiSvgIcon-root": { fontSize: 19 },
-  ":hover": { color: theme.palette.info.main }
+  ":hover": {
+    color: "#14B8A6",
+    backgroundColor: "rgba(20, 184, 166, 0.08)"
+  }
 }));
 
 type StatusType = {
@@ -52,28 +59,28 @@ type StatusType = {
 
 const StatusWrapper = styled(Box, {
   shouldForwardProp: (prop) => prop !== "status"
-})<StatusType>(({ theme, status }) => {
-  let color = theme.palette.secondary.main;
-  let backgroundColor = theme.palette.secondary[100];
+})<StatusType>(({ status }) => {
+  let color = "#334155";
+  let backgroundColor = "#E2E8F0";
 
   if (status === "Accepted" || status === "Delivered" || status === "Normal") {
-    color = theme.palette.success.main;
-    backgroundColor = theme.palette.success[100];
+    color = "#0F766E";
+    backgroundColor = "#CCFBF1";
   }
 
   if (status === "Rejected" || status === "Urgent" || status === "Cancelled") {
-    color = theme.palette.error.main;
-    backgroundColor = theme.palette.error[100];
+    color = "#B91C1C";
+    backgroundColor = "#FEE2E2";
   }
 
   if (status === "Processing") {
-    color = theme.palette.warning.main;
-    backgroundColor = theme.palette.warning[100];
+    color = "#0C4A6E";
+    backgroundColor = "#E0F2FE";
   }
 
   if (status === "Pending") {
-    color = theme.palette.info.main;
-    backgroundColor = theme.palette.info[100];
+    color = "#0F766E";
+    backgroundColor = "#CCFBF1";
   }
 
   return {

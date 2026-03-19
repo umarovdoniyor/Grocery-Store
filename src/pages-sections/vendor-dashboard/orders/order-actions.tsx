@@ -24,17 +24,41 @@ export default function OrderActions({ id, createdAt, status }: Props) {
   return (
     <div>
       <FlexBox flexWrap="wrap" alignItems="center" columnGap={4} rowGap={1}>
-        <Typography variant="body1" sx={{ span: { color: "grey.600" } }}>
+        <Typography variant="body1" sx={{ color: "#1F2937", span: { color: "#6B7280" } }}>
           <span>Order ID:</span> {id}
         </Typography>
 
-        <Typography variant="body1" sx={{ span: { color: "grey.600" } }}>
+        <Typography variant="body1" sx={{ color: "#1F2937", span: { color: "#6B7280" } }}>
           <span>Placed on:</span> {format(new Date(createdAt), "dd MMM, yyyy")}
         </Typography>
 
-        <Typography variant="body1" sx={{ span: { color: "grey.600" } }}>
+        <Typography variant="body1" sx={{ color: "#1F2937", span: { color: "#6B7280" } }}>
           <span>Current status:</span>{" "}
-          <Chip size="small" label={status} color={getColor(status)} sx={{ ml: 1 }} />
+          <Chip
+            size="small"
+            label={status}
+            color={getColor(status)}
+            sx={{
+              ml: 1,
+              borderRadius: "6px",
+              "&.MuiChip-colorSuccess": {
+                backgroundColor: "#CCFBF1",
+                color: "#0F766E"
+              },
+              "&.MuiChip-colorInfo": {
+                backgroundColor: "#CFFAFE",
+                color: "#155E75"
+              },
+              "&.MuiChip-colorSecondary": {
+                backgroundColor: "#E5E7EB",
+                color: "#4B5563"
+              },
+              "&.MuiChip-colorError": {
+                backgroundColor: "#FEE2E2",
+                color: "#B91C1C"
+              }
+            }}
+          />
         </Typography>
       </FlexBox>
     </div>

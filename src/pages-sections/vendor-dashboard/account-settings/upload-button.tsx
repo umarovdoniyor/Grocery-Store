@@ -38,18 +38,26 @@ export default function UploadButton({
         <Button
           size="small"
           component="span"
-          color="secondary"
           disabled={disabled || loading}
           sx={{
             p: "6px",
             height: "auto",
             borderRadius: "50%",
-            bgcolor: "info.100",
+            minWidth: 0,
+            border: "1px solid #99F6E4",
+            bgcolor: "rgba(240, 253, 250, 0.9)",
             ...style,
-            ":hover": { backgroundColor: "grey.300" }
+            ":hover": {
+              backgroundColor: "#CCFBF1",
+              borderColor: "#14B8A6"
+            }
           }}
         >
-          {loading ? <CircularProgress size={16} /> : <CameraAlt fontSize="small" color="info" />}
+          {loading ? (
+            <CircularProgress size={16} sx={{ color: "#0F766E" }} />
+          ) : (
+            <CameraAlt fontSize="small" sx={{ color: "#0F766E" }} />
+          )}
         </Button>
       </label>
 

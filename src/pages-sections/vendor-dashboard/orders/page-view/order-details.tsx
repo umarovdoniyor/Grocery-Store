@@ -37,7 +37,14 @@ export default function OrderDetailsPageView({
     <PageWrapper title="Order Details">
       <Grid container spacing={3}>
         <Grid size={12}>
-          <Card sx={{ p: 3 }}>
+          <Card
+            sx={{
+              p: 3,
+              borderRadius: "10px",
+              border: "1px solid #D1D5DB",
+              boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)"
+            }}
+          >
             {/* ADD PRODUCT & CHANGE ORDER STATUS ACTION  */}
             <OrderActions id={order.id} createdAt={order.createdAt} status={order.status} />
 
@@ -68,14 +75,27 @@ export default function OrderDetailsPageView({
           {canMarkDelivered ? (
             <Button
               variant="contained"
-              color="success"
               loading={isUpdatingStatus}
               onClick={onMarkDelivered}
+              sx={{
+                backgroundColor: "#14B8A6",
+                color: "#F8FAFC",
+                "&:hover": {
+                  backgroundColor: "#0F766E"
+                }
+              }}
             >
               Mark as Delivered
             </Button>
           ) : onMarkDelivered ? (
-            <Button variant="outlined" color="success" disabled>
+            <Button
+              variant="outlined"
+              disabled
+              sx={{
+                color: "#6B7280",
+                borderColor: "#D1D5DB"
+              }}
+            >
               {order.status === "Delivered" ? "Already Delivered" : "Status Locked"}
             </Button>
           ) : null}

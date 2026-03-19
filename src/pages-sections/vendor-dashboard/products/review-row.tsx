@@ -46,16 +46,33 @@ export default function ReviewRow({
     <StyledTableRow tabIndex={-1} role="checkbox">
       <StyledTableCell align="left">
         <FlexBox alignItems="center" gap={1.5}>
-          <Avatar variant="rounded">
+          <Avatar
+            variant="rounded"
+            sx={{
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              backgroundColor: "#F8FAFC"
+            }}
+          >
             <Image fill alt={product} src={productImage} sizes="(100%, 100%)" />
           </Avatar>
 
-          <Typography variant="h6">{product}</Typography>
+          <Typography variant="h6" sx={{ color: "#1F2937" }}>
+            {product}
+          </Typography>
         </FlexBox>
       </StyledTableCell>
 
-      <StyledTableCell align="left">{customer}</StyledTableCell>
-      <StyledTableCell align="left">{comment}</StyledTableCell>
+      <StyledTableCell align="left">
+        <Typography variant="body2" sx={{ color: "#374151" }}>
+          {customer}
+        </Typography>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Typography variant="body2" sx={{ color: "#6B7280" }}>
+          {comment}
+        </Typography>
+      </StyledTableCell>
 
       <StyledTableCell align="left">
         <BazaarSwitch

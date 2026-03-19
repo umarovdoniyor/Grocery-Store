@@ -378,19 +378,74 @@ export default function ProductForm({
   });
 
   if (loadingInitial) {
-    return <Card className="p-3">Loading product...</Card>;
+    return (
+      <Card
+        sx={{
+          p: 3,
+          borderRadius: "10px",
+          border: "1px solid #D1D5DB",
+          boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
+          color: "#374151"
+        }}
+      >
+        Loading product...
+      </Card>
+    );
   }
 
   return (
-    <Card className="p-3">
+    <Card
+      sx={{
+        p: 3,
+        borderRadius: "10px",
+        border: "1px solid #D1D5DB",
+        boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)"
+      }}
+    >
       <FormProvider methods={methods} onSubmit={handleSubmitForm}>
         {formError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert
+            severity="error"
+            sx={{
+              mb: 2,
+              color: "#991B1B",
+              border: "1px solid #FCA5A5",
+              backgroundColor: "#FEF2F2"
+            }}
+          >
             {formError}
           </Alert>
         )}
 
-        <Grid container spacing={3}>
+        <Box
+          sx={{
+            "& .MuiInputLabel-root": {
+              zIndex: 1,
+              color: "#6B7280"
+            },
+            "& .MuiInputLabel-shrink": {
+              px: 0.5,
+              bgcolor: "#F8FAFC"
+            },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              backgroundColor: "#F8FAFC",
+              "& fieldset": {
+                borderColor: "#D1D5DB"
+              },
+              "&:hover fieldset": {
+                borderColor: "#14B8A6"
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#14B8A6"
+              }
+            },
+            "& .MuiInputBase-input": {
+              color: "#1F2937"
+            }
+          }}
+        >
+          <Grid container spacing={3}>
           <Grid size={{ sm: 6, xs: 12 }}>
             <TextField
               fullWidth
@@ -547,8 +602,15 @@ export default function ProductForm({
                 <Button
                   component="label"
                   variant="outlined"
-                  color="info"
                   disabled={uploadingThumbnail || isSubmitting}
+                  sx={{
+                    color: "#0F766E",
+                    borderColor: "#14B8A6",
+                    "&:hover": {
+                      borderColor: "#0F766E",
+                      backgroundColor: "rgba(20, 184, 166, 0.08)"
+                    }
+                  }}
                 >
                   {uploadingThumbnail ? <CircularProgress size={18} /> : "Upload Thumbnail"}
                   <input
@@ -559,14 +621,14 @@ export default function ProductForm({
                   />
                 </Button>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "#6B7280" }}>
                   Upload fills the thumbnail field automatically.
                 </Typography>
               </Stack>
 
               {thumbnailValue && (
                 <Stack spacing={1}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: "#6B7280" }}>
                     Thumbnail preview
                   </Typography>
 
@@ -578,9 +640,9 @@ export default function ProductForm({
                       width: 120,
                       height: 120,
                       objectFit: "cover",
-                      borderRadius: 1,
+                        borderRadius: "8px",
                       border: "1px solid",
-                      borderColor: "divider"
+                        borderColor: "#D1D5DB"
                     }}
                   />
                 </Stack>
@@ -605,8 +667,15 @@ export default function ProductForm({
                 <Button
                   component="label"
                   variant="outlined"
-                  color="info"
                   disabled={uploadingGallery || isSubmitting}
+                  sx={{
+                    color: "#0F766E",
+                    borderColor: "#14B8A6",
+                    "&:hover": {
+                      borderColor: "#0F766E",
+                      backgroundColor: "rgba(20, 184, 166, 0.08)"
+                    }
+                  }}
                 >
                   {uploadingGallery ? <CircularProgress size={18} /> : "Upload Gallery Images"}
                   <input
@@ -618,14 +687,14 @@ export default function ProductForm({
                   />
                 </Button>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "#6B7280" }}>
                   Uploaded paths are appended to the images field.
                 </Typography>
               </Stack>
 
               {galleryPreviewImages.length > 0 && (
                 <Stack spacing={1}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: "#6B7280" }}>
                     Gallery preview ({galleryPreviewImages.length})
                   </Typography>
 
@@ -636,9 +705,9 @@ export default function ProductForm({
                         sx={{
                           width: 88,
                           height: 88,
-                          borderRadius: 1,
+                          borderRadius: "8px",
                           border: "1px solid",
-                          borderColor: "divider",
+                          borderColor: "#D1D5DB",
                           position: "relative",
                           overflow: "hidden"
                         }}
@@ -673,11 +742,23 @@ export default function ProductForm({
           </Grid>
 
           <Grid size={{ sm: 6, xs: 12 }}>
-            <Button loading={isSubmitting} variant="contained" color="info" type="submit">
+            <Button
+              loading={isSubmitting}
+              variant="contained"
+              type="submit"
+              sx={{
+                backgroundColor: "#14B8A6",
+                color: "#F8FAFC",
+                "&:hover": {
+                  backgroundColor: "#0F766E"
+                }
+              }}
+            >
               {mode === "edit" ? "Update Product" : "Create Product"}
             </Button>
           </Grid>
-        </Grid>
+          </Grid>
+        </Box>
       </FormProvider>
     </Card>
   );

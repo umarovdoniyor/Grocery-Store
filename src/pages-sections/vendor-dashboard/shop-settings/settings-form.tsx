@@ -201,12 +201,49 @@ export default function SettingsForm() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       {shopApiNotice && (
-        <Alert severity="info" sx={{ mb: 2 }}>
+        <Alert
+          severity="info"
+          sx={{
+            mb: 2,
+            border: "1px solid #99F6E4",
+            backgroundColor: "#F0FDFA",
+            color: "#115E59"
+          }}
+        >
           {shopApiNotice}
         </Alert>
       )}
 
-      <Stack spacing={3} mb={3}>
+      <Stack
+        spacing={3}
+        mb={3}
+        sx={{
+          "& .MuiInputLabel-root": {
+            zIndex: 1,
+            color: "#6B7280"
+          },
+          "& .MuiInputLabel-shrink": {
+            px: 0.5,
+            bgcolor: "#F8FAFC"
+          },
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "8px",
+            backgroundColor: "#F8FAFC",
+            "& fieldset": {
+              borderColor: "#D1D5DB"
+            },
+            "&:hover fieldset": {
+              borderColor: "#14B8A6"
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#14B8A6"
+            }
+          },
+          "& .MuiInputBase-input": {
+            color: "#1F2937"
+          }
+        }}
+      >
         <TextField color="info" size="medium" name="shopName" label="Shop Name *" />
         <TextField color="info" size="medium" name="shopPhone" label="Shop Phone" />
         <TextField
@@ -236,8 +273,20 @@ export default function SettingsForm() {
         <TextField name="order" color="info" size="medium" type="number" label="Minimum Order *" />
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
-          <Button component="label" variant="outlined" color="info" disabled={uploadingCover}>
-            {uploadingCover ? <CircularProgress size={18} /> : "Upload Shop Cover"}
+          <Button
+            component="label"
+            variant="outlined"
+            disabled={uploadingCover}
+            sx={{
+              color: "#0F766E",
+              borderColor: "#14B8A6",
+              "&:hover": {
+                borderColor: "#0F766E",
+                backgroundColor: "rgba(20, 184, 166, 0.08)"
+              }
+            }}
+          >
+            {uploadingCover ? <CircularProgress size={18} sx={{ color: "#0F766E" }} /> : "Upload Shop Cover"}
             <input hidden type="file" accept="image/*" onChange={handleCoverUpload} />
           </Button>
 
@@ -256,12 +305,29 @@ export default function SettingsForm() {
             component="img"
             src={toImageSrc(coverImage)}
             alt="Shop cover preview"
-            sx={{ width: "100%", maxHeight: 200, borderRadius: 1, objectFit: "cover" }}
+            sx={{
+              width: "100%",
+              maxHeight: 200,
+              borderRadius: "8px",
+              objectFit: "cover",
+              border: "1px solid #D1D5DB"
+            }}
           />
         )}
       </Stack>
 
-      <Button loading={isSubmitting} type="submit" color="info" variant="contained">
+      <Button
+        loading={isSubmitting}
+        type="submit"
+        variant="contained"
+        sx={{
+          backgroundColor: "#14B8A6",
+          color: "#F8FAFC",
+          "&:hover": {
+            backgroundColor: "#0F766E"
+          }
+        }}
+      >
         Save Changes
       </Button>
     </FormProvider>

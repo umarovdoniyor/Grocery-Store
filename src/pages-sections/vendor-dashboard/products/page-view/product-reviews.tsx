@@ -279,16 +279,56 @@ export default function ProductReviewsPageView(_: Props) {
   return (
     <PageWrapper title="Product Reviews">
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            color: "#991B1B",
+            border: "1px solid #FCA5A5",
+            backgroundColor: "#FEF2F2"
+          }}
+        >
           {error}
         </Alert>
       )}
 
-      <Card>
+      <Card
+        sx={{
+          borderRadius: "10px",
+          border: "1px solid #D1D5DB",
+          boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
+          "& .MuiTableHead-root": {
+            backgroundColor: "#F0FDFA"
+          },
+          "& .MuiTableSortLabel-root": {
+            color: "#374151"
+          },
+          "& .MuiTableSortLabel-root.Mui-active": {
+            color: "#0F766E"
+          },
+          "& .MuiTableSortLabel-icon": {
+            color: "#14B8A6 !important"
+          }
+        }}
+      >
         <Tabs
           value={statusFilter}
           onChange={(_, value: ReviewFilter) => setStatusFilter(value)}
-          sx={{ px: 2, pt: 2 }}
+          sx={{
+            px: 2,
+            pt: 2,
+            "& .MuiTab-root": {
+              color: "#6B7280",
+              textTransform: "none",
+              fontWeight: 600
+            },
+            "& .MuiTab-root.Mui-selected": {
+              color: "#0F766E"
+            },
+            "& .MuiTabs-indicator": {
+              backgroundColor: "#14B8A6"
+            }
+          }}
         >
           <Tab value="ALL" label="All" />
           <Tab value="PENDING" label="Pending" />
@@ -301,8 +341,8 @@ export default function ProductReviewsPageView(_: Props) {
           <Box
             sx={{ py: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}
           >
-            <CircularProgress size={20} />
-            <Typography variant="body2" color="text.secondary">
+            <CircularProgress size={20} sx={{ color: "#14B8A6" }} />
+            <Typography variant="body2" sx={{ color: "#6B7280" }}>
               Loading reviews...
             </Typography>
           </Box>
@@ -337,7 +377,23 @@ export default function ProductReviewsPageView(_: Props) {
           </OverlayScrollbar>
         )}
 
-        <Stack alignItems="center" my={4}>
+        <Stack
+          alignItems="center"
+          my={4}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#1F2937"
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              color: "#0F766E",
+              borderColor: "#14B8A6"
+            },
+            "& .MuiPaginationItem-previousNext": {
+              color: "#0F766E",
+              borderColor: "#14B8A6"
+            }
+          }}
+        >
           <TablePagination
             onChange={handleChangePage}
             count={Math.ceil(filteredList.length / rowsPerPage)}
@@ -350,8 +406,16 @@ export default function ProductReviewsPageView(_: Props) {
         onClose={closeModerationDialog}
         fullWidth
         maxWidth="sm"
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "10px",
+              border: "1px solid #D1D5DB"
+            }
+          }
+        }}
       >
-        <DialogTitle>
+        <DialogTitle sx={{ color: "#1F2937" }}>
           {moderationTarget?.status === "PUBLISHED"
             ? "Publish Review"
             : moderationTarget?.status === "HIDDEN"
@@ -360,7 +424,7 @@ export default function ProductReviewsPageView(_: Props) {
         </DialogTitle>
 
         <DialogContent>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ mb: 2, color: "#6B7280" }}>
             {moderationTarget?.status === "PUBLISHED"
               ? "Please provide a moderation reason before publishing this review."
               : moderationTarget?.status === "HIDDEN"
@@ -377,11 +441,38 @@ export default function ProductReviewsPageView(_: Props) {
             placeholder="Enter reason"
             value={moderationReason}
             onChange={(event) => setModerationReason(event.target.value)}
+            sx={{
+              "& .MuiInputLabel-root": {
+                zIndex: 1,
+                color: "#6B7280"
+              },
+              "& .MuiInputLabel-shrink": {
+                px: 0.5,
+                bgcolor: "#F8FAFC"
+              },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                backgroundColor: "#F8FAFC",
+                "& fieldset": {
+                  borderColor: "#D1D5DB"
+                },
+                "&:hover fieldset": {
+                  borderColor: "#14B8A6"
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#14B8A6"
+                }
+              }
+            }}
           />
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={closeModerationDialog} disabled={Boolean(updatingId)}>
+          <Button
+            onClick={closeModerationDialog}
+            disabled={Boolean(updatingId)}
+            sx={{ color: "#374151" }}
+          >
             Cancel
           </Button>
 
@@ -389,6 +480,13 @@ export default function ProductReviewsPageView(_: Props) {
             variant="contained"
             onClick={handleModerationConfirm}
             disabled={!moderationReason.trim() || Boolean(updatingId)}
+            sx={{
+              backgroundColor: "#14B8A6",
+              color: "#F8FAFC",
+              "&:hover": {
+                backgroundColor: "#0F766E"
+              }
+            }}
           >
             {moderationTarget?.status === "PUBLISHED"
               ? "Publish"

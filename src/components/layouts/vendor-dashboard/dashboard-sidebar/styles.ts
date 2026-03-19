@@ -73,8 +73,8 @@ const ListIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
   "& svg": {
     width: "100%",
-    height:"#6B7280"
-    color: theme.palette.text.disabled
+    height: "100%",
+    color: "#6B7280"
   }
 }));
 
@@ -95,15 +95,15 @@ const StyledText = styled("span", {
 
 const BulletIcon = styled("div", {
   shouldForwardProp: (prop) => prop !== "active"
-})<Active>(({ theme, active }) => ({
+})<Active>(({ active }) => ({
   width: 3,
   height: 3,
   marginLeft: "10px",
   overflow: "hidden",
   borderRadius: "50%",
-  marginRight: "1.3rem""#14B8A6" : "#6B7280",
-  boxShadow: active ? `0px 0px 0px 4px rgba(20, 184, 166, 0.2)
-  boxShadow: active ? `0px 0px 0px 4px ${alpha(theme.palette.info[500], 0.2)}` : "none"
+  marginRight: "1.3rem",
+  background: active ? "#14B8A6" : "#6B7280",
+  boxShadow: active ? "0px 0px 0px 4px rgba(20, 184, 166, 0.2)" : "none"
 }));
 
 const BadgeValue = styled("div", {

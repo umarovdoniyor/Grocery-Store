@@ -206,7 +206,14 @@ export default function AccountSettingsPageView() {
 
   return (
     <PageWrapper title="Account Setting">
-      <Card className="p-2">
+      <Card
+        sx={{
+          p: 2,
+          borderRadius: "10px",
+          border: "1px solid #D1D5DB",
+          boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)"
+        }}
+      >
         {/* COVER SECTION */}
         <CoverPicSection
           avatarSrc={avatarSrc}
@@ -218,14 +225,51 @@ export default function AccountSettingsPageView() {
         />
 
         {shopImageNotice && (
-          <Alert severity="info" sx={{ mb: 2 }}>
+          <Alert
+            severity="info"
+            sx={{
+              mb: 2,
+              border: "1px solid #99F6E4",
+              backgroundColor: "#F0FDFA",
+              color: "#115E59"
+            }}
+          >
             {shopImageNotice}
           </Alert>
         )}
 
         {/* FORM SECTION */}
         <FormProvider methods={methods} onSubmit={handleSubmitForm}>
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              "& .MuiInputLabel-root": {
+                zIndex: 1,
+                color: "#6B7280"
+              },
+              "& .MuiInputLabel-shrink": {
+                px: 0.5,
+                bgcolor: "#F8FAFC"
+              },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                backgroundColor: "#F8FAFC",
+                "& fieldset": {
+                  borderColor: "#D1D5DB"
+                },
+                "&:hover fieldset": {
+                  borderColor: "#14B8A6"
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#14B8A6"
+                }
+              },
+              "& .MuiInputBase-input": {
+                color: "#1F2937"
+              }
+            }}
+          >
             <Grid size={{ md: 6, xs: 12 }}>
               <TextField fullWidth size="medium" name="first_name" label="First Name" />
             </Grid>
@@ -259,7 +303,18 @@ export default function AccountSettingsPageView() {
             </Grid>
 
             <Grid size={12}>
-              <Button type="submit" variant="contained" color="info" loading={isSubmitting}>
+              <Button
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                sx={{
+                  backgroundColor: "#14B8A6",
+                  color: "#F8FAFC",
+                  "&:hover": {
+                    backgroundColor: "#0F766E"
+                  }
+                }}
+              >
                 Save Changes
               </Button>
             </Grid>

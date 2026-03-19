@@ -50,16 +50,34 @@ export default function OrderRow({
         {canMarkDelivered ? (
           <Button
             size="small"
-            color="success"
-            variant="text"
+            variant="outlined"
             loading={isUpdating}
             onClick={() => onMarkDelivered?.(id)}
-            sx={{ ml: 1, minWidth: 120 }}
+            sx={{
+              ml: 1,
+              minWidth: 120,
+              color: "#0F766E",
+              borderColor: "#14B8A6",
+              "&:hover": {
+                borderColor: "#0F766E",
+                backgroundColor: "rgba(20, 184, 166, 0.08)"
+              }
+            }}
           >
             Mark Delivered
           </Button>
         ) : onMarkDelivered && isFinalized ? (
-          <Button size="small" variant="outlined" disabled sx={{ ml: 1, minWidth: 120 }}>
+          <Button
+            size="small"
+            variant="outlined"
+            disabled
+            sx={{
+              ml: 1,
+              minWidth: 120,
+              borderColor: "#D1D5DB",
+              color: "#6B7280"
+            }}
+          >
             Finalized
           </Button>
         ) : null}

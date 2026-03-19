@@ -85,14 +85,23 @@ export default function ProductRow({
     <StyledTableRow tabIndex={-1} role="checkbox">
       <StyledTableCell align="left">
         <FlexBox alignItems="center" gap={1.5}>
-          <Avatar variant="rounded">
+          <Avatar
+            variant="rounded"
+            sx={{
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              backgroundColor: "#F8FAFC"
+            }}
+          >
             <Image fill src={image} alt={name} sizes="(100%, 100%)" />
           </Avatar>
 
           <div>
-            <Typography variant="h6">{name}</Typography>
+            <Typography variant="h6" sx={{ color: "#1F2937" }}>
+              {name}
+            </Typography>
 
-            <Typography variant="body1" sx={{ fontSize: 13, color: "grey.600" }}>
+            <Typography variant="body1" sx={{ fontSize: 13, color: "#6B7280" }}>
               #{id.split("-")[0]}
             </Typography>
           </div>
@@ -109,7 +118,7 @@ export default function ProductRow({
             <Image fill src={brand} alt={name} sizes="(55px, 25px)" />
           </Box>
         ) : (
-          <Typography variant="body2" sx={{ color: "grey.700" }}>
+          <Typography variant="body2" sx={{ color: "#374151" }}>
             {brand || "-"}
           </Typography>
         )}
@@ -119,7 +128,7 @@ export default function ProductRow({
 
       <StyledTableCell align="left">
         {isUpdating ? (
-          <CircularProgress size={18} color="info" />
+          <CircularProgress size={18} sx={{ color: "#14B8A6" }} />
         ) : (
           <BazaarSwitch
             color="info"
@@ -134,7 +143,7 @@ export default function ProductRow({
           <Box>
             <FlexBox alignItems="center" gap={1}>
               {isUpdatingFeatured ? (
-                <CircularProgress size={18} color="warning" />
+                <CircularProgress size={18} sx={{ color: "#0F766E" }} />
               ) : (
                 <BazaarSwitch
                   color="warning"
@@ -158,7 +167,22 @@ export default function ProductRow({
                 onBlur={applyFeaturedRank}
                 disabled={!featured || isUpdatingFeatured}
                 slotProps={{ htmlInput: { min: 1 } }}
-                sx={{ width: 90 }}
+                sx={{
+                  width: 90,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    backgroundColor: "#F8FAFC",
+                    "& fieldset": {
+                      borderColor: "#D1D5DB"
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#14B8A6"
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#14B8A6"
+                    }
+                  }
+                }}
               />
 
               <StyledIconButton
@@ -169,11 +193,11 @@ export default function ProductRow({
               </StyledIconButton>
             </FlexBox>
 
-            <Typography variant="caption" sx={{ display: "block", mt: 0.75 }}>
+            <Typography variant="caption" sx={{ display: "block", mt: 0.75, color: "#6B7280" }}>
               {isVisibleOnHome ? (
                 <>
                   Visible on Home.{" "}
-                  <Link href="/" target="_blank">
+                  <Link href="/" target="_blank" style={{ color: "#0F766E" }}>
                     Open
                   </Link>
                 </>

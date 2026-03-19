@@ -80,7 +80,25 @@ export default function ProductsPageView({
         showButton={showCreateButton}
       />
 
-      <Card>
+      <Card
+        sx={{
+          borderRadius: "10px",
+          border: "1px solid #D1D5DB",
+          boxShadow: "0 8px 20px rgba(15, 23, 42, 0.05)",
+          "& .MuiTableHead-root": {
+            backgroundColor: "#F0FDFA"
+          },
+          "& .MuiTableSortLabel-root": {
+            color: "#374151"
+          },
+          "& .MuiTableSortLabel-root.Mui-active": {
+            color: "#0F766E"
+          },
+          "& .MuiTableSortLabel-icon": {
+            color: "#14B8A6 !important"
+          }
+        }}
+      >
         <OverlayScrollbar>
           <TableContainer sx={{ minWidth: 900 }}>
             <Table>
@@ -112,7 +130,23 @@ export default function ProductsPageView({
           </TableContainer>
         </OverlayScrollbar>
 
-        <Stack alignItems="center" my={4}>
+        <Stack
+          alignItems="center"
+          my={4}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#1F2937"
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              color: "#0F766E",
+              borderColor: "#14B8A6"
+            },
+            "& .MuiPaginationItem-previousNext": {
+              color: "#0F766E",
+              borderColor: "#14B8A6"
+            }
+          }}
+        >
           <TablePagination
             onChange={handleChangePage}
             count={Math.ceil(products.length / rowsPerPage)}

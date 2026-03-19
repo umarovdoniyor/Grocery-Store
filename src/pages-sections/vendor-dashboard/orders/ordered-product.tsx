@@ -43,23 +43,43 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
   const isLocked = normalizedStatus === "DELIVERED";
 
   return (
-    <Box my={2} gap={2} display="grid" gridTemplateColumns={{ md: "1fr 1fr", xs: "1fr" }}>
+    <Box
+      my={2}
+      gap={2}
+      display="grid"
+      gridTemplateColumns={{ md: "1fr 1fr", xs: "1fr" }}
+      sx={{
+        p: 2,
+        borderRadius: "8px",
+        border: "1px solid #E5E7EB",
+        backgroundColor: "#FFFFFF"
+      }}
+    >
       <FlexBox flexShrink={0} gap={1.5} alignItems="center">
-        <Avatar variant="rounded" sx={{ height: 64, width: 64 }}>
+        <Avatar
+          variant="rounded"
+          sx={{
+            height: 64,
+            width: 64,
+            borderRadius: "8px",
+            border: "1px solid #D1D5DB",
+            backgroundColor: "#F8FAFC"
+          }}
+        >
           <Image fill alt={product_name} src={product_img} sizes="(64px, 64px)" />
         </Avatar>
 
         <div>
-          <Typography variant="h6" sx={{ mb: 1 }}>
+          <Typography variant="h6" sx={{ mb: 1, color: "#1F2937" }}>
             {product_name}
           </Typography>
 
           <FlexBox alignItems="center" gap={1}>
-            <Typography variant="body1" sx={{ color: "grey.600" }}>
+            <Typography variant="body1" sx={{ color: "#4B5563" }}>
               {currency(product_price)} x
             </Typography>
 
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: "#6B7280" }}>
               Qty: {product_quantity}
             </Typography>
           </FlexBox>
@@ -67,7 +87,7 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
       </FlexBox>
 
       <FlexBetween flexShrink={0}>
-        <Typography variant="body2" sx={{ color: "grey.600" }}>
+        <Typography variant="body2" sx={{ color: "#6B7280" }}>
           Product properties: {product.variant || "-"}
         </Typography>
 
@@ -77,7 +97,25 @@ export default function OrderedProduct({ product, updating = false, onUpdateStat
             size="small"
             value={statusValue}
             disabled={updating || isLocked}
-            sx={{ minWidth: 170 }}
+            sx={{
+              minWidth: 170,
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#F8FAFC",
+                borderRadius: "8px",
+                "& fieldset": {
+                  borderColor: "#D1D5DB"
+                },
+                "&:hover fieldset": {
+                  borderColor: "#14B8A6"
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#14B8A6"
+                }
+              },
+              "& .MuiInputBase-input": {
+                color: "#1F2937"
+              }
+            }}
             onChange={(event) => onUpdateStatus(item_id, event.target.value as Status)}
           >
             {nextStatusOptions.map((option) => (

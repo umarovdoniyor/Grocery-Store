@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 // MUI
 import Add from "@mui/icons-material/Add";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Theme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -58,26 +59,55 @@ export default function SearchArea({
   }, [handleSearch]);
 
   return (
-    <FlexBox mb={2} gap={2} justifyContent="space-between" flexWrap="wrap">
-      <SearchInput
-        placeholder={searchPlaceholder}
-        value={value}
-        onChange={(e) => {
-          const nextValue = e.target.value;
-          setValue(nextValue);
-          handleSearch(nextValue);
+    <FlexBox mb={2} gap={2} justifyContent="space-between" flexWrap="wrap" alignItems="center">
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 360,
+          borderRadius: "10px",
+          border: "1px solid #D1D5DB",
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
+          "&:focus-within": {
+            borderColor: "#14B8A6",
+            boxShadow: "0 0 0 3px rgba(20, 184, 166, 0.14)"
+          }
         }}
-      />
+      >
+        <SearchInput
+          placeholder={searchPlaceholder}
+          value={value}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setValue(nextValue);
+            handleSearch(nextValue);
+          }}
+          sx={{
+            maxWidth: "100%",
+            color: "#374151",
+            backgroundColor: "transparent",
+            "& .MuiSvgIcon-root": {
+              color: "#14B8A6"
+            }
+          }}
+        />
+      </Box>
 
       {showButton && (
         <Button
           href={url}
-          color="info"
           fullWidth={downSM}
           variant="contained"
           startIcon={<Add />}
           component={Link}
-          sx={{ minHeight: 44 }}
+          sx={{
+            minHeight: 44,
+            backgroundColor: "#14B8A6",
+            color: "#F8FAFC",
+            "&:hover": {
+              backgroundColor: "#0F766E"
+            }
+          }}
         >
           {buttonText}
         </Button>

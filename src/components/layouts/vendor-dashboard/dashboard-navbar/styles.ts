@@ -52,7 +52,13 @@ export const CustomButton = styled(Button)(({ theme }) => ({
     borderColor: "#14B8A6"
   },
   [theme.breakpoints.down("xs")]: { display: "none" }
-}));"#9CA3AF",
+}));
+
+export const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  width: 200,
+  padding: "5px 10px",
+  borderRadius: "8px",
+  color: "#9CA3AF",
   backgroundColor: "#374151",
   transition: "all 0.2s ease",
   "& input::placeholder": {
@@ -61,12 +67,6 @@ export const CustomButton = styled(Button)(({ theme }) => ({
   },
   "&:hover": {
     backgroundColor: "#4B5563"
-  }
-export const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  width: 200,
-  padding: "5px 10px",
-  borderRadius: "8px",
-  color: theme.palette.grey[500],
-  backgroundColor: theme.palette.grey[100],
+  },
   [theme.breakpoints.down("md")]: { display: "none" }
 }));
