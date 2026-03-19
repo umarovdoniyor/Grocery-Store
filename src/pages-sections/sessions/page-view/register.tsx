@@ -249,6 +249,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -274,6 +279,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -299,6 +309,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -325,6 +340,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -350,6 +370,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -375,6 +400,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -402,6 +432,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
@@ -429,6 +464,11 @@ export default function RegisterPageView() {
                   borderColor: "#4f6d2f",
                   backgroundColor: "#fefdf9",
                   boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                },
+                "&.Mui-error": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(79, 109, 47, 0.35)"
+                  }
                 }
               }
             }
