@@ -20,13 +20,33 @@ type Props = { order: Order };
 const getChipSx = (status: string) => {
   const base = { fontWeight: 600, fontSize: "0.72rem" };
   if (status === "Pending")
-    return { ...base, backgroundColor: "#F0E8DE", color: "#8B6A4A", border: "1px solid rgba(139,106,74,0.3)" };
+    return {
+      ...base,
+      backgroundColor: "#F0E8DE",
+      color: "#8B6A4A",
+      border: "1px solid rgba(139,106,74,0.3)"
+    };
   if (status === "Processing")
-    return { ...base, backgroundColor: "#E8EDE0", color: "#5D6B3F", border: "1px solid rgba(93,107,63,0.3)" };
+    return {
+      ...base,
+      backgroundColor: "#E8EDE0",
+      color: "#5D6B3F",
+      border: "1px solid rgba(93,107,63,0.3)"
+    };
   if (status === "Delivered")
-    return { ...base, backgroundColor: "#F5EBE9", color: "#A44A3F", border: "1px solid rgba(164,74,63,0.3)" };
+    return {
+      ...base,
+      backgroundColor: "#F5EBE9",
+      color: "#A44A3F",
+      border: "1px solid rgba(164,74,63,0.3)"
+    };
   if (status === "Cancelled")
-    return { ...base, backgroundColor: "rgba(43,38,34,0.06)", color: "#7A6C60", border: "1px solid rgba(43,38,34,0.15)" };
+    return {
+      ...base,
+      backgroundColor: "rgba(43,38,34,0.06)",
+      color: "#7A6C60",
+      border: "1px solid rgba(43,38,34,0.15)"
+    };
   return base;
 };
 
@@ -42,7 +62,11 @@ export default function OrderRow({ order }: Props) {
           <Chip size="small" label={order.status} sx={getChipSx(order.status)} />
         </Box>
 
-        <Typography noWrap variant="body1" sx={{ textAlign: { sm: "center", xs: "left" }, color: "#7A6C60" }}>
+        <Typography
+          noWrap
+          variant="body1"
+          sx={{ textAlign: { sm: "center", xs: "left" }, color: "#7A6C60" }}
+        >
           {format(new Date(order.createdAt), "MMM dd, yyyy")}
         </Typography>
 

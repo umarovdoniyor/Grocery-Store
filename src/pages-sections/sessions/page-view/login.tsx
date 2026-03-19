@@ -166,7 +166,9 @@ export default function LoginPageView() {
           type={visiblePassword ? "text" : "password"}
           slotProps={{
             input: {
-              endAdornment: <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />,
+              endAdornment: (
+                <EyeToggleButton show={visiblePassword} click={togglePasswordVisible} />
+              ),
               sx: {
                 borderRadius: "10px",
                 backgroundColor: "#f8f6ec",

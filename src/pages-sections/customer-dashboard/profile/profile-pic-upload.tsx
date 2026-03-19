@@ -154,7 +154,11 @@ export default function ProfilePicUpload({ image }: { image: string }) {
           transition: "background-color 180ms ease"
         }}
       >
-        {uploading ? <CircularProgress size={16} sx={{ color: "#F4EEE3" }} /> : <CameraEnhance fontSize="small" />}
+        {uploading ? (
+          <CircularProgress size={16} sx={{ color: "#F4EEE3" }} />
+        ) : (
+          <CameraEnhance fontSize="small" />
+        )}
       </IconButton>
 
       <Box

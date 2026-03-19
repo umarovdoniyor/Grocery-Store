@@ -59,7 +59,11 @@ export default function DashboardHeader({ title, href, Icon }: Props) {
     <StyledRoot>
       <div className="left">
         {Icon && (
-          <Avatar variant="rounded" className="avatar" sx={{ backgroundColor: "#2B2622", borderRadius: "4px" }}>
+          <Avatar
+            variant="rounded"
+            className="avatar"
+            sx={{ backgroundColor: "#2B2622", borderRadius: "4px" }}
+          >
             <Icon sx={{ color: "#F4EEE3" }} fontSize="small" />
           </Avatar>
         )}
