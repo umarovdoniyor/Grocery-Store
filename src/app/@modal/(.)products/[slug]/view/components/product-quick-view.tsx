@@ -26,63 +26,112 @@ export default function ProductQuickView({ product }: Props) {
 
   return (
     <QuickViewModal>
-      <Box position="relative" bgcolor="grey.100">
+      <Box position="relative" sx={{ backgroundColor: "#f7f4ea", paddingTop: "24px" }}>
         <ImageCarousel images={product.images!} title={product.title} />
       </Box>
 
       <Box py={3} px={4}>
-        <Typography variant="body1" fontSize={22} fontWeight={600} sx={{ mb: 1 }}>
+        {/* TITLE */}
+        <Typography
+          variant="h6"
+          sx={{ fontSize: 18, fontWeight: 700, color: "#1f2a1a", lineHeight: 1.3, mb: 1.5 }}
+        >
           {product.title}
         </Typography>
 
-        <Typography variant="body1" fontSize={22} fontWeight={600}>
-          {currency(basePrice)}
+        {/* PRICE ROW */}
+        <Box display="flex" alignItems="baseline" gap={1.5} mb={1.5}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#3d6b2a" }}>
+            {currency(basePrice)}
+          </Typography>
           {comparePrice && (
             <Typography
-              component="span"
-              sx={{
-                ml: 1,
-                fontSize: 16,
-                fontWeight: 500,
-                color: "text.secondary",
-                textDecoration: "line-through"
-              }}
+              sx={{ fontSize: 15, fontWeight: 400, color: "text.disabled", textDecoration: "line-through" }}
             >
               {currency(comparePrice)}
             </Typography>
           )}
-        </Typography>
+          {discountPercent > 0 && (
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#fff",
+                bgcolor: "#e05c2a",
+                borderRadius: 999,
+                px: 1,
+                py: 0.25,
+                lineHeight: 1.6
+              }}
+            >
+              -{discountPercent}%
+            </Typography>
+          )}
+        </Box>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Category: <strong>{categoryLabel}</strong>
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          Product Code: <strong>{productCode}</strong>
-        </Typography>
-
-        <Box display="flex" alignItems="center" gap={1} mb={3} mt={2}>
-          <Rating size="small" color="warn" value={product.rating || 0} readOnly />
-          <Typography variant="body1" lineHeight="1" color="text.secondary">
-            ({reviewCount})
+        {/* RATING */}
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
+          <Rating size="small" value={product.rating || 0} readOnly />
+          <Typography variant="body2" color="text.secondary">
+            ({reviewCount} review{reviewCount !== 1 ? "s" : ""})
           </Typography>
         </Box>
 
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        {/* META PILLS */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          <Box
+            sx={{
+              fontSize: 12,
+              px: 1.5,
+              py: 0.4,
+              borderRadius: 999,
+              bgcolor: "rgba(111,143,68,0.1)",
+              color: "#3d5a20",
+              fontWeight: 500
+            }}
+          >
+            {categoryLabel}
+          </Box>
+          <Box
+            sx={{
+              fontSize: 12,
+              px: 1.5,
+              py: 0.4,
+              borderRadius: 999,
+              bgcolor: "rgba(0,0,0,0.05)",
+              color: "text.secondary",
+              fontWeight: 500
+            }}
+          >
+            SKU: {productCode}
+          </Box>
+        </Box>
+
+        {/* DESCRIPTION */}
+        <Typography
+          variant="body2"
+          sx={{ color: "text.secondary", lineHeight: 1.75, mb: 2.5 }}
+        >
           {product?.description ||
             "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus liberpuro ate vol faucibus adipiscing."}
         </Typography>
 
+        {/* SOLD BY */}
         {product.shop && (
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Sold By:{" "}
-            <Link href={`/shops/${product.shop.slug}`} style={{ fontWeight: 700 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
+            Sold by:{" "}
+            <Link
+              href={`/shops/${product.shop.slug}`}
+              style={{ fontWeight: 600, color: "#3d6b2a" }}
+            >
               {product.shop.name}
             </Link>
           </Typography>
         )}
 
-        <ButtonGroup product={product} />
+        <Box sx={{ borderTop: "1px solid rgba(0,0,0,0.07)", pt: 2.5 }}>
+          <ButtonGroup product={product} />
+        </Box>
       </Box>
     </QuickViewModal>
   );
