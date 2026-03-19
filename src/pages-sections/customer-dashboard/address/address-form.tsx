@@ -131,21 +131,33 @@ export default function AddressForm({ address }: Props) {
 
       <Grid container spacing={3}>
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField fullWidth size="medium" name="name" label="Name"
+          <TextField
+            fullWidth
+            size="medium"
+            name="name"
+            label="Name"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField fullWidth size="medium" name="address" label="Address Line"
+          <TextField
+            fullWidth
+            size="medium"
+            name="address"
+            label="Address Line"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField fullWidth size="medium" label="Phone" name="contact"
+          <TextField
+            fullWidth
+            size="medium"
+            label="Phone"
+            name="contact"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />

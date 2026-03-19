@@ -21,7 +21,13 @@ export default function Card1(props: Props) {
   const { title, amount1, amount2, percentage, status = "up", color = "info.main" } = props;
 
   return (
-    <Card className="p-1">
+    <Card 
+      className="p-1"
+      sx={{
+        borderTop: "3px solid #14B8A6",
+        boxShadow: "0 1px 3px rgba(20, 184, 166, 0.1)"
+      }}
+    >
       <Typography variant="h6" sx={{ mb: 1, color: "text.secondary" }}>
         {title}
       </Typography>

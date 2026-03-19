@@ -18,7 +18,7 @@ export default function LeftContent() {
       </ToggleWrapper>
 
       <Link href="/grocery-1" style={{ textDecoration: "none" }}>
-        <CustomButton startIcon={<Globe sx={{ color: "grey.900" }} />}>Browse Website</CustomButton>
+        <CustomButton startIcon={<Globe sx={{ color: "#F3F4F6" }} />}>Browse Website</CustomButton>
       </Link>
     </Fragment>
   );

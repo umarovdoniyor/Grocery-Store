@@ -130,7 +130,10 @@ export default function OrderProgress({ status, deliveredAt, isDelivered }: Prop
             </Box>
 
             {ind < activeIcons.length - 1 && (
-              <Box className="line" sx={{ backgroundColor: ind < statusIndex ? "#2B2622" : "#C8B79C" }} />
+              <Box
+                className="line"
+                sx={{ backgroundColor: ind < statusIndex ? "#2B2622" : "#C8B79C" }}
+              />
             )}
           </Fragment>
         ))}

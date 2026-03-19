@@ -50,7 +50,13 @@ export default function OrderedProducts({ order }: Props) {
         boxShadow: "none"
       }}
     >
-      <FlexBetween px={3} py={2} flexWrap="wrap" gap={1} sx={{ backgroundColor: "#F4EEE3", borderBottom: "1px solid rgba(43,38,34,0.08)" }}>
+      <FlexBetween
+        px={3}
+        py={2}
+        flexWrap="wrap"
+        gap={1}
+        sx={{ backgroundColor: "#F4EEE3", borderBottom: "1px solid rgba(43,38,34,0.08)" }}
+      >
         <Item title="Order ID:" value={id} />
         <Item title="Placed on:" value={format(new Date(createdAt), "dd MMM, yyyy")} />
         <Item
@@ -71,7 +77,10 @@ export default function OrderedProducts({ order }: Props) {
         return (
           <FlexBetween px={2} py={1} flexWrap="wrap" key={`${item.product_id || ind}`} gap={1}>
             <FlexBox gap={2} alignItems="center">
-              <Avatar variant="rounded" sx={{ height: 60, width: 60, borderRadius: "4px", backgroundColor: "#EDE8DF" }}>
+              <Avatar
+                variant="rounded"
+                sx={{ height: 60, width: 60, borderRadius: "4px", backgroundColor: "#EDE8DF" }}
+              >
                 <Image fill alt={item.product_name} src={item.product_img} sizes="(60px, 60px)" />
               </Avatar>
 
@@ -153,11 +162,22 @@ export default function OrderedProducts({ order }: Props) {
 function Item({ title, value }: { title: string; value: string }) {
   return (
     <FlexBox gap={1} alignItems="center">
-      <Typography variant="body1" sx={{ color: "#8B6A4A", fontWeight: 600, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+      <Typography
+        variant="body1"
+        sx={{
+          color: "#8B6A4A",
+          fontWeight: 600,
+          fontSize: "0.8rem",
+          textTransform: "uppercase",
+          letterSpacing: "0.04em"
+        }}
+      >
         {title}
       </Typography>
 
-      <Typography variant="body1" sx={{ color: "#2B2622", fontWeight: 500 }}>{value}</Typography>
+      <Typography variant="body1" sx={{ color: "#2B2622", fontWeight: 500 }}>
+        {value}
+      </Typography>
     </FlexBox>
   );
 }

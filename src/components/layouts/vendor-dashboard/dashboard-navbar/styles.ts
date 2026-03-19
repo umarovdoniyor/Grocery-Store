@@ -9,9 +9,9 @@ export const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   zIndex: 11,
   paddingTop: "1rem",
   paddingBottom: "1rem",
-  backgroundColor: "#ffffff",
+  backgroundColor: "#111827",
   boxShadow: theme.shadows[6],
-  color: theme.palette.text.primary
+  color: "#F3F4F6"
 }));
 
 export const StyledToolBar = styled(Toolbar)({
@@ -29,7 +29,12 @@ export const ToggleWrapper = styled(FlexRowCenter)(({ theme }) => ({
   display: "none",
   cursor: "pointer",
   borderRadius: "8px",
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: "#374151",
+  color: "#F3F4F6",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    backgroundColor: "#4B5563"
+  },
   [theme.breakpoints.down("lg")]: { display: "flex" }
 }));
 
@@ -39,10 +44,24 @@ export const CustomButton = styled(Button)(({ theme }) => ({
   marginLeft: 16,
   padding: "0 20px",
   borderRadius: "8px",
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: "#374151",
+  color: "#F3F4F6",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    backgroundColor: "#4B5563",
+    borderColor: "#14B8A6"
+  },
   [theme.breakpoints.down("xs")]: { display: "none" }
-}));
-
+}));"#9CA3AF",
+  backgroundColor: "#374151",
+  transition: "all 0.2s ease",
+  "& input::placeholder": {
+    color: "#6B7280",
+    opacity: 1
+  },
+  "&:hover": {
+    backgroundColor: "#4B5563"
+  }
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: 200,
   padding: "5px 10px",

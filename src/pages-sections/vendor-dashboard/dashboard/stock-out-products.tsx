@@ -22,10 +22,10 @@ interface Props {
 
 export default function StockOutProducts({ stockOutProducts }: Props) {
   return (
-    <Card>
+    <Card sx={{ borderTop: "3px solid #14B8A6" }}>
       <FlexBetween px={3} py={2.5}>
         <Typography variant="h5">Stock Out Products</Typography>
-        <Button size="small" color="info" variant="outlined">
+        <Button size="small" sx={{ borderColor: "#14B8A6", color: "#14B8A6" }} variant="outlined">
           All Products
         </Button>
       </FlexBetween>

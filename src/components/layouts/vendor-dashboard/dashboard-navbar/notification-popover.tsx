@@ -43,9 +43,9 @@ export default function NotificationsPopover() {
   return (
     <ClickAwayListener onClickAway={handleClose}>
       <div>
-        <IconButton onClick={handleClick}>
+        <IconButton onClick={handleClick} sx={{ color: "#9CA3AF" }}>
           <Badge color="secondary" variant="dot" invisible badgeContent={0}>
-            <Notifications sx={{ color: "grey.500" }} />
+            <Notifications />
           </Badge>
         </IconButton>
 
@@ -72,24 +72,24 @@ export default function NotificationsPopover() {
               position: "absolute",
               borderTop: "1px solid",
               borderLeft: "1px solid",
-              borderColor: "grey.200",
-              bgcolor: "background.paper",
+              borderColor: "#4B5563",
+              bgcolor: "#1F2937",
               transform: "translateY(-50%) rotate(45deg)"
             }
           }}
         >
           {({ TransitionProps }) => (
             <Fade {...TransitionProps} timeout={150}>
-              <Paper sx={{ p: 2 }}>
+              <Paper sx={{ p: 2, backgroundColor: "#1F2937", border: "1px solid #4B5563" }}>
                 <Stack spacing={1.5}>
-                  <Typography variant="h6">Notifications</Typography>
+                  <Typography variant="h6" sx={{ color: "#F3F4F6" }}>Notifications</Typography>
 
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: "#9CA3AF" }}>
                     {helperText}
                   </Typography>
 
                   <FlexBox justifyContent="flex-end">
-                    <Button LinkComponent={Link} href={targetPath} color="info" size="small">
+                    <Button LinkComponent={Link} href={targetPath} sx={{ color: "#14B8A6" }} size="small">
                       Open Related Page
                     </Button>
                   </FlexBox>

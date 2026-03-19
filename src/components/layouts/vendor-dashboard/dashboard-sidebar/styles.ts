@@ -19,8 +19,8 @@ const SidebarWrapper = styled("div", {
   position: "fixed",
   transition: "all .2s ease",
   zIndex: theme.zIndex.drawer,
-  color: theme.palette.common.white,
-  backgroundColor: theme.palette.grey[900],
+  color: "#F3F4F6",
+  backgroundColor: "#1F2937",
   ...(compact && { width: 86, "&:hover": { width: 280 } })
 }));
 
@@ -34,11 +34,16 @@ const NavItemButton = styled(ButtonBase, {
   padding: "0 12px 0 16px",
   justifyContent: "flex-start",
   transition: "all 0.15s ease",
+  color: "#9CA3AF",
+  "&:hover": {
+    backgroundColor: "rgba(20, 184, 166, 0.08)",
+    color: "#2DD4BF"
+  },
   ...(active && {
-    color: theme.palette.info.main,
-    backgroundColor: alpha(theme.palette.grey[800], 0.6),
+    color: "#14B8A6",
+    backgroundColor: "rgba(20, 184, 166, 0.12)",
     "& .MuiSvgIcon-root .secondary": {
-      color: theme.palette.info.main,
+      color: "#14B8A6",
       opacity: 1
     }
   })
@@ -49,6 +54,7 @@ const ListLabel = styled("p", {
 })<Compact>(({ compact }) => ({
   fontWeight: 600,
   fontSize: "12px",
+  color: "#9CA3AF",
   marginTop: "20px",
   marginLeft: "15px",
   marginBottom: "10px",
@@ -67,7 +73,7 @@ const ListIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
   "& svg": {
     width: "100%",
-    height: "100%",
+    height:"#6B7280"
     color: theme.palette.text.disabled
   }
 }));
@@ -95,8 +101,8 @@ const BulletIcon = styled("div", {
   marginLeft: "10px",
   overflow: "hidden",
   borderRadius: "50%",
-  marginRight: "1.3rem",
-  background: active ? theme.palette.info.main : theme.palette.common.white,
+  marginRight: "1.3rem""#14B8A6" : "#6B7280",
+  boxShadow: active ? `0px 0px 0px 4px rgba(20, 184, 166, 0.2)
   boxShadow: active ? `0px 0px 0px 4px ${alpha(theme.palette.info[500], 0.2)}` : "none"
 }));
 
@@ -118,12 +124,12 @@ const ChevronLeftIcon = styled(ChevronLeft, {
   cursor: "pointer",
   borderRadius: "50%",
   transition: "all 0.3s",
-  color: "rgba(255, 255, 255, .6)",
+  color: "#9CA3AF",
   display: compact ? "none" : "block",
   transform: sidebar_compact ? "rotate(180deg)" : "rotate(0deg)",
   "&:hover": {
-    color: "rgba(255, 255, 255, 1)",
-    background: "rgba(255, 255, 255, .05)"
+    color: "#F3F4F6",
+    background: "rgba(20, 184, 166, 0.1)"
   }
 }));
 
@@ -131,7 +137,7 @@ const ChevronRightIcon = styled(ChevronRight, {
   shouldForwardProp: (prop) => prop !== "compact" && prop !== "collapsed"
 })<CollapseCompact>(({ collapsed, compact, theme: { direction } }) => ({
   fontSize: 18,
-  color: "white",
+  color: "#F3F4F6",
   transform: collapsed ? "0deg" : "rotate(90deg)",
   transition: "transform 0.3s cubic-bezier(0, 0, 0.2, 1) 0ms",
   ...(compact && { display: "none", width: 0 }),

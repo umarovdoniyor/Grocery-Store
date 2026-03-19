@@ -37,17 +37,37 @@ export default function OrderSummery({
   return (
     <Grid container spacing={3}>
       <Grid size={{ md: 6, xs: 12 }}>
-        <Card elevation={0} sx={{ p: 3, backgroundColor: "#FAF6EF", border: "1px solid rgba(43,38,34,0.12)", borderRadius: "4px", boxShadow: "none" }}>
+        <Card
+          elevation={0}
+          sx={{
+            p: 3,
+            backgroundColor: "#FAF6EF",
+            border: "1px solid rgba(43,38,34,0.12)",
+            borderRadius: "4px",
+            boxShadow: "none"
+          }}
+        >
           <Typography variant="h5" sx={{ mb: 2, color: "#2B2622" }}>
             Shipping Address
           </Typography>
 
-          <Typography variant="body1" sx={{ color: "#7A6C60" }}>{order.shippingAddress}</Typography>
+          <Typography variant="body1" sx={{ color: "#7A6C60" }}>
+            {order.shippingAddress}
+          </Typography>
         </Card>
       </Grid>
 
       <Grid size={{ md: 6, xs: 12 }}>
-        <Card elevation={0} sx={{ p: 3, backgroundColor: "#FAF6EF", border: "1px solid rgba(43,38,34,0.12)", borderRadius: "4px", boxShadow: "none" }}>
+        <Card
+          elevation={0}
+          sx={{
+            p: 3,
+            backgroundColor: "#FAF6EF",
+            border: "1px solid rgba(43,38,34,0.12)",
+            borderRadius: "4px",
+            boxShadow: "none"
+          }}
+        >
           <Typography variant="h5" sx={{ mb: 2, color: "#2B2622" }}>
             Total Summary
           </Typography>
@@ -60,8 +80,12 @@ export default function OrderSummery({
           <Divider sx={{ mb: 1, borderColor: "rgba(43,38,34,0.1)" }} />
 
           <FlexBetween mb={2}>
-            <Typography variant="h6" sx={{ color: "#2B2622" }}>Total</Typography>
-            <Typography variant="h6" sx={{ color: "#2B2622" }}>{currency(order.totalPrice)}</Typography>
+            <Typography variant="h6" sx={{ color: "#2B2622" }}>
+              Total
+            </Typography>
+            <Typography variant="h6" sx={{ color: "#2B2622" }}>
+              {currency(order.totalPrice)}
+            </Typography>
           </FlexBetween>
 
           <Typography variant="body2" sx={{ color: "#8B6A4A" }}>
@@ -80,7 +104,11 @@ export default function OrderSummery({
                   color: canCancel ? "#A44A3F" : "#C8B79C",
                   textTransform: "none",
                   fontWeight: 600,
-                  "&:hover": { backgroundColor: "#A44A3F", borderColor: "#A44A3F", color: "#F4EEE3" }
+                  "&:hover": {
+                    backgroundColor: "#A44A3F",
+                    borderColor: "#A44A3F",
+                    color: "#F4EEE3"
+                  }
                 }}
               >
                 Cancel Order
@@ -106,7 +134,9 @@ function ListItem({ title, value }: { title: string; value: string }) {
         {title}
       </Typography>
 
-      <Typography variant="h6" sx={{ color: "#2B2622" }}>{value}</Typography>
+      <Typography variant="h6" sx={{ color: "#2B2622" }}>
+        {value}
+      </Typography>
     </FlexBetween>
   );
 }

@@ -9,6 +9,8 @@ const RootStyle = styled("div", {
 })<{ compact: boolean }>(({ theme, compact }) => ({
   transition: "margin-left 0.3s",
   marginLeft: compact ? 86 : 280,
+  backgroundColor: "#F9FAFB",
+  minHeight: "100vh",
   [theme.breakpoints.down("lg")]: { marginLeft: 0 }
 }));
 

@@ -15,7 +15,15 @@ export function AddressDetailsPageView({ address }: Props) {
     <Fragment>
       <DashboardHeader href="/address" title="Edit Address" />
 
-      <Card sx={{ padding: { xs: 3, sm: 4 }, backgroundColor: "#FAF6EF", border: "1px solid rgba(43,38,34,0.12)", borderRadius: "4px", boxShadow: "none" }}>
+      <Card
+        sx={{
+          padding: { xs: 3, sm: 4 },
+          backgroundColor: "#FAF6EF",
+          border: "1px solid rgba(43,38,34,0.12)",
+          borderRadius: "4px",
+          boxShadow: "none"
+        }}
+      >
         <AddressForm address={address} />
       </Card>
     </Fragment>

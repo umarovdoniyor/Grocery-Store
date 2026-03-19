@@ -13,7 +13,7 @@ import { useAuth } from "contexts/AuthContext";
 // STYLED COMPONENT
 const Divider = styled("div")(({ theme }) => ({
   margin: "0.5rem 0",
-  border: `1px dashed ${theme.palette.grey[200]}`
+  border: `1px dashed #4B5563`
 }));
 
 export default function AccountPopover() {
@@ -73,9 +73,13 @@ export default function AccountPopover() {
               borderRadius: "8px",
               overflow: "visible",
               border: "1px solid",
-              borderColor: "grey.200",
+              borderColor: "#4B5563",
+              backgroundColor: "#1F2937",
+              "& .MuiMenuItem-root": {
+                color: "#F3F4F6"
+              },
               "& .MuiMenuItem-root:hover": {
-                backgroundColor: "grey.200"
+                backgroundColor: "#374151"
               },
               "&:before": {
                 top: 0,
@@ -88,13 +92,13 @@ export default function AccountPopover() {
                 position: "absolute",
                 borderTop: "1px solid",
                 borderLeft: "1px solid",
-                borderColor: "grey.200",
-                bgcolor: "background.paper",
+                borderColor: "#4B5563",
+                bgcolor: "#1F2937",
                 transform: "translateY(-50%) rotate(45deg)"
               }
             }
-          }
-        }}
+          } sx={{ color: "#F3F4F6" }}>{displayName}</Typography>
+          <Typography variant="body1" sx={{ fontSize: 12, color: "#9CA3AF
       >
         <Box px={2} pt={1}>
           <Typography variant="h6">{displayName}</Typography>

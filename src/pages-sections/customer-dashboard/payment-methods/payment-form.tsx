@@ -75,28 +75,44 @@ export default function PaymentForm({ payment }: Props) {
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <Grid container spacing={3}>
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="card_no" label="Reference ID"
+          <TextField
+            size="medium"
+            fullWidth
+            name="card_no"
+            label="Reference ID"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="name" label="Profile Name"
+          <TextField
+            size="medium"
+            fullWidth
+            name="name"
+            label="Profile Name"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="exp" label="Renewal Date"
+          <TextField
+            size="medium"
+            fullWidth
+            name="exp"
+            label="Renewal Date"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
         </Grid>
 
         <Grid size={{ md: 6, xs: 12 }}>
-          <TextField size="medium" fullWidth name="cvc" label="Verification Code"
+          <TextField
+            size="medium"
+            fullWidth
+            name="cvc"
+            label="Verification Code"
             slotProps={{ input: { sx: inputSx } }}
             sx={labelSx}
           />
