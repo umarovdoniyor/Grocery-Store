@@ -51,8 +51,7 @@ export function HeaderAccount() {
     const customerItems = [
       ...commonItems,
       { label: "Wishlist", href: "/wish-list" },
-      { label: "Addresses", href: "/address" },
-      { label: "Support Tickets", href: "/support-tickets" }
+      { label: "Addresses", href: "/address" }
     ];
 
     const vendorItems = [

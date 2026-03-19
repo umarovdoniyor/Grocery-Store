@@ -12,7 +12,7 @@ import { MainContainer } from "./styles";
 import { initializeApollo } from "../../../../apollo/client";
 import { GET_MY_ORDERS, GET_MY_WISHLIST } from "../../../../apollo/user/query";
 import { useAuth } from "contexts/AuthContext";
-import { getCustomerAddressList, getCustomerPayments } from "utils/services/customer-dashboard";
+import { getCustomerAddressList } from "utils/services/customer-dashboard";
 
 const BASE_MENUS = [
   {
@@ -26,18 +26,12 @@ const BASE_MENUS = [
     title: "ACCOUNT SETTINGS",
     list: [
       { icon: "User3", href: "/profile", title: "Profile Info" },
-      { icon: "Location", href: "/address", title: "Addresses", countKey: "addresses" },
-      {
-        icon: "CreditCard",
-        href: "/payment-methods",
-        title: "Demo Payments",
-        countKey: "paymentMethods"
-      }
+      { icon: "Location", href: "/address", title: "Addresses", countKey: "addresses" }
     ]
   }
 ];
 
-type CountKey = "orders" | "wishlist" | "addresses" | "paymentMethods";
+type CountKey = "orders" | "wishlist" | "addresses";
 type DashboardCounts = Partial<Record<CountKey, number>>;
 
 export function Navigation() {
@@ -92,21 +86,18 @@ export function Navigation() {
           : 0;
 
       const addressCount = user ? getCustomerAddressList(user, 1).addressList.length : 0;
-      const paymentCount = getCustomerPayments(1).payments.length;
 
       setCounts({
         orders: ordersCount,
         wishlist: wishlistCount,
-        addresses: addressCount,
-        paymentMethods: paymentCount
+        addresses: addressCount
       });
     };
 
     loadCounts().catch(() => {
       if (!active) return;
       const addressCount = user ? getCustomerAddressList(user, 1).addressList.length : 0;
-      const paymentCount = getCustomerPayments(1).payments.length;
-      setCounts({ addresses: addressCount, paymentMethods: paymentCount });
+      setCounts({ addresses: addressCount });
     });
 
     return () => {

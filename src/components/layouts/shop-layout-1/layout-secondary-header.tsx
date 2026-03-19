@@ -17,7 +17,6 @@ export default function LayoutSecondaryHeader({ header }: Props) {
   const hideOnShops = pathname.startsWith("/shops");
   const hideOnProfile = pathname.startsWith("/profile");
   const hideOnAddress = pathname.startsWith("/address");
-  const hideOnPaymentMethods = pathname.startsWith("/payment-methods");
   const hideOnOrders = pathname.startsWith("/orders");
   const hideOnWishlist = pathname.startsWith("/wish-list");
   const hideOnOrderConfirmation = pathname.startsWith("/order-confirmation");
@@ -27,7 +26,6 @@ export default function LayoutSecondaryHeader({ header }: Props) {
     hideOnShops ||
     hideOnProfile ||
     hideOnAddress ||
-    hideOnPaymentMethods ||
     hideOnOrders ||
     hideOnWishlist ||
     hideOnOrderConfirmation
