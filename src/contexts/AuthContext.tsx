@@ -13,6 +13,7 @@ import { GET_MEMBER_PROFILE, ME, GET_MY_VENDOR_APPLICATION } from "../../apollo/
 import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apollo/user/mutation";
 import { userVar } from "../../apollo/store";
 import { toPublicImageUrl } from "../../libs/upload";
+import { clearCartServer } from "utils/services/cart";
 import User, { UserRole } from "models/User.model";
 
 interface AuthContextType {
@@ -37,7 +38,7 @@ interface AuthContextType {
   getMemberProfile: (
     memberId: string
   ) => Promise<{ success: boolean; user?: User; error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -92,6 +93,7 @@ interface VendorApplication {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const POST_LOGOUT_REDIRECT_KEY = "postLogoutRedirect";
 
 const mapMemberTypeToRole = (memberType?: string): UserRole => {
   if (memberType === "ADMIN") return "admin";
@@ -475,7 +477,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(POST_LOGOUT_REDIRECT_KEY, "/");
+    }
+
+    try {
+      if (getJwtToken()) {
+        await clearCartServer();
+      }
+    } catch {
+      // Logout should still proceed even if clearing the remote cart fails.
+    }
+
     setUser(null);
     localStorage.removeItem("user");
     authLogOut();

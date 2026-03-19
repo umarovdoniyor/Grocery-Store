@@ -21,8 +21,8 @@ export default function AccountPopover() {
   const { user, logout } = useAuth();
   const open = Boolean(anchorEl);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     if (typeof window !== "undefined") {
       window.location.replace("/");
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -40,8 +41,20 @@ type CountKey = "orders" | "wishlist" | "addresses" | "paymentMethods";
 type DashboardCounts = Partial<Record<CountKey, number>>;
 
 export function Navigation() {
+  const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
   const [counts, setCounts] = useState<DashboardCounts>({});
+
+  const handleLogout = async () => {
+    await logout();
+
+    if (typeof window !== "undefined") {
+      window.location.replace("/");
+      return;
+    }
+
+    router.replace("/");
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -138,7 +151,7 @@ export function Navigation() {
           disableElevation
           variant="outlined"
           fullWidth
-          onClick={logout}
+          onClick={handleLogout}
           sx={{
             borderColor: "rgba(43, 38, 34, 0.3)",
             color: "#2B2622",

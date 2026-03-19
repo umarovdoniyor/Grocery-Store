@@ -17,6 +17,7 @@ const ROLE_LANDING_PATH: Record<UserRole, string> = {
 };
 
 const AUTH_PATHS = new Set(["/login", "/register", "/reset-password"]);
+const POST_LOGOUT_REDIRECT_KEY = "postLogoutRedirect";
 
 const toSafeNextPath = (value: string) => {
   let candidate = value.trim();
@@ -79,6 +80,16 @@ export function useProtectedRoute(options: UseProtectedRouteOptions = {}) {
 
     // Not authenticated - redirect to login
     if (!isAuthenticated) {
+      if (typeof window !== "undefined") {
+        const logoutRedirect = sessionStorage.getItem(POST_LOGOUT_REDIRECT_KEY);
+
+        if (logoutRedirect) {
+          sessionStorage.removeItem(POST_LOGOUT_REDIRECT_KEY);
+          window.location.replace(logoutRedirect);
+          return;
+        }
+      }
+
       const target = buildAuthRedirect();
 
       // Use hard navigation for auth redirects to avoid intercepted modal routes
