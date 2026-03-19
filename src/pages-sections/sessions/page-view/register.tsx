@@ -202,30 +202,108 @@ export default function RegisterPageView() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            backgroundColor: "rgba(244, 67, 54, 0.08)",
+            border: "1px solid rgba(244, 67, 54, 0.3)",
+            borderRadius: "10px",
+            color: "error.main"
+          }}
+        >
           {error}
         </Alert>
       )}
 
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 2 }}>
+        <Alert
+          severity="success"
+          sx={{
+            mb: 2,
+            backgroundColor: "rgba(79, 109, 47, 0.08)",
+            border: "1px solid rgba(79, 109, 47, 0.3)",
+            borderRadius: "10px",
+            color: "#446127"
+          }}
+        >
           {successMessage}
         </Alert>
       )}
 
       <div className="mb-1">
         <Label>First Name</Label>
-        <TextField fullWidth name="firstName" size="medium" placeholder="Ralph" />
+        <TextField
+          fullWidth
+          name="firstName"
+          size="medium"
+          placeholder="Ralph"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="mb-1">
         <Label>Last Name</Label>
-        <TextField fullWidth name="lastName" size="medium" placeholder="Awards" />
+        <TextField
+          fullWidth
+          name="lastName"
+          size="medium"
+          placeholder="Awards"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="mb-1">
         <Label>Nickname</Label>
-        <TextField fullWidth name="nickname" size="medium" placeholder="ralph_awards" />
+        <TextField
+          fullWidth
+          name="nickname"
+          size="medium"
+          placeholder="ralph_awards"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="mb-1">
@@ -236,17 +314,72 @@ export default function RegisterPageView() {
           size="medium"
           type="email"
           placeholder="example@mail.com"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
         />
       </div>
 
       <div className="mb-1">
         <Label>Phone Number (Optional)</Label>
-        <TextField fullWidth name="phone" size="medium" placeholder="+1234567890" />
+        <TextField
+          fullWidth
+          name="phone"
+          size="medium"
+          placeholder="+1234567890"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="mb-1">
         <Label>Address (Optional)</Label>
-        <TextField fullWidth name="address" size="medium" placeholder="Street, city, country" />
+        <TextField
+          fullWidth
+          name="address"
+          size="medium"
+          placeholder="Street, city, country"
+          slotProps={{
+            input: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="mb-1">
@@ -257,7 +390,22 @@ export default function RegisterPageView() {
           name="password"
           placeholder="*********"
           type={visiblePassword ? "text" : "password"}
-          slotProps={{ input: inputProps }}
+          slotProps={{
+            input: {
+              ...inputProps,
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
         />
       </div>
 
@@ -269,7 +417,22 @@ export default function RegisterPageView() {
           name="re_password"
           placeholder="*********"
           type={visiblePassword ? "text" : "password"}
-          slotProps={{ input: inputProps }}
+          slotProps={{
+            input: {
+              ...inputProps,
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: "#f8f6ec",
+                border: "1px solid rgba(79, 109, 47, 0.15)",
+                transition: "all 220ms ease",
+                "&:focus-within": {
+                  borderColor: "#4f6d2f",
+                  backgroundColor: "#fefdf9",
+                  boxShadow: "0 0 0 3px rgba(79, 109, 47, 0.08)"
+                }
+              }
+            }
+          }}
         />
       </div>
 
@@ -295,6 +458,19 @@ export default function RegisterPageView() {
         color="primary"
         variant="contained"
         loading={isSubmitting}
+        sx={{
+          background: "linear-gradient(135deg, #4f6d2f 0%, #5a7a30 100%)",
+          borderRadius: "10px",
+          fontWeight: 600,
+          letterSpacing: "0.3px",
+          textTransform: "none",
+          boxShadow: "0 6px 20px rgba(79, 109, 47, 0.25)",
+          transition: "all 220ms ease",
+          "&:hover": {
+            background: "linear-gradient(135deg, #446127 0%, #4f6d2f 100%)",
+            boxShadow: "0 8px 28px rgba(79, 109, 47, 0.35)"
+          }
+        }}
       >
         Create an Account
       </Button>

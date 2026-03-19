@@ -39,7 +39,7 @@ export default function RegisterBottom() {
 
   return (
     <FlexRowCenter gap={1} mt={3}>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.95rem" }}>
         Already have an account?
       </Typography>
 

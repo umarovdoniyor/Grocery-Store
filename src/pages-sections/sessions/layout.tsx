@@ -15,7 +15,19 @@ interface Props extends PropsWithChildren {
 
 export default function AuthLayout({ children, bottomContent }: Props) {
   return (
-    <FlexRowCenter bgcolor="grey.50" flexDirection="column" minHeight="100vh" px={2}>
+    <FlexRowCenter
+      flexDirection="column"
+      minHeight="100vh"
+      px={2}
+      sx={{
+        background: "#f9f7f0",
+        backgroundImage: `
+          radial-gradient(circle at 85% 15%, rgba(95, 125, 79, 0.14) 0%, transparent 40%),
+          radial-gradient(circle at 15% 85%, rgba(159, 107, 68, 0.12) 0%, transparent 40%)
+        `,
+        position: "relative"
+      }}
+    >
       <Wrapper elevation={6}>
         <LogoWithTitle />
 

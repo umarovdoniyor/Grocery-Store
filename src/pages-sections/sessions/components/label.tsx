@@ -5,10 +5,11 @@ export default function Label({ children }: FormLabelProps) {
     <FormLabel
       sx={{
         mb: 1,
-        fontSize: 14,
-        fontWeight: 500,
+        fontSize: "0.9rem",
+        fontWeight: 600,
         display: "block",
-        color: "text.secondary"
+        color: "#446127",
+        letterSpacing: "0.2px"
       }}
     >
       {children}

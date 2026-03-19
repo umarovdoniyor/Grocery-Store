@@ -11,7 +11,19 @@ interface Props {
 export default function BoxLink({ href, title }: Props) {
   return (
     <Link href={href}>
-      <Box fontWeight={500} borderColor="grey.900" borderBottom="1px solid">
+      <Box
+        fontWeight={600}
+        color="#4f6d2f"
+        borderBottom="2px solid #4f6d2f"
+        sx={{
+          cursor: "pointer",
+          transition: "all 220ms ease",
+          "&:hover": {
+            color: "#446127",
+            borderBottomColor: "#446127"
+          }
+        }}
+      >
         {title}
       </Box>
     </Link>
