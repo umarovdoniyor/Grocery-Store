@@ -105,7 +105,7 @@ export default function CheckoutSummary() {
       <ListItem title={t("Tax")} value={totals.tax} />
       <ListItem title={t("Discount")} value={totals.discount} />
 
-        {t("Total")}
+      {t("Total")}
 
       <Typography variant="h2" sx={{ color: "#2F4022" }}>
         {currency(totals.total)}

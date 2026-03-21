@@ -70,4 +70,4 @@ export const footerSocialLinks = {
 };
 
 export const footerDescription =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.";
+  "Fresh groceries, pantry staples, and daily essentials from trusted local vendors delivered to your doorstep with care.";

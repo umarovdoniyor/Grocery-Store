@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 // PAGE VIEW COMPONENT
 import { ProductSearchPageView } from "pages-sections/product-details/page-view";
 import { getCatalogFilters, getCatalogProducts } from "utils/services/storefront-catalog";
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 interface Props {
   searchParams: Promise<{
     q: string;
+    tag: string;
     sale: string;
     sales: string;
     page: string;
@@ -28,9 +30,21 @@ interface Props {
 }
 // ==============================================================
 
+const LEGACY_DEAL_REDIRECTS: Record<string, string> = {
+  "flash-sale": "/deals/flash-sales",
+  "weekly-deal": "/deals/weekly-deals",
+  clearance: "/deals/clearance"
+};
+
 export default async function ProductSearch({ searchParams }: Props) {
-  const { q, page, sort, sale, sales, prices, colors, brands, rating, category } =
+  const { q, tag, page, sort, sale, sales, prices, colors, brands, rating, category } =
     await searchParams;
+
+  const legacyDealRedirect = tag ? LEGACY_DEAL_REDIRECTS[tag] : undefined;
+
+  if (legacyDealRedirect) {
+    redirect(legacyDealRedirect);
+  }
 
   const [filters, data] = await Promise.all([
     getCatalogFilters(),

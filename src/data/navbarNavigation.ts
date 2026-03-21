@@ -23,9 +23,9 @@ const navbarNavigation: Menu[] = [
     megaMenuWithSub: false,
     title: "Deals",
     child: [
-      { title: "Flash Sales", url: "/products/search?tag=flash-sale" },
-      { title: "Weekly Deals", url: "/products/search?tag=weekly-deal" },
-      { title: "Clearance", url: "/products/search?tag=clearance" }
+      { title: "Flash Sales", url: "/deals/flash-sales" },
+      { title: "Weekly Deals", url: "/deals/weekly-deals" },
+      { title: "Clearance", url: "/deals/clearance" }
     ]
   }
 ];

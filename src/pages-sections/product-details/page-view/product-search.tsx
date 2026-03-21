@@ -40,6 +40,10 @@ interface Props {
   lastIndex: number;
   firstIndex: number;
   totalProducts: number;
+  announcement?: {
+    title: string;
+    description: string;
+  };
 }
 // ==============================================================
 
@@ -49,7 +53,8 @@ export default function ProductSearchPageView({
   pageCount,
   lastIndex,
   firstIndex,
-  totalProducts
+  totalProducts,
+  announcement
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -78,221 +83,310 @@ export default function ProductSearchPageView({
       }}
     >
       <Container sx={{ pt: { xs: 1.5, md: 2.5 } }}>
-        {/* FILTER ACTION AREA */}
-        <FlexBetween
-          flexWrap="wrap"
-          gap={2}
-          mb={3}
-          sx={{
-            p: 2.25,
-            borderRadius: 3,
-            border: "1px solid rgba(90, 112, 64, 0.16)",
-            backgroundColor: "rgba(255,255,255,0.88)",
-            backdropFilter: "blur(2px)",
-            boxShadow: "0 12px 26px rgba(33, 49, 26, 0.06)"
-          }}
-        >
-          {query ? (
-            <div>
-              <Typography variant="h5" sx={{ mb: 0.5, fontWeight: 700, color: "#1f2a1a" }}>
-                Searching for “{query}”
-              </Typography>
-              <Typography variant="body1" sx={{ color: "#5c6f4a" }}>
-                {totalProducts} results found
-              </Typography>
-            </div>
-          ) : (
-            <div>
-              <Typography variant="h5" sx={{ mb: 0.5, fontWeight: 700, color: "#1f2a1a" }}>
-                Curated Product Search
-              </Typography>
-              <Typography variant="body1" sx={{ color: "#5c6f4a" }}>
-                Filter by shop, ratings, and attributes to find your next pick.
-              </Typography>
-            </div>
-          )}
-
-          <FlexBox alignItems="center" columnGap={3} rowGap={1.5} flexWrap="wrap">
-            <FlexBox alignItems="center" gap={1} flex="1 1 0">
-              <Typography variant="body1" sx={{ color: "#5f6f4c", whiteSpace: "pre" }}>
-                Sort by:
-              </Typography>
-
-              <TextField
-                select
-                fullWidth
-                size="small"
-                value={sort}
-                variant="outlined"
-                placeholder="Sort by"
-                onChange={(e) => handleChangeSearchParams("sort", e.target.value)}
-                sx={{
-                  flex: "1 1 0",
-                  minWidth: "170px",
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                    backgroundColor: "#fff",
-                    "& fieldset": { borderColor: "rgba(90,112,64,0.25)" },
-                    "&:hover fieldset": { borderColor: "rgba(90,112,64,0.5)" },
-                    "&.Mui-focused fieldset": { borderColor: "#5a7a30" }
-                  }
-                }}
-              >
-                {SORT_OPTIONS.map((item) => (
-                  <MenuItem value={item.value} key={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FlexBox>
-
-            <FlexBox
-              alignItems="center"
-              my="0.25rem"
+        {announcement ? (
+          <Box
+            sx={{
+              px: { xs: 2.5, md: 4 },
+              py: { xs: 4, md: 5 },
+              borderRadius: 4,
+              border: "1px solid rgba(90, 112, 64, 0.16)",
+              background:
+                "linear-gradient(145deg, rgba(255,255,255,0.94) 0%, rgba(244, 238, 227, 0.96) 100%)",
+              boxShadow: "0 18px 36px rgba(33, 49, 26, 0.08)",
+              textAlign: "center"
+            }}
+          >
+            <Typography
               sx={{
-                border: "1px solid rgba(90,112,64,0.2)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                px: 1.5,
+                py: 0.6,
+                mb: 2,
                 borderRadius: 999,
-                p: "3px",
-                backgroundColor: "#fff"
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                color: "#446127",
+                backgroundColor: "rgba(90, 122, 48, 0.12)"
               }}
             >
-              <Typography variant="body1" sx={{ color: "#5f6f4c", mr: 1, ml: 0.75 }}>
-                View:
-              </Typography>
+              Future Deals Section
+            </Typography>
 
-              <IconButton
-                onClick={() => handleChangeSearchParams("view", "grid")}
+            <Typography variant="h3" sx={{ mb: 1.5, fontWeight: 800, color: "#24311d" }}>
+              {announcement.title}
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{ maxWidth: 720, mx: "auto", mb: 3, color: "#5e7050", lineHeight: 1.75 }}
+            >
+              {announcement.description}
+            </Typography>
+
+            <FlexBox justifyContent="center" gap={1.25} flexWrap="wrap">
+              <Box
+                component="a"
+                href="/products"
                 sx={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: view === "grid" ? "rgba(90,112,64,0.16)" : "transparent",
-                  color: view === "grid" ? "#3f5a27" : "#77846a"
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: 2.25,
+                  py: 1,
+                  borderRadius: 999,
+                  fontWeight: 700,
+                  color: "#fff",
+                  backgroundColor: "#5a7a30",
+                  textDecoration: "none"
                 }}
               >
-                <Apps fontSize="small" color="inherit" />
-              </IconButton>
+                Browse Products
+              </Box>
 
-              <IconButton
-                onClick={() => handleChangeSearchParams("view", "list")}
+              <Box
+                component="a"
+                href="/"
                 sx={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: view === "list" ? "rgba(90,112,64,0.16)" : "transparent",
-                  color: view === "list" ? "#3f5a27" : "#77846a"
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: 2.25,
+                  py: 1,
+                  borderRadius: 999,
+                  fontWeight: 700,
+                  color: "#446127",
+                  backgroundColor: "rgba(90, 122, 48, 0.1)",
+                  border: "1px solid rgba(90, 122, 48, 0.18)",
+                  textDecoration: "none"
                 }}
               >
-                <ViewList fontSize="small" color="inherit" />
-              </IconButton>
-
-              {/* SHOW IN THE SMALL DEVICE */}
-              <Box display={{ md: "none", xs: "block" }}>
-                <Sidenav
-                  handler={(close) => (
-                    <IconButton
-                      onClick={close}
-                      sx={{
-                        ml: 0.5,
-                        width: 30,
-                        height: 30,
-                        color: "#3f5a27",
-                        backgroundColor: "rgba(90,112,64,0.12)"
-                      }}
-                    >
-                      <FilterList fontSize="small" color="inherit" />
-                    </IconButton>
-                  )}
-                >
-                  <Box px={3} py={2}>
-                    <ProductFilters filters={filters} />
-                  </Box>
-                </Sidenav>
+                Back to Home
               </Box>
             </FlexBox>
-          </FlexBox>
-        </FlexBetween>
-
-        <Grid container spacing={4}>
-          {/* PRODUCT FILTER SIDEBAR AREA */}
-          <Grid size={{ xl: 2, md: 3 }} sx={{ display: { md: "block", xs: "none" } }}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 3,
-                border: "1px solid rgba(90, 112, 64, 0.14)",
-                backgroundColor: "rgba(255,255,255,0.92)",
-                boxShadow: "0 10px 20px rgba(33, 49, 26, 0.05)",
-                position: "sticky",
-                top: 84
-              }}
-            >
-              <ProductFilters filters={filters} />
-            </Box>
-          </Grid>
-
-          {/* PRODUCT VIEW AREA */}
-          <Grid size={{ xl: 10, md: 9, xs: 12 }}>
-            {products.length ? (
-              view === "grid" ? (
-                <ProductsGridView products={products} />
-              ) : (
-                <ProductsListView products={products} />
-              )
-            ) : (
-              <Box
-                sx={{
-                  py: 8,
-                  px: 3,
-                  textAlign: "center",
-                  borderRadius: 3,
-                  border: "1px dashed",
-                  borderColor: "rgba(90,112,64,0.28)",
-                  backgroundColor: "rgba(255,255,255,0.86)"
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  No products found
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Try adjusting your filters or search keyword.
-                </Typography>
-              </Box>
-            )}
-
+          </Box>
+        ) : (
+          <>
+            {/* FILTER ACTION AREA */}
             <FlexBetween
               flexWrap="wrap"
-              mt={6}
+              gap={2}
+              mb={3}
               sx={{
-                p: 2,
-                borderRadius: 2,
-                borderTop: "1px solid rgba(90, 112, 64, 0.2)",
-                backgroundColor: "rgba(255,255,255,0.72)"
+                p: 2.25,
+                borderRadius: 3,
+                border: "1px solid rgba(90, 112, 64, 0.16)",
+                backgroundColor: "rgba(255,255,255,0.88)",
+                backdropFilter: "blur(2px)",
+                boxShadow: "0 12px 26px rgba(33, 49, 26, 0.06)"
               }}
             >
-              <Typography variant="body1" sx={{ color: "grey.600" }}>
-                Showing {firstIndex}-{lastIndex} of {totalProducts} Products
-              </Typography>
+              {query ? (
+                <div>
+                  <Typography variant="h5" sx={{ mb: 0.5, fontWeight: 700, color: "#1f2a1a" }}>
+                    Searching for “{query}”
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: "#5c6f4a" }}>
+                    {totalProducts} results found
+                  </Typography>
+                </div>
+              ) : (
+                <div>
+                  <Typography variant="h5" sx={{ mb: 0.5, fontWeight: 700, color: "#1f2a1a" }}>
+                    Curated Product Search
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: "#5c6f4a" }}>
+                    Filter by shop, ratings, and attributes to find your next pick.
+                  </Typography>
+                </div>
+              )}
 
-              <Pagination
-                color="primary"
-                variant="outlined"
-                page={+page}
-                count={pageCount}
-                onChange={(_, page) => handleChangeSearchParams("page", page.toString())}
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    borderColor: "rgba(90,112,64,0.25)",
-                    color: "#5f6f4c"
-                  },
-                  "& .Mui-selected": {
-                    color: "#fff",
-                    borderColor: "#5a7a30",
-                    backgroundColor: "#5a7a30"
-                  }
-                }}
-              />
+              <FlexBox alignItems="center" columnGap={3} rowGap={1.5} flexWrap="wrap">
+                <FlexBox alignItems="center" gap={1} flex="1 1 0">
+                  <Typography variant="body1" sx={{ color: "#5f6f4c", whiteSpace: "pre" }}>
+                    Sort by:
+                  </Typography>
+
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    value={sort}
+                    variant="outlined"
+                    placeholder="Sort by"
+                    onChange={(e) => handleChangeSearchParams("sort", e.target.value)}
+                    sx={{
+                      flex: "1 1 0",
+                      minWidth: "170px",
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        backgroundColor: "#fff",
+                        "& fieldset": { borderColor: "rgba(90,112,64,0.25)" },
+                        "&:hover fieldset": { borderColor: "rgba(90,112,64,0.5)" },
+                        "&.Mui-focused fieldset": { borderColor: "#5a7a30" }
+                      }
+                    }}
+                  >
+                    {SORT_OPTIONS.map((item) => (
+                      <MenuItem value={item.value} key={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FlexBox>
+
+                <FlexBox
+                  alignItems="center"
+                  my="0.25rem"
+                  sx={{
+                    border: "1px solid rgba(90,112,64,0.2)",
+                    borderRadius: 999,
+                    p: "3px",
+                    backgroundColor: "#fff"
+                  }}
+                >
+                  <Typography variant="body1" sx={{ color: "#5f6f4c", mr: 1, ml: 0.75 }}>
+                    View:
+                  </Typography>
+
+                  <IconButton
+                    onClick={() => handleChangeSearchParams("view", "grid")}
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: view === "grid" ? "rgba(90,112,64,0.16)" : "transparent",
+                      color: view === "grid" ? "#3f5a27" : "#77846a"
+                    }}
+                  >
+                    <Apps fontSize="small" color="inherit" />
+                  </IconButton>
+
+                  <IconButton
+                    onClick={() => handleChangeSearchParams("view", "list")}
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: view === "list" ? "rgba(90,112,64,0.16)" : "transparent",
+                      color: view === "list" ? "#3f5a27" : "#77846a"
+                    }}
+                  >
+                    <ViewList fontSize="small" color="inherit" />
+                  </IconButton>
+
+                  {/* SHOW IN THE SMALL DEVICE */}
+                  <Box display={{ md: "none", xs: "block" }}>
+                    <Sidenav
+                      handler={(close) => (
+                        <IconButton
+                          onClick={close}
+                          sx={{
+                            ml: 0.5,
+                            width: 30,
+                            height: 30,
+                            color: "#3f5a27",
+                            backgroundColor: "rgba(90,112,64,0.12)"
+                          }}
+                        >
+                          <FilterList fontSize="small" color="inherit" />
+                        </IconButton>
+                      )}
+                    >
+                      <Box px={3} py={2}>
+                        <ProductFilters filters={filters} />
+                      </Box>
+                    </Sidenav>
+                  </Box>
+                </FlexBox>
+              </FlexBox>
             </FlexBetween>
-          </Grid>
-        </Grid>
+
+            <Grid container spacing={4}>
+              {/* PRODUCT FILTER SIDEBAR AREA */}
+              <Grid size={{ xl: 2, md: 3 }} sx={{ display: { md: "block", xs: "none" } }}>
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    border: "1px solid rgba(90, 112, 64, 0.14)",
+                    backgroundColor: "rgba(255,255,255,0.92)",
+                    boxShadow: "0 10px 20px rgba(33, 49, 26, 0.05)",
+                    position: "sticky",
+                    top: 84
+                  }}
+                >
+                  <ProductFilters filters={filters} />
+                </Box>
+              </Grid>
+
+              {/* PRODUCT VIEW AREA */}
+              <Grid size={{ xl: 10, md: 9, xs: 12 }}>
+                {products.length ? (
+                  view === "grid" ? (
+                    <ProductsGridView products={products} />
+                  ) : (
+                    <ProductsListView products={products} />
+                  )
+                ) : (
+                  <Box
+                    sx={{
+                      py: 8,
+                      px: 3,
+                      textAlign: "center",
+                      borderRadius: 3,
+                      border: "1px dashed",
+                      borderColor: "rgba(90,112,64,0.28)",
+                      backgroundColor: "rgba(255,255,255,0.86)"
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      No products found
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Try adjusting your filters or search keyword.
+                    </Typography>
+                  </Box>
+                )}
+
+                <FlexBetween
+                  flexWrap="wrap"
+                  mt={6}
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    borderTop: "1px solid rgba(90, 112, 64, 0.2)",
+                    backgroundColor: "rgba(255,255,255,0.72)"
+                  }}
+                >
+                  <Typography variant="body1" sx={{ color: "grey.600" }}>
+                    Showing {firstIndex}-{lastIndex} of {totalProducts} Products
+                  </Typography>
+
+                  <Pagination
+                    color="primary"
+                    variant="outlined"
+                    page={+page}
+                    count={pageCount}
+                    onChange={(_, page) => handleChangeSearchParams("page", page.toString())}
+                    sx={{
+                      "& .MuiPaginationItem-root": {
+                        borderColor: "rgba(90,112,64,0.25)",
+                        color: "#5f6f4c"
+                      },
+                      "& .Mui-selected": {
+                        color: "#fff",
+                        borderColor: "#5a7a30",
+                        backgroundColor: "#5a7a30"
+                      }
+                    }}
+                  />
+                </FlexBetween>
+              </Grid>
+            </Grid>
+          </>
+        )}
       </Container>
     </Box>
   );

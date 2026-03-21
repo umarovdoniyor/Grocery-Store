@@ -39,7 +39,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body id="body" className={geist.className}>
+      <body id="body" className={geist.className} suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
             <SettingsProvider>

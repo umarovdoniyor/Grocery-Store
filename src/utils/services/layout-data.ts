@@ -314,7 +314,7 @@ async function getLayoutDataUncached(): Promise<LayoutModel> {
 
 const getLayoutDataCached = unstable_cache(
   async () => getLayoutDataUncached(),
-  ["layout-data-v1"],
+  ["layout-data-v3"],
   {
     revalidate: 300
   }
