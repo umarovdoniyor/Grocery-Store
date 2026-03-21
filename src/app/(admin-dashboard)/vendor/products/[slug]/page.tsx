@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { EditProductPageView } from "pages-sections/vendor-dashboard/products/page-view";
+import VendorProductEditClient from "./vendor-product-edit-client";
 
 export const metadata: Metadata = {
   title: "Edit Product - Bazaar Next.js E-commerce Template",
@@ -15,5 +15,5 @@ export default async function VendorProductEditPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <EditProductPageView basePath="/vendor/products" mode="edit" productId={slug} />;
+  return <VendorProductEditClient productId={slug} />;
 }

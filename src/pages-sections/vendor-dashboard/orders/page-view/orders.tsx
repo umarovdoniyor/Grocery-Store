@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
@@ -10,14 +11,14 @@ import OverlayScrollbar from "components/overlay-scrollbar";
 import { TableHeader, TablePagination } from "components/data-table";
 // GLOBAL CUSTOM HOOK
 import useMuiTable from "hooks/useMuiTable";
-// LOCAL CUSTOM COMPONENT
-import OrderRow from "../order-row";
-import SearchArea from "../../search-box";
-import PageWrapper from "../../page-wrapper";
 // CUSTOM DATA MODEL
 import Order from "models/Order.model";
 // TABLE HEAD COLUMN DATA
 import { tableHeading } from "../table-heading";
+
+const OrderRow = dynamic(() => import("../order-row"), { ssr: false });
+const SearchArea = dynamic(() => import("../../search-box"), { ssr: false });
+const PageWrapper = dynamic(() => import("../../page-wrapper"), { ssr: false });
 
 // =============================================================================
 type Props = {

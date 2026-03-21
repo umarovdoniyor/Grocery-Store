@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import AsyncState from "components/AsyncState";
-import { ProductsPageView } from "pages-sections/vendor-dashboard/products/page-view";
 import {
   VendorProductRow,
   fetchVendorProductsForUi,
   removeVendorProductForUi,
   updateVendorProductPublishedForUi
 } from "utils/services/vendor-products";
+
+const ProductsPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/products/page-view/products"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 export default function ProductsClient() {
   const [products, setProducts] = useState<VendorProductRow[]>([]);

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +16,6 @@ import { Autocomplete, FormProvider, TextField } from "components/form-hook";
 import countryList from "data/countryList";
 // LOCAL CUSTOM COMPONENT
 import PageWrapper from "../../page-wrapper";
-import CoverPicSection from "../cover-pic-section";
 import { useAuth } from "contexts/AuthContext";
 import {
   toPublicImageUrl,
@@ -24,6 +24,8 @@ import {
 } from "../../../../../libs/upload";
 import { updateMyVendorProfile } from "../../../../../libs/vendor";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
+
+const CoverPicSection = dynamic(() => import("../cover-pic-section"), { ssr: false });
 
 const validationSchema = yup.object().shape({
   city: yup.string().notRequired(),

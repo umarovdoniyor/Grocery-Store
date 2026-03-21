@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardPageView } from "pages-sections/vendor-dashboard/dashboard/page-view";
+import DashboardClient from "./dashboard-client";
 
 export const metadata: Metadata = {
   title: "Vendor Dashboard - Bazaar Next.js E-commerce Template",
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function VendorDashboard() {
-  return <DashboardPageView />;
+  return <DashboardClient />;
 }

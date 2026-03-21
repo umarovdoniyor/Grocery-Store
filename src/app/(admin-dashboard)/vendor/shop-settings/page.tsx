@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ShopSettingsPageView } from "pages-sections/vendor-dashboard/shop-settings/page-view";
+import ShopSettingsClient from "./shop-settings-client";
 
 export const metadata: Metadata = {
   title: "Shop Settings - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function ShopSettings() {
-  return <ShopSettingsPageView />;
+  return <ShopSettingsClient />;
 }

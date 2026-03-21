@@ -1,10 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-// LOCAL CUSTOM COMPONENT
-import SettingsForm from "../settings-form";
+
+const SettingsForm = dynamic(() => import("../settings-form"), { ssr: false });
 
 export default function ShopSettingsPageView() {
   return (

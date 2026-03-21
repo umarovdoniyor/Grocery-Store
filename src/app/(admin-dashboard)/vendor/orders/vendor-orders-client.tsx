@@ -1,11 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import AsyncState from "components/AsyncState";
-import { OrdersPageView } from "pages-sections/vendor-dashboard/orders/page-view";
 import type Order from "models/Order.model";
 import { useAuth } from "contexts/AuthContext";
 import { fetchVendorOrdersForUi } from "utils/services/vendor-orders";
+
+const OrdersPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/orders/page-view/orders"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 export default function VendorOrdersClient() {
   const { user } = useAuth();

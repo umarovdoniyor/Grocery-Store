@@ -1,16 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-// LOCAL CUSTOM COMPONENT
-import OrderActions from "../order-actions";
-import TotalSummery from "../total-summery";
-import PageWrapper from "../../page-wrapper";
-import OrderedProduct from "../ordered-product";
-import ShippingAddress from "../shipping-address";
 // CUSTOM DATA MODEL
 import Order from "models/Order.model";
+
+const OrderActions = dynamic(() => import("../order-actions"), { ssr: false });
+const TotalSummery = dynamic(() => import("../total-summery"), { ssr: false });
+const PageWrapper = dynamic(() => import("../../page-wrapper"), { ssr: false });
+const OrderedProduct = dynamic(() => import("../ordered-product"), { ssr: false });
+const ShippingAddress = dynamic(() => import("../shipping-address"), { ssr: false });
 
 // ==============================================================
 type Props = {

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
@@ -10,11 +11,11 @@ import OverlayScrollbar from "components/overlay-scrollbar";
 import { TableHeader, TablePagination } from "components/data-table";
 // GLOBAL CUSTOM HOOK
 import useMuiTable from "hooks/useMuiTable";
-//  LOCAL CUSTOM COMPONENT
-import ProductRow from "../product-row";
 import type { ProductRowItem } from "../product-row";
-import SearchArea from "../../search-box";
-import PageWrapper from "../../page-wrapper";
+
+const ProductRow = dynamic(() => import("../product-row"), { ssr: false });
+const SearchArea = dynamic(() => import("../../search-box"), { ssr: false });
+const PageWrapper = dynamic(() => import("../../page-wrapper"), { ssr: false });
 
 // TABLE HEADING DATA LIST
 const defaultTableHeading = [

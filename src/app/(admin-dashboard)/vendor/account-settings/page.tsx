@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { AccountSettingsPageView } from "pages-sections/vendor-dashboard/account-settings/page-view";
+import AccountSettingsClient from "./account-settings-client";
 
 export const metadata: Metadata = {
   title: "Account Settings - Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function AccountSettings() {
-  return <AccountSettingsPageView />;
+  return <AccountSettingsClient />;
 }
