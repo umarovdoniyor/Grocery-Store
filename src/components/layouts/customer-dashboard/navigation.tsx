@@ -41,13 +41,6 @@ export function Navigation() {
 
   const handleLogout = async () => {
     await logout();
-
-    if (typeof window !== "undefined") {
-      window.location.replace("/");
-      return;
-    }
-
-    router.replace("/");
   };
 
   useEffect(() => {

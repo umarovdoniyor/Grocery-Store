@@ -24,29 +24,26 @@ import {
   getGrocery1Navigation
 } from "utils/services/grocery-home";
 import { getLayoutData } from "utils/services/layout-data";
+import type LayoutModel from "models/Layout.model";
 
 // =====================================================
 type Props = {
   selected?: { title: string; slug: string; parent?: { title: string; slug: string } | null };
+  layoutData?: LayoutModel;
 };
 // =====================================================
 
-export default async function GroceryOnePageView({ selected }: Props) {
-  const [
-    products,
-    featuredProducts,
-    popularProducts,
-    trendingProducts,
-    grocery1NavList,
-    layoutData
-  ] = await Promise.all([
+export default async function GroceryOnePageView({ selected, layoutData }: Props) {
+  const [products, grocery1NavList] = await Promise.all([
     getGroceryProducts(selected?.slug),
-    getFeaturedProducts(),
-    getPopularProducts(),
-    getTrendingProducts(),
-    getGrocery1Navigation(),
-    getLayoutData()
+    getGrocery1Navigation()
   ]);
+
+  const [featuredProducts, popularProducts, trendingProducts] = selected
+    ? [[], [], []]
+    : await Promise.all([getFeaturedProducts(), getPopularProducts(), getTrendingProducts()]);
+
+  const resolvedLayoutData = layoutData || (await getLayoutData());
 
   const mobileIconMap = {
     Home,
@@ -55,7 +52,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
     User2
   };
 
-  const mobileNavigation = (layoutData.mobileNavigation.version2 || [])
+  const mobileNavigation = (resolvedLayoutData.mobileNavigation.version2 || [])
     .map((item) => ({
       ...item,
       Icon: mobileIconMap[item.icon as keyof typeof mobileIconMap]
@@ -97,7 +94,7 @@ export default async function GroceryOnePageView({ selected }: Props) {
         <Section5 />
 
         {/* FOOTER AREA */}
-        <Footer2 footer={layoutData.footer} />
+        <Footer2 footer={resolvedLayoutData.footer} />
       </StickyWrapper>
 
       {/* POPUP NEWSLETTER FORM */}

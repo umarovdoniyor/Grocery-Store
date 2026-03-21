@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -9,7 +10,8 @@ import useCart from "hooks/useCart";
 import Trash from "icons/Trash";
 import CartItem from "../cart-item";
 import EmptyCart from "../empty-cart";
-import CheckoutForm from "../checkout-form";
+
+const CheckoutForm = dynamic(() => import("../checkout-form"));
 
 export default function CartPageView() {
   const { state, dispatch } = useCart();

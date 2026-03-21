@@ -1,6 +1,7 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import type LayoutModel from "models/Layout.model";
-import { getCategories, getCategoryTree } from "../../../libs/category";
+import { getCategories } from "../../../libs/category";
 import navbarNavigation from "data/navbarNavigation";
 import { categoryMenus } from "data/navigations";
 import {
@@ -16,6 +17,9 @@ import {
 import type { CategoryMenuItem } from "models/Category.model";
 import type { Category, CategoryTreeNode } from "../../../libs/category";
 import type { Menu, CategoryMenuItem as NavigationCategoryMenuItem } from "models/Navigation.model";
+import { getSharedCategoryTree } from "./category-tree";
+
+const getCategoryTreeCached = getSharedCategoryTree;
 
 const footerContact = {
   phone: "+1 1123 456 780",
@@ -176,7 +180,7 @@ function buildGroupedChildrenForHeaderNav(
 }
 
 async function getHeaderCategories() {
-  const liveCategories = await getLiveCategories();
+  const liveCategories = await getLiveCategoriesCached();
 
   const categoryOptions = liveCategories.map((item) => ({
     title: item.name,
@@ -189,7 +193,7 @@ async function getHeaderCategories() {
 }
 
 async function getHeaderCategoryMenus(): Promise<CategoryMenuItem[]> {
-  const treeResponse = await getCategoryTree();
+  const treeResponse = await getCategoryTreeCached();
 
   if (treeResponse.success && treeResponse.tree?.length) {
     const liveMenus: CategoryMenuItem[] = treeResponse.tree.map((parent) => ({
@@ -207,7 +211,7 @@ async function getHeaderCategoryMenus(): Promise<CategoryMenuItem[]> {
 }
 
 async function getLiveCategories(): Promise<Category[]> {
-  const treeResponse = await getCategoryTree();
+  const treeResponse = await getCategoryTreeCached();
 
   if (treeResponse.success && treeResponse.tree?.length) {
     const flat = flattenCategoryTree(treeResponse.tree);
@@ -228,7 +232,7 @@ async function getLiveCategories(): Promise<Category[]> {
 }
 
 async function getHeaderNavigation(): Promise<Menu[]> {
-  const treeResponse = await getCategoryTree();
+  const treeResponse = await getCategoryTreeCached();
 
   let categoryMegaMenu: NavigationCategoryMenuItem[] = [];
 
@@ -238,7 +242,7 @@ async function getHeaderNavigation(): Promise<Menu[]> {
       child: buildGroupedChildrenForHeaderNav(parent)
     }));
   } else {
-    const liveCategories = await getLiveCategories();
+    const liveCategories = await getLiveCategoriesCached();
 
     if (!liveCategories.length) return navbarNavigation;
 
@@ -268,7 +272,9 @@ async function getHeaderNavigation(): Promise<Menu[]> {
   });
 }
 
-export const getLayoutData = cache(async (): Promise<LayoutModel> => {
+const getLiveCategoriesCached = cache(async () => getLiveCategories());
+
+async function getLayoutDataUncached(): Promise<LayoutModel> {
   const [categories, headerCategoryMenus, headerNavigation] = await Promise.all([
     getHeaderCategories(),
     getHeaderCategoryMenus(),
@@ -304,4 +310,14 @@ export const getLayoutData = cache(async (): Promise<LayoutModel> => {
       logo: "/assets/images/logo2.svg"
     }
   };
-});
+}
+
+const getLayoutDataCached = unstable_cache(
+  async () => getLayoutDataUncached(),
+  ["layout-data-v1"],
+  {
+    revalidate: 300
+  }
+);
+
+export const getLayoutData = cache(async (): Promise<LayoutModel> => getLayoutDataCached());

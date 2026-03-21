@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import type Filters from "models/Filters";
 import type Product from "models/Product.model";
 import {
@@ -126,7 +127,7 @@ const toInt = (value?: string, fallback = 1) => {
   return Number.isNaN(parsed) || parsed < 1 ? fallback : parsed;
 };
 
-export async function getCatalogFilters(): Promise<Filters> {
+async function getCatalogFiltersUncached(): Promise<Filters> {
   const [categoriesRes, vendorsRes] = await Promise.all([
     getCategories({ page: 1, limit: 50, status: "ACTIVE" }),
     getVendors({ page: 1, limit: 50, status: "ACTIVE", sortBy: "POPULAR" })
@@ -148,6 +149,16 @@ export async function getCatalogFilters(): Promise<Filters> {
     others: DEFAULT_OTHERS,
     colors: DEFAULT_COLORS
   };
+}
+
+const getCatalogFiltersCached = unstable_cache(
+  async () => getCatalogFiltersUncached(),
+  ["storefront-catalog-filters"],
+  { revalidate: 300 }
+);
+
+export async function getCatalogFilters(): Promise<Filters> {
+  return getCatalogFiltersCached();
 }
 
 interface CatalogSearchParams {
@@ -206,6 +217,22 @@ const applyLocalSort = (products: Product[], sort?: string): Product[] => {
   const sorted = [...products].sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
   return sort === "asc" ? sorted : sorted.reverse();
 };
+
+const getCategoryIdsBySlugCached = unstable_cache(
+  async (categorySlug: string): Promise<string[]> => {
+    const bySlug = await getCategoryBySlug(categorySlug);
+    const matchedIds = bySlug.success && bySlug.category ? [bySlug.category._id] : [];
+
+    if (!matchedIds.length) {
+      const categoryRes = await getCategories({ page: 1, limit: 20, search: categorySlug });
+      matchedIds.push(...(categoryRes.list || []).map((item) => item._id));
+    }
+
+    return matchedIds;
+  },
+  ["storefront-catalog-category-ids"],
+  { revalidate: 300 }
+);
 
 export async function getCatalogProducts(params: CatalogSearchParams) {
   const page = toInt(params.page, 1);
@@ -268,13 +295,7 @@ export async function getCatalogProducts(params: CatalogSearchParams) {
   };
 
   if (params.category) {
-    const bySlug = await getCategoryBySlug(params.category);
-    const matchedIds = bySlug.success && bySlug.category ? [bySlug.category._id] : [];
-
-    if (!matchedIds.length) {
-      const categoryRes = await getCategories({ page: 1, limit: 20, search: params.category });
-      matchedIds.push(...(categoryRes.list || []).map((item) => item._id));
-    }
+    const matchedIds = await getCategoryIdsBySlugCached(params.category);
 
     if (matchedIds.length) {
       input.categoryIds = matchedIds;

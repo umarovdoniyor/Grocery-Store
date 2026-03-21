@@ -73,7 +73,6 @@ export function SearchInput1({ categories }: Props) {
 
   const INPUT_PROPS = {
     sx: {
-      border: 0,
       padding: 0,
       borderRadius: 999,
       border: "1px solid rgba(93, 112, 68, 0.3)",

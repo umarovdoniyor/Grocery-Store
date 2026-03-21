@@ -1,10 +1,14 @@
 import { Fragment } from "react";
+import dynamic from "next/dynamic";
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-// CUSTOM COMPONENT
-import AddressForm from "../address-form";
 import DashboardHeader from "../../dashboard-header";
 // CUSTOM DATA MODEL
 import Address from "models/Address.model";
+
+const AddressForm = dynamic(() => import("../address-form"), {
+  loading: () => <Box sx={{ minHeight: 280 }} />
+});
 
 // =============================================================
 type Props = { address: Address };

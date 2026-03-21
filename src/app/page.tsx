@@ -18,7 +18,7 @@ export default async function IndexPage() {
 
   return (
     <ShopLayout3 showFooter={false} showMobileMenu={false} data={data}>
-      <GroceryOnePageView />
+      <GroceryOnePageView layoutData={data} />
     </ShopLayout3>
   );
 }

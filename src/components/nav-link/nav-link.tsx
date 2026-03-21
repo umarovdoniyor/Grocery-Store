@@ -21,10 +21,18 @@ const StyledLink = styled(Link, {
 export interface NavLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
   className?: string;
+  prefetch?: boolean;
 }
 // ==============================================================
 
-export function NavLink({ href, children, style, className, ...props }: NavLinkProps) {
+export function NavLink({
+  href,
+  children,
+  style,
+  className,
+  prefetch = false,
+  ...props
+}: NavLinkProps) {
   const pathname = usePathname();
 
   const isActive = useMemo(() => {
@@ -32,7 +40,14 @@ export function NavLink({ href, children, style, className, ...props }: NavLinkP
   }, [pathname, href]);
 
   return (
-    <StyledLink href={href} style={style} className={clsx(className)} active={isActive} {...props}>
+    <StyledLink
+      href={href}
+      prefetch={prefetch}
+      style={style}
+      className={clsx(className)}
+      active={isActive}
+      {...props}
+    >
       {children}
     </StyledLink>
   );

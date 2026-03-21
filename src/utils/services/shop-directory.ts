@@ -1,7 +1,6 @@
 import type Shop from "models/Shop.model";
 import type Product from "models/Product.model";
 import { getProductById, getProducts } from "../../../libs/product";
-import { getProductReviews } from "../../../libs/review";
 import { toPublicImageUrl } from "../../../libs/upload";
 import {
   getVendorBySlug,
@@ -85,10 +84,7 @@ const safeImage = (value?: string | null, fallback = DEFAULT_PROFILE, version?: 
   return resolved;
 };
 
-const mapProductToUi = (
-  item: VendorProductSummary,
-  reviewSummary?: { ratingAvg: number; reviewsCount: number }
-): Product => {
+const mapProductToUi = (item: VendorProductSummary): Product => {
   const price = Number(item.price || 0);
   const salePrice = typeof item.salePrice === "number" ? item.salePrice : undefined;
   const discount =
@@ -104,8 +100,8 @@ const mapProductToUi = (
     images: [thumbnail],
     price,
     discount,
-    rating: Number(reviewSummary?.ratingAvg || 0),
-    reviewsCount: Number(reviewSummary?.reviewsCount || 0),
+    rating: Number(item.ratingAvg || 0),
+    reviewsCount: Number(item.reviewsCount || 0),
     likes: Number(item.likes || 0),
     meLiked: Boolean((item as VendorProductSummary & { meLiked?: boolean }).meLiked),
     views: Number(item.views || 0),
@@ -113,63 +109,6 @@ const mapProductToUi = (
     status: item.status,
     published: item.status === "PUBLISHED"
   };
-};
-
-const getReviewSummaryMap = async (productIds: string[]) => {
-  const uniqueIds = Array.from(new Set(productIds.filter(Boolean)));
-  if (uniqueIds.length === 0) return new Map<string, { ratingAvg: number; reviewsCount: number }>();
-
-  const results = await Promise.allSettled(
-    uniqueIds.map((productId) =>
-      getProductReviews({ productId, page: 1, limit: 1, sortBy: "NEWEST" })
-    )
-  );
-
-  const summaryMap = new Map<string, { ratingAvg: number; reviewsCount: number }>();
-
-  results.forEach((result, index) => {
-    if (result.status !== "fulfilled") return;
-    if (!result.value.success) return;
-
-    summaryMap.set(uniqueIds[index], {
-      ratingAvg: Number(result.value.summary?.ratingAvg || 0),
-      reviewsCount: Number(result.value.summary?.reviewsCount || 0)
-    });
-  });
-
-  return summaryMap;
-};
-
-const getCatalogSummaryFallbackMap = async (items: VendorProductSummary[]) => {
-  const unresolvedIds = new Set(items.map((item) => item._id).filter(Boolean));
-  const unresolvedSlugs = new Set(items.map((item) => item.slug).filter(Boolean));
-  const map = new Map<string, { ratingAvg: number; reviewsCount: number }>();
-
-  if (unresolvedIds.size === 0 && unresolvedSlugs.size === 0) return map;
-
-  for (let page = 1; page <= MAX_PRODUCT_LOOKUP_PAGES; page += 1) {
-    const response = await getProducts({ page, limit: PRODUCT_LOOKUP_LIMIT, sortBy: "NEWEST" });
-    if (!response.success || !response.list?.length) break;
-
-    for (const summary of response.list) {
-      const matchById = unresolvedIds.has(summary._id);
-      const matchBySlug = unresolvedSlugs.has(summary.slug);
-      if (!matchById && !matchBySlug) continue;
-
-      map.set(summary._id, {
-        ratingAvg: Number(summary.ratingAvg || 0),
-        reviewsCount: Number(summary.reviewsCount || 0)
-      });
-
-      unresolvedIds.delete(summary._id);
-      unresolvedSlugs.delete(summary.slug);
-    }
-
-    if (unresolvedIds.size === 0 && unresolvedSlugs.size === 0) break;
-    if ((response.list || []).length < PRODUCT_LOOKUP_LIMIT) break;
-  }
-
-  return map;
 };
 
 const mapVendorSort = (sort?: string): VendorProductsInquiryInput["sortBy"] => {
@@ -277,27 +216,8 @@ const getVendorProducts = async ({
   q?: string;
 }) => {
   const searchQuery = (q || "").trim().toLowerCase();
-  const mapItemsToProducts = async (items: VendorProductSummary[]) => {
-    const reviewSummaryMap = await getReviewSummaryMap(items.map((item) => item._id));
-    const catalogSummaryMap = await getCatalogSummaryFallbackMap(items);
-
-    return items.map((item) => {
-      const reviewSummary = reviewSummaryMap.get(item._id);
-      const fallbackSummary = catalogSummaryMap.get(item._id);
-      const resolvedSummary = {
-        ratingAvg:
-          Number(reviewSummary?.ratingAvg || 0) > 0
-            ? Number(reviewSummary?.ratingAvg || 0)
-            : Number(fallbackSummary?.ratingAvg || 0),
-        reviewsCount:
-          Number(reviewSummary?.reviewsCount || 0) > 0
-            ? Number(reviewSummary?.reviewsCount || 0)
-            : Number(fallbackSummary?.reviewsCount || 0)
-      };
-
-      return mapProductToUi(item, resolvedSummary);
-    });
-  };
+  const mapItemsToProducts = (items: VendorProductSummary[]) =>
+    items.map((item) => mapProductToUi(item));
 
   if (searchQuery) {
     const allItems: VendorProductSummary[] = [];
@@ -332,7 +252,7 @@ const getVendorProducts = async ({
     const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
     const pageStart = (page - 1) * limit;
     const pageItems = filteredItems.slice(pageStart, pageStart + limit);
-    const products = await mapItemsToProducts(pageItems);
+    const products = mapItemsToProducts(pageItems);
     const firstIndex = totalProducts === 0 ? 0 : pageStart + 1;
     const lastIndex = Math.min(page * limit, totalProducts);
 
@@ -358,7 +278,7 @@ const getVendorProducts = async ({
   });
 
   const sortedItems = applyLocalVendorSort(response.list || [], sort);
-  const products = await mapItemsToProducts(sortedItems);
+  const products = mapItemsToProducts(sortedItems);
   const totalProducts = response.total || 0;
   const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
   const firstIndex = totalProducts === 0 ? 0 : (page - 1) * limit + 1;

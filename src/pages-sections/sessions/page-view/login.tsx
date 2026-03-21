@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
@@ -32,6 +32,7 @@ export default function LoginPageView() {
   const { login, isAuthenticated, isLoading } = useAuth();
   const { visiblePassword, togglePasswordVisible } = usePasswordVisible();
   const [error, setError] = useState<string | null>(null);
+  const hasRedirectedRef = useRef(false);
 
   const initialValues = { identifier: "", password: "" };
 
@@ -75,7 +76,14 @@ export default function LoginPageView() {
 
   useEffect(() => {
     if (isLoading) return;
-    if (isAuthenticated) router.replace(redirectPath);
+    if (!isAuthenticated) {
+      hasRedirectedRef.current = false;
+      return;
+    }
+
+    if (hasRedirectedRef.current) return;
+    hasRedirectedRef.current = true;
+    router.replace(redirectPath);
   }, [isAuthenticated, isLoading, redirectPath, router]);
 
   const handleSubmitForm = handleSubmit(async (values) => {
@@ -84,7 +92,8 @@ export default function LoginPageView() {
     const result = await login(loginIdentifier, values.password);
 
     if (result.success) {
-      router.push(redirectPath);
+      // Redirect is handled by the auth-state effect above to avoid duplicate navigations.
+      return;
     } else {
       const message = result.error || "Login failed";
       setError(message);

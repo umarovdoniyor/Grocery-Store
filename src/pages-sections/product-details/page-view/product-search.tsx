@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // MUI
 import Box from "@mui/material/Box";
@@ -19,7 +20,7 @@ import Sidenav from "components/side-nav";
 import { FlexBetween, FlexBox } from "components/flex-box";
 import ProductFilters from "components/products-view/filters";
 import ProductsGridView from "components/products-view/products-grid-view";
-import ProductsListView from "components/products-view/products-list-view";
+const ProductsListView = dynamic(() => import("components/products-view/products-list-view"));
 // TYPES
 import Filters from "models/Filters";
 import Product from "models/Product.model";

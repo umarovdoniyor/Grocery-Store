@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 // STYLED COMPONENT
 import { Wrapper, StyledButton } from "./styles";
 
-export default function OrderConfirmationPageView() {
-  const searchParams = useSearchParams();
-  const paymentMethod = searchParams.get("method");
-  const orderNo = searchParams.get("orderNo");
-  const orderId = searchParams.get("orderId");
+type Props = {
+  paymentMethod?: string;
+  orderNo?: string;
+  orderId?: string;
+};
 
+export default function OrderConfirmationPageView({ paymentMethod, orderNo, orderId }: Props) {
   return (
     <Container className="mt-2 mb-5">
       <Wrapper>

@@ -17,15 +17,18 @@ import {
 
 interface Props {
   orderId: string;
+  initialOrder?: Order | null;
 }
 
-export default function OrderDetailsClient({ orderId }: Props) {
+export default function OrderDetailsClient({ orderId, initialOrder }: Props) {
   const { enqueueSnackbar } = useSnackbar();
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<Order | null>(initialOrder || null);
   const [error, setError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
+    if (order) return;
+
     let active = true;
 
     getCustomerOrderById(orderId).then((result) => {
@@ -42,7 +45,7 @@ export default function OrderDetailsClient({ orderId }: Props) {
     return () => {
       active = false;
     };
-  }, [orderId]);
+  }, [order, orderId]);
 
   if (!order && !error) {
     return (

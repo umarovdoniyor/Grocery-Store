@@ -2,8 +2,6 @@
 
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
-// GLOBAL CUSTOM COMPONENTS
-import { NavLink } from "components/nav-link";
 
 // COMMON STYLED OBJECT
 export const NAV_LINK_STYLES = {
@@ -33,8 +31,6 @@ export const NAV_LINK_STYLES = {
   },
   "&:last-child": { marginRight: 0 }
 };
-
-export const StyledNavLink = styled(NavLink)(() => ({ ...NAV_LINK_STYLES }));
 
 export const ParentNav = styled(Box, {
   shouldForwardProp: (prop) => prop !== "active"

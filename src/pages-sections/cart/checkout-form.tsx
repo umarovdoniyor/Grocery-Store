@@ -5,7 +5,6 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
 // GLOBAL CUSTOM HOOK
 import useCart from "hooks/useCart";
@@ -92,20 +91,22 @@ export default function CheckoutForm() {
       </Typography>
 
       {/* COUNTRY TEXT FIELD */}
-      <Autocomplete
+      <TextField
+        select
         fullWidth
+        size="small"
+        label="Country"
+        variant="outlined"
+        placeholder="Select Country"
+        defaultValue="US"
         sx={{ mb: 2 }}
-        options={countryList}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            size="small"
-            label="Country"
-            variant="outlined"
-            placeholder="Select Country"
-          />
-        )}
-      />
+      >
+        {countryList.map(({ label, value }) => (
+          <MenuItem key={value} value={value}>
+            {label}
+          </MenuItem>
+        ))}
+      </TextField>
 
       {/* STATE/CITY TEXT FIELD */}
       <TextField

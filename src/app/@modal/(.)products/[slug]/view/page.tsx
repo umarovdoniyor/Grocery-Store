@@ -1,14 +1,17 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import ProductQuickView from "./components/product-quick-view";
 
-import { getProductBySlug } from "utils/services/product-details";
+import { getQuickViewProductBySlug } from "utils/services/product-details";
 import { SlugParams } from "models/Common";
+
+const getCachedQuickViewProduct = cache(getQuickViewProductBySlug);
 
 export async function generateMetadata({ params }: SlugParams): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedQuickViewProduct(slug);
 
   if (!product) notFound();
 
@@ -22,7 +25,7 @@ export async function generateMetadata({ params }: SlugParams): Promise<Metadata
 
 export default async function QuickViewPage({ params }: SlugParams) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedQuickViewProduct(slug);
 
   if (!product) notFound();
 

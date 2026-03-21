@@ -1,10 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import AsyncState from "components/AsyncState";
 import { useProtectedRoute } from "hooks/useProtectedRoute";
-import { ProfileEditPageView } from "pages-sections/customer-dashboard/profile/page-view";
+
+const ProfileEditPageView = dynamic(() =>
+  import("pages-sections/customer-dashboard/profile/page-view").then((mod) => ({
+    default: mod.ProfileEditPageView
+  }))
+);
 
 export default function ProfileEditClient() {
   const router = useRouter();

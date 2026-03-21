@@ -1,11 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import AsyncState from "components/AsyncState";
 import { useAuth } from "contexts/AuthContext";
-import { WishListPageView } from "pages-sections/customer-dashboard/wish-list";
 import { getCustomerWishlistProducts } from "utils/services/customer-dashboard";
 import type Product from "models/Product.model";
+
+const WishListPageView = dynamic(() =>
+  import("pages-sections/customer-dashboard/wish-list").then((mod) => ({
+    default: mod.WishListPageView
+  }))
+);
 
 type Props = { page?: string };
 

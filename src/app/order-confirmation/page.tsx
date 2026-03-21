@@ -9,6 +9,24 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export default function OrderConfirmation() {
-  return <OrderConfirmationPageView />;
+type OrderConfirmationSearchParams = {
+  method?: string;
+  orderNo?: string;
+  orderId?: string;
+};
+
+export default async function OrderConfirmation({
+  searchParams
+}: {
+  searchParams: Promise<OrderConfirmationSearchParams>;
+}) {
+  const params = await searchParams;
+
+  return (
+    <OrderConfirmationPageView
+      paymentMethod={params.method}
+      orderNo={params.orderNo}
+      orderId={params.orderId}
+    />
+  );
 }

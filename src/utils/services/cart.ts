@@ -1,4 +1,5 @@
 import { initializeApollo } from "../../../apollo/client";
+import { getJwtToken } from "../../../libs/auth";
 import {
   ADD_TO_CART,
   CLEAR_CART,
@@ -80,6 +81,11 @@ export async function getMyCartItems(): Promise<{
   error?: string;
 }> {
   try {
+    // Skip protected cart query when user is logged out.
+    if (!getJwtToken()) {
+      return { success: true, items: [] };
+    }
+
     const apolloClient = await initializeApollo();
     const { data } = await apolloClient.query({
       query: GET_MY_CART,

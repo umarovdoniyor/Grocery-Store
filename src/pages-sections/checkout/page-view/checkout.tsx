@@ -1,7 +1,14 @@
+import dynamic from "next/dynamic";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-// LOCAL CUSTOM COMPONENTS
-import CheckoutForm from "../checkout-form";
-import CheckoutSummary from "../checkout-summery";
+
+const CheckoutForm = dynamic(() => import("../checkout-form"), {
+  loading: () => <Box sx={{ minHeight: 520 }} />
+});
+
+const CheckoutSummary = dynamic(() => import("../checkout-summery"), {
+  loading: () => <Box sx={{ minHeight: 320 }} />
+});
 
 export default function CheckoutPageView() {
   return (

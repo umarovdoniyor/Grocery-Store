@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 // MUI
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
@@ -17,6 +17,7 @@ import { useAuth } from "contexts/AuthContext";
 
 export function HeaderAccount() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -36,7 +37,10 @@ export function HeaderAccount() {
   const handleLogout = async () => {
     await logout();
     handleClose();
-    router.push("/");
+
+    if (pathname !== "/") {
+      router.replace("/");
+    }
   };
 
   // Menu items based on role

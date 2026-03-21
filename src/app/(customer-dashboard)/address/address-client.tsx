@@ -2,7 +2,7 @@
 
 import AsyncState from "components/AsyncState";
 import { useAuth } from "contexts/AuthContext";
-import { AddressPageView } from "pages-sections/customer-dashboard/address/page-view";
+import { AddressPageView } from "pages-sections/customer-dashboard/address/page-view/address";
 import { getCustomerAddressList } from "utils/services/customer-dashboard";
 
 type Props = { page?: string };

@@ -2,7 +2,7 @@
 
 import AsyncState from "components/AsyncState";
 import { useAuth } from "contexts/AuthContext";
-import { AddressDetailsPageView } from "pages-sections/customer-dashboard/address/page-view";
+import { AddressDetailsPageView } from "pages-sections/customer-dashboard/address/page-view/address-details";
 import { getCustomerAddressById } from "utils/services/customer-dashboard";
 
 type Props = { id: string };

@@ -23,9 +23,6 @@ export default function AccountPopover() {
 
   const handleLogout = async () => {
     await logout();
-    if (typeof window !== "undefined") {
-      window.location.replace("/");
-    }
   };
 
   const handleClose = () => setAnchorEl(null);

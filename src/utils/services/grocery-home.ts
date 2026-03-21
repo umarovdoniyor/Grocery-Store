@@ -1,11 +1,11 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import type Product from "models/Product.model";
 import type Service from "models/Service.model";
 import type CategoryNavList from "models/CategoryNavList.model";
-import { getCategories, getCategoryBySlug, getCategoryTree } from "../../../libs/category";
+import { getCategories, getCategoryBySlug } from "../../../libs/category";
 import {
   getFeaturedProducts as getFeaturedProductsApi,
-  getProductById,
   getPopularProducts as getPopularProductsApi,
   getTrendingProducts as getTrendingProductsApi,
   getProducts,
@@ -13,6 +13,7 @@ import {
   type ProductSummary,
   type ProductSortBy
 } from "../../../libs/product";
+import { getSharedCategoryTree } from "./category-tree";
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 const PRODUCT_PAGE_LIMIT = 24;
@@ -31,6 +32,37 @@ type TreeCategory = {
   parentId?: string | null;
   children?: TreeCategory[];
 };
+
+const getCategoryTreeCached = getSharedCategoryTree;
+
+const getPopularProductsResponseCached = unstable_cache(
+  async () => getPopularProductsApi({ limit: 12 }),
+  ["grocery-home-popular-products-v1"],
+  { revalidate: 120 }
+);
+
+const getFeaturedProductsResponseCached = unstable_cache(
+  async () => getFeaturedProductsApi({ limit: 12 }),
+  ["grocery-home-featured-products-v1"],
+  { revalidate: 120 }
+);
+
+const getTrendingProductsResponseCached = unstable_cache(
+  async () => getTrendingProductsApi({ limit: 12, windowDays: 7 }),
+  ["grocery-home-trending-products-v1"],
+  { revalidate: 120 }
+);
+
+const getNewestProductsResponseCached = unstable_cache(
+  async () =>
+    getProducts({
+      page: 1,
+      limit: PRODUCT_PAGE_LIMIT,
+      sortBy: "NEWEST"
+    }),
+  ["grocery-home-newest-products-v1"],
+  { revalidate: 60 }
+);
 
 const CHILD_CATEGORY_KEYWORDS: Record<string, string[]> = {
   "fruits-berries": ["berry", "berries", "strawberry", "strawberries", "blueberry", "blueberries"],
@@ -280,7 +312,7 @@ const buildChildCategoryKeywords = (node: TreeCategory, parentNode?: TreeCategor
 };
 
 const matchesChildCategoryFallback = (
-  product: ProductDetail,
+  product: { title: string; slug: string; tags?: string[] },
   childNode: TreeCategory,
   parentNode?: TreeCategory | null
 ) => {
@@ -309,14 +341,15 @@ async function getChildCategoryFallbackProducts(
   const parentProducts = response.list || [];
   if (!parentProducts.length) return [];
 
-  const detailResponses = await Promise.all(parentProducts.map((item) => getProductById(item._id)));
-
-  return detailResponses
-    .map((entry) => entry.product)
-    .filter((item): item is ProductDetail => Boolean(item))
+  const lightweightMatches = parentProducts
     .filter((item) => matchesChildCategoryFallback(item, childNode, parentNode))
-    .slice(0, PRODUCT_PAGE_LIMIT)
-    .map(toDetailedProductModel);
+    .slice(0, PRODUCT_PAGE_LIMIT);
+
+  if (lightweightMatches.length) {
+    return lightweightMatches.map(toProductModel);
+  }
+
+  return [];
 }
 
 async function getCatalogProductsForHome(options?: {
@@ -324,6 +357,15 @@ async function getCatalogProductsForHome(options?: {
   sortBy?: ProductSortBy;
   limit?: number;
 }): Promise<Product[]> {
+  if (
+    !options?.categoryIds?.length &&
+    (!options?.sortBy || options.sortBy === "NEWEST") &&
+    (!options?.limit || options.limit === PRODUCT_PAGE_LIMIT)
+  ) {
+    const cached = await getNewestProductsResponseCached();
+    return (cached.list || []).map(toProductModel);
+  }
+
   const response = await getProducts({
     page: 1,
     limit: options?.limit || PRODUCT_PAGE_LIMIT,
@@ -335,7 +377,7 @@ async function getCatalogProductsForHome(options?: {
 }
 
 export const getGrocery1Navigation = cache(async () => {
-  const treeResponse = await getCategoryTree();
+  const treeResponse = await getCategoryTreeCached();
 
   if (treeResponse.success && treeResponse.tree?.length) {
     const categoryItems = treeResponse.tree.map((parent) => ({
@@ -378,12 +420,12 @@ export const getGrocery1Navigation = cache(async () => {
 });
 
 export const getPopularProducts = cache(async (): Promise<Product[]> => {
-  const response = await getPopularProductsApi({ limit: 12 });
+  const response = await getPopularProductsResponseCached();
   return (response.list || []).map(toProductModel);
 });
 
 export const getFeaturedProducts = cache(async (): Promise<Product[]> => {
-  const response = await getFeaturedProductsApi({ limit: 12 });
+  const response = await getFeaturedProductsResponseCached();
 
   const sortedFeatured = [...(response.list || [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -393,7 +435,7 @@ export const getFeaturedProducts = cache(async (): Promise<Product[]> => {
 });
 
 export const getTrendingProducts = cache(async (): Promise<Product[]> => {
-  const response = await getTrendingProductsApi({ limit: 12, windowDays: 7 });
+  const response = await getTrendingProductsResponseCached();
   return (response.list || []).map(toProductModel);
 });
 
@@ -406,7 +448,7 @@ export const getGroceryProducts = cache(async (category?: string): Promise<Produ
   let matchedNode: TreeCategory | null = null;
   let treeNodes: TreeCategory[] = [];
 
-  const treeResponse = await getCategoryTree();
+  const treeResponse = await getCategoryTreeCached();
   if (treeResponse.success && treeResponse.tree?.length) {
     treeNodes = treeResponse.tree as TreeCategory[];
     matchedNode = findNodeBySlug(treeNodes, normalizedCategorySlug);
@@ -465,27 +507,33 @@ export const getGroceryCategory = cache(
     slug: string;
     parent?: { title: string; slug: string } | null;
   } | null> => {
-    const response = await getCategoryBySlugFlexible(category);
-    if (!response) return null;
+    const normalized = normalizeSlug(category);
+    const treeResponse = await getCategoryTreeCached();
 
-    let parent: { title: string; slug: string } | null = null;
-    if (response.parentId) {
-      const treeResponse = await getCategoryTree();
-      if (treeResponse.success && treeResponse.tree?.length) {
-        const parentNode = findNodeById(treeResponse.tree as TreeCategory[], response.parentId);
-        if (parentNode?.name) {
-          parent = { title: parentNode.name, slug: parentNode.slug };
-        }
+    if (treeResponse.success && treeResponse.tree?.length) {
+      const treeNodes = treeResponse.tree as TreeCategory[];
+      const matchedNode = findNodeBySlug(treeNodes, normalized);
+
+      if (matchedNode?.name) {
+        const parentNode = matchedNode.parentId
+          ? findNodeById(treeNodes, matchedNode.parentId)
+          : null;
+
+        return {
+          title: matchedNode.name,
+          slug: matchedNode.slug,
+          parent: parentNode?.name ? { title: parentNode.name, slug: parentNode.slug } : null
+        };
       }
     }
 
-    const result: GroceryCategory = {
-      slug: response.slug,
-      href: `/grocery-1/${response.slug}`,
-      title: response.name,
-      parent
-    };
+    const response = await getCategoryBySlugFlexible(normalized);
+    if (!response) return null;
 
-    return { title: result.title, slug: result.slug, parent: result.parent || null };
+    return {
+      title: response.name,
+      slug: response.slug,
+      parent: null
+    };
   }
 );

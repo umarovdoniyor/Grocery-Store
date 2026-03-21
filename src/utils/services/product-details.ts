@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type Product from "models/Product.model";
 import type Review from "models/Review.model";
 import type Shop from "models/Shop.model";
@@ -10,14 +11,11 @@ import {
   type ProductSummary
 } from "../../../libs/product";
 import { getCategoryById } from "../../../libs/category";
-import { getVendors, type VendorSummary } from "../../../libs/vendor";
 import { getProductReviews, type ProductReview as ProductReviewDto } from "../../../libs/review";
 
 const PRODUCT_LOOKUP_LIMIT = 50;
 const MAX_PRODUCT_LOOKUP_PAGES = 20;
 const PRODUCT_REVIEW_LIMIT = 10;
-const VENDOR_LOOKUP_LIMIT = 100;
-const MAX_VENDOR_LOOKUP_PAGES = 20;
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 
 const toDiscount = (price: number, salePrice?: number) => {
@@ -136,95 +134,6 @@ const resolveCategoryNames = async (categoryIds: string[]): Promise<string[]> =>
     .filter((name): name is string => Boolean(name));
 };
 
-const resolveVendorSummaryById = async (
-  vendorId?: string,
-  hints?: Array<string | undefined>
-): Promise<VendorSummary | undefined> => {
-  if (!vendorId) return undefined;
-
-  const statuses: Array<"ACTIVE" | "INACTIVE" | "SUSPENDED" | undefined> = [
-    "ACTIVE",
-    undefined,
-    "INACTIVE",
-    "SUSPENDED"
-  ];
-
-  for (const status of statuses) {
-    const byIdSearch = await getVendors({
-      page: 1,
-      limit: 20,
-      search: vendorId,
-      status,
-      sortBy: "POPULAR"
-    });
-
-    if (byIdSearch.success && byIdSearch.list?.length) {
-      const exact = byIdSearch.list.find((vendor) => vendor._id === vendorId);
-      if (exact) return exact;
-    }
-
-    const firstPage = await getVendors({
-      page: 1,
-      limit: VENDOR_LOOKUP_LIMIT,
-      search: "",
-      status,
-      sortBy: "POPULAR"
-    });
-
-    if (!firstPage.success) continue;
-
-    const firstMatch = (firstPage.list || []).find((vendor) => vendor._id === vendorId);
-    if (firstMatch) return firstMatch;
-
-    const total = firstPage.total || 0;
-    const totalPages = Math.min(
-      Math.max(1, Math.ceil(total / VENDOR_LOOKUP_LIMIT)),
-      MAX_VENDOR_LOOKUP_PAGES
-    );
-
-    for (let page = 2; page <= totalPages; page += 1) {
-      const response = await getVendors({
-        page,
-        limit: VENDOR_LOOKUP_LIMIT,
-        search: "",
-        status,
-        sortBy: "POPULAR"
-      });
-
-      if (!response.success) continue;
-
-      const match = (response.list || []).find((vendor) => vendor._id === vendorId);
-      if (match) return match;
-    }
-  }
-
-  const searchTerms = (hints || []).map((term) => (term || "").trim()).filter(Boolean);
-
-  for (const term of searchTerms) {
-    for (const status of statuses) {
-      const response = await getVendors({
-        page: 1,
-        limit: 20,
-        search: term,
-        status,
-        sortBy: "POPULAR"
-      });
-
-      if (!response.success || !response.list?.length) continue;
-
-      const exactId = response.list.find((vendor) => vendor._id === vendorId);
-      if (exactId) return exactId;
-
-      const exactSlug = response.list.find((vendor) => vendor.slug === term);
-      if (exactSlug) return exactSlug;
-
-      return response.list[0];
-    }
-  }
-
-  return undefined;
-};
-
 const mapReviewToUi = (review: ProductReviewDto): Review => {
   const firstName = review.member?.memberFirstName || review.member?.memberNickname || "Customer";
   const lastName = review.member?.memberLastName || "";
@@ -253,7 +162,7 @@ const mapReviewToUi = (review: ProductReviewDto): Review => {
 };
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const match = await findProductSummaryBySlug(slug);
+  const match = await findProductSummaryBySlugCached(slug);
 
   if (!match?._id) return null;
 
@@ -261,25 +170,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!detail.product) return null;
 
   const product = mapDetailToProduct(detail.product);
-  const vendorSummary = await resolveVendorSummaryById(detail.product.vendor?._id, [
-    detail.product.vendor?.memberNickname,
-    `${detail.product.vendor?.memberFirstName || ""} ${detail.product.vendor?.memberLastName || ""}`,
-    detail.product.vendor?._id
-  ]);
-  const productWithResolvedShop = product.shop
-    ? {
-        ...product,
-        shop: {
-          ...product.shop,
-          slug: vendorSummary?.slug || product.shop.slug,
-          name: vendorSummary?.storeName || product.shop.name,
-          phone: vendorSummary?.memberPhone || product.shop.phone,
-          address: vendorSummary?.memberAddress || product.shop.address,
-          profilePicture: vendorSummary?.memberImage || product.shop.profilePicture,
-          coverPicture: vendorSummary?.coverImage || product.shop.coverPicture
-        }
-      }
-    : product;
   const categories = await resolveCategoryNames(detail.product.categoryIds || []);
   const fallbackRating = Number(match.ratingAvg || 0);
   const fallbackReviewsCount = Number(match.reviewsCount || 0);
@@ -292,8 +182,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
   if (!reviewResponse.success) {
     return {
-      ...productWithResolvedShop,
-      categories: categories.length ? categories : productWithResolvedShop.categories,
+      ...product,
+      categories: categories.length ? categories : product.categories,
       rating: fallbackRating,
       reviewsCount: fallbackReviewsCount
     };
@@ -312,16 +202,34 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     summaryReviewsCount > 0 ? summaryReviewsCount : fallbackReviewsCount || mappedReviews.length;
 
   return {
-    ...productWithResolvedShop,
-    categories: categories.length ? categories : productWithResolvedShop.categories,
+    ...product,
+    categories: categories.length ? categories : product.categories,
     rating: resolvedRating,
     reviewsCount: resolvedReviewsCount,
     reviews: mappedReviews
   };
 }
 
+export async function getQuickViewProductBySlug(slug: string): Promise<Product | null> {
+  const match = await findProductSummaryBySlugCached(slug);
+
+  if (!match?._id) return null;
+
+  const detail = await getProductById(match._id);
+  if (!detail.product) return null;
+
+  const product = mapDetailToProduct(detail.product);
+
+  return {
+    ...product,
+    rating: Number(match.ratingAvg || 0),
+    reviewsCount: Number(match.reviewsCount || 0),
+    reviews: []
+  };
+}
+
 export async function getRelatedProductsBySlug(slug: string, limit = 8): Promise<Product[]> {
-  const match = await findProductSummaryBySlug(slug);
+  const match = await findProductSummaryBySlugCached(slug);
 
   if (!match?._id) return [];
 
@@ -368,3 +276,7 @@ async function findProductSummaryBySlug(slug: string): Promise<ProductSummary | 
 
   return null;
 }
+
+const findProductSummaryBySlugCached = cache(async (slug: string) =>
+  findProductSummaryBySlug(slug)
+);
