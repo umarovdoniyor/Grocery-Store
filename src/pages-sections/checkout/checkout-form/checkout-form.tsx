@@ -10,6 +10,7 @@ import clsx from "clsx";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 // GLOBAL CUSTOM COMPONENTS
 import { FormProvider, TextField, Autocomplete, Checkbox } from "components/form-hook";
 // DUMMY CUSTOM DATA
@@ -39,6 +40,7 @@ const validationSchema = yup.object().shape({
 type FormValues = yup.InferType<typeof validationSchema>;
 
 export default function CheckoutForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
@@ -101,72 +103,72 @@ export default function CheckoutForm() {
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <CardRoot elevation={0}>
         <Typography variant="h5" sx={{ mb: 2, color: "#2F4022", fontWeight: 700 }}>
-          Shipping Address
+          {t("Shipping Address")}
         </Typography>
 
         <FormWrapper>
-          <TextField size="medium" fullWidth label="Full Name" name="shipping_name" />
-          <TextField size="medium" fullWidth label="Phone Number" name="shipping_contact" />
+          <TextField size="medium" fullWidth label={t("Full Name")} name="shipping_name" />
+          <TextField size="medium" fullWidth label={t("Phone Number")} name="shipping_contact" />
           <TextField
             fullWidth
             type="email"
             size="medium"
-            label="Email Address"
+            label={t("Email Address")}
             name="shipping_email"
           />
-          <TextField size="medium" fullWidth label="Company" name="shipping_company" />
-          <TextField size="medium" fullWidth label="Address 1" name="shipping_address1" />
-          <TextField size="medium" fullWidth label="Address 2" name="shipping_address2" />
+          <TextField size="medium" fullWidth label={t("Company")} name="shipping_company" />
+          <TextField size="medium" fullWidth label={t("Address 1")} name="shipping_address1" />
+          <TextField size="medium" fullWidth label={t("Address 2")} name="shipping_address2" />
           <Autocomplete
             fullWidth
             size="medium"
-            label="Country"
+            label={t("Country")}
             options={countryList}
             name="shipping_country"
-            placeholder="Select Country"
+            placeholder={t("Select Country")}
             getOptionLabel={(option) => (typeof option === "string" ? option : option.label)}
           />
-          <TextField size="medium" fullWidth label="Zip Code" name="shipping_zip" />
+          <TextField size="medium" fullWidth label={t("Zip Code")} name="shipping_zip" />
         </FormWrapper>
       </CardRoot>
 
       <CardRoot elevation={0}>
         <Typography variant="h5" sx={{ color: "#2F4022", fontWeight: 700 }}>
-          Billing Address
+          {t("Billing Address")}
         </Typography>
 
         <Checkbox
           size="small"
           color="secondary"
           name="same_as_shipping"
-          label="Same as shipping address"
+          label={t("Same as shipping address")}
           className={clsx({ "mb-1": !sameAsShipping })}
         />
 
         {!sameAsShipping && (
           <FormWrapper>
-            <TextField size="medium" fullWidth label="Full Name" name="billing_name" />
-            <TextField size="medium" fullWidth label="Phone Number" name="billing_contact" />
+            <TextField size="medium" fullWidth label={t("Full Name")} name="billing_name" />
+            <TextField size="medium" fullWidth label={t("Phone Number")} name="billing_contact" />
             <TextField
               size="medium"
               fullWidth
               type="email"
               name="billing_email"
-              label="Email Address"
+              label={t("Email Address")}
             />
-            <TextField size="medium" fullWidth label="Company" name="billing_company" />
-            <TextField size="medium" fullWidth label="Address 1" name="billing_address1" />
-            <TextField size="medium" fullWidth label="Address 2" name="billing_address2" />
+            <TextField size="medium" fullWidth label={t("Company")} name="billing_company" />
+            <TextField size="medium" fullWidth label={t("Address 1")} name="billing_address1" />
+            <TextField size="medium" fullWidth label={t("Address 2")} name="billing_address2" />
             <Autocomplete
               size="medium"
               fullWidth
-              label="Country"
+              label={t("Country")}
               options={countryList}
               name="billing_country"
-              placeholder="Select Country"
+              placeholder={t("Select Country")}
               getOptionLabel={(option) => (typeof option === "string" ? option : option.label)}
             />
-            <TextField size="medium" fullWidth label="Zip Code" name="billing_zip" />
+            <TextField size="medium" fullWidth label={t("Zip Code")} name="billing_zip" />
           </FormWrapper>
         )}
       </CardRoot>
@@ -193,7 +195,7 @@ export default function CheckoutForm() {
             }
           }}
         >
-          Back to Cart
+          {t("Back to Cart")}
         </Button>
 
         <Button
@@ -209,7 +211,7 @@ export default function CheckoutForm() {
             }
           }}
         >
-          Proceed to Payment
+          {t("Proceed to Payment")}
         </Button>
       </ButtonWrapper>
     </FormProvider>

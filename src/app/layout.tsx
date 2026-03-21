@@ -24,6 +24,7 @@ import { AuthProvider } from "contexts/AuthContext";
 import RTL from "components/rtl";
 import ProgressBar from "components/progress";
 import SnackbarProvider from "components/SnackbarProvider";
+import LanguageSync from "components/i18n/language-sync";
 
 // IMPORT i18n SUPPORT FILE
 import "i18n";
@@ -44,6 +45,7 @@ export default function RootLayout({ children, modal }: RootLayoutProps) {
             <SettingsProvider>
               <ThemeProvider>
                 <SnackbarProvider>
+                  <LanguageSync />
                   <RTL>
                     {modal}
                     {children}

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Fragment, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +8,7 @@ import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 import useCart from "hooks/useCart";
 import {
   createOrderFromCartServer,
@@ -14,6 +17,7 @@ import {
 } from "utils/services/checkout-flow";
 
 export default function PaymentForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { dispatch } = useCart();
   const [error, setError] = useState<string | null>(null);
@@ -99,11 +103,11 @@ export default function PaymentForm() {
         }}
       >
         <Typography variant="h5" sx={{ mb: 1, color: "#2F4022", fontWeight: 700 }}>
-          Demo Payment
+          {t("Demo Payment")}
         </Typography>
 
         <Typography variant="body2" sx={{ color: "#5E6F4D", lineHeight: 1.7 }}>
-          Payment is simplified for this demo. Click Place Order to create the order record.
+          {t("Payment is simplified for this demo. Click Place Order to create the order record.")}
         </Typography>
       </Card>
 
@@ -145,7 +149,7 @@ export default function PaymentForm() {
             }
           }}
         >
-          Back to checkout
+          {t("Back to checkout")}
         </Button>
 
         <Button
@@ -166,7 +170,7 @@ export default function PaymentForm() {
             }
           }}
         >
-          Place Order
+          {t("Place Order")}
         </Button>
       </Stack>
     </Fragment>

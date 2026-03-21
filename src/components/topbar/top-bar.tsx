@@ -1,4 +1,5 @@
 import { ComponentProps } from "react";
+import TopbarLeftTranslatedText from "./topbar-left-translated-text";
 // STYLED COMPONENTS
 import { LeftContent, RightContent, StyledChip, StyledContainer, StyledRoot } from "./styles";
 
@@ -25,8 +26,7 @@ Topbar.Left = function ({ label, title, children, ...props }: TopbarLeftProps) {
   return (
     <LeftContent {...props}>
       <div className="tag">
-        <StyledChip label={label} size="small" />
-        <span>{title}</span>
+        <TopbarLeftTranslatedText label={label} title={title} />
       </div>
     </LeftContent>
   );

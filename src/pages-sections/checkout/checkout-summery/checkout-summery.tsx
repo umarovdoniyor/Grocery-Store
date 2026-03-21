@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
+import { useTranslation } from "react-i18next";
 // LOCAL CUSTOM COMPONENT
 import ListItem from "./list-item";
 // CUSTOM UTILS LIBRARY FUNCTION
@@ -21,6 +22,7 @@ import {
 } from "utils/services/checkout-flow";
 
 export default function CheckoutSummary() {
+  const { t } = useTranslation();
   const { state } = useCart();
   const [snapshot, setSnapshot] = useState<CheckoutSnapshotResult | null>(null);
 
@@ -95,15 +97,15 @@ export default function CheckoutSummary() {
       })}
     >
       <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
-        Order Summary
+        {t("Order Summary")}
       </Typography>
 
-      <ListItem title="Subtotal" value={totals.subtotal} />
-      <ListItem title="Shipping" value={totals.shipping} />
-      <ListItem title="Tax" value={totals.tax} />
-      <ListItem title="Discount" value={totals.discount} />
+      <ListItem title={t("Subtotal")} value={totals.subtotal} />
+      <ListItem title={t("Shipping")} value={totals.shipping} />
+      <ListItem title={t("Tax")} value={totals.tax} />
+      <ListItem title={t("Discount")} value={totals.discount} />
 
-      <Divider sx={{ my: 2 }} />
+        {t("Total")}
 
       <Typography variant="h2" sx={{ color: "#2F4022" }}>
         {currency(totals.total)}
@@ -116,7 +118,7 @@ export default function CheckoutSummary() {
       )}
 
       <Stack direction="row" spacing={2} mt={3}>
-        <TextField size="medium" placeholder="Voucher" variant="outlined" fullWidth />
+        <TextField size="medium" placeholder={t("Voucher")} variant="outlined" fullWidth />
 
         <Button
           size="large"
@@ -130,7 +132,7 @@ export default function CheckoutSummary() {
             }
           }}
         >
-          Apply
+          {t("Apply")}
         </Button>
       </Stack>
     </Card>

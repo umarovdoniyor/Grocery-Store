@@ -5,6 +5,7 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
+import { useTranslation } from "react-i18next";
 // LOCAL CUSTOM COMPONENT
 import PaymentItem from "./payment-item";
 // CUSTOM UTILS LIBRARY FUNCTION
@@ -17,6 +18,7 @@ import {
 } from "utils/services/checkout-flow";
 
 export default function PaymentSummary() {
+  const { t } = useTranslation();
   const { state } = useCart();
   const [snapshot, setSnapshot] = useState<CheckoutSnapshotResult | null>(null);
 
@@ -69,13 +71,13 @@ export default function PaymentSummary() {
       }}
     >
       <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
-        Order Summary
+        {t("Order Summary")}
       </Typography>
 
-      <PaymentItem title="Subtotal:" amount={totals.subtotal} />
-      <PaymentItem title="Shipping:" amount={totals.shipping} />
-      <PaymentItem title="Tax:" amount={totals.tax} />
-      <PaymentItem title="Discount:" amount={totals.discount} />
+      <PaymentItem title={`${t("Subtotal")}:`} amount={totals.subtotal} />
+      <PaymentItem title={`${t("Shipping")}:`} amount={totals.shipping} />
+      <PaymentItem title={`${t("Tax")}:`} amount={totals.tax} />
+      <PaymentItem title={`${t("Discount")}:`} amount={totals.discount} />
 
       <Divider sx={{ my: 2 }} />
 
@@ -83,7 +85,7 @@ export default function PaymentSummary() {
         variant="body2"
         sx={{ color: "#5E6F4D", textTransform: "uppercase", letterSpacing: 0.6, mb: 0.5 }}
       >
-        Total
+        {t("Total")}
       </Typography>
 
       <Typography variant="h3" textAlign="right" sx={{ color: "#2F4022", fontWeight: 700 }}>

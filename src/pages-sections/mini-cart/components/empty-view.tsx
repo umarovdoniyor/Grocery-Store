@@ -1,7 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Link from "next/link";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 
@@ -29,25 +29,25 @@ export default function EmptyCartView() {
         No products in the cart
       </Typography>
 
-      <Link href="/products/search">
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            borderRadius: 999,
-            fontWeight: 700,
-            textTransform: "none",
-            px: 2.4,
-            background: "linear-gradient(135deg, #3b7a81 0%, #1f5b67 100%)",
-            boxShadow: "0 8px 18px rgba(22, 59, 70, 0.24)",
-            "&:hover": {
-              background: "linear-gradient(135deg, #316a70 0%, #184c56 100%)"
-            }
-          }}
-        >
-          Continue Shopping
-        </Button>
-      </Link>
+      <Button
+        variant="contained"
+        color="primary"
+        href="/products/search"
+        LinkComponent={Link}
+        sx={{
+          borderRadius: 999,
+          fontWeight: 700,
+          textTransform: "none",
+          px: 2.4,
+          background: "linear-gradient(135deg, #3b7a81 0%, #1f5b67 100%)",
+          boxShadow: "0 8px 18px rgba(22, 59, 70, 0.24)",
+          "&:hover": {
+            background: "linear-gradient(135deg, #316a70 0%, #184c56 100%)"
+          }
+        }}
+      >
+        Continue Shopping
+      </Button>
     </FlexBox>
   );
 }

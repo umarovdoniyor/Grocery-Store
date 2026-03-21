@@ -2,13 +2,99 @@ export const resources = {
   en: {
     translation: {
       HOT: "HOT",
-      "Free Express Shipping": "Free Express Shipping"
+      "Free Express Shipping": "Free Express Shipping",
+      "Your Cart": "Your Cart",
+      "Review your items and proceed to checkout when ready.":
+        "Review your items and proceed to checkout when ready.",
+      "Clear Cart": "Clear Cart",
+      "Order Summary": "Order Summary",
+      "Total:": "Total:",
+      "Additional Comments": "Additional Comments",
+      Note: "Note",
+      Voucher: "Voucher",
+      Apply: "Apply",
+      "Shipping Estimates": "Shipping Estimates",
+      Country: "Country",
+      "Select Country": "Select Country",
+      State: "State",
+      "Select State": "Select State",
+      "Zip Code": "Zip Code",
+      "Calculate Shipping": "Calculate Shipping",
+      "Checkout Now": "Checkout Now",
+      "Shipping Address": "Shipping Address",
+      "Full Name": "Full Name",
+      "Phone Number": "Phone Number",
+      "Email Address": "Email Address",
+      Company: "Company",
+      "Address 1": "Address 1",
+      "Address 2": "Address 2",
+      "Billing Address": "Billing Address",
+      "Same as shipping address": "Same as shipping address",
+      "Back to Cart": "Back to Cart",
+      "Proceed to Payment": "Proceed to Payment",
+      Subtotal: "Subtotal",
+      Shipping: "Shipping",
+      Tax: "Tax",
+      Discount: "Discount",
+      Total: "Total",
+      "Demo Payment": "Demo Payment",
+      "Payment is simplified for this demo. Click Place Order to create the order record.":
+        "Payment is simplified for this demo. Click Place Order to create the order record.",
+      "Back to checkout": "Back to checkout",
+      "Place Order": "Place Order",
+      "Fresh groceries at your doorstep in 30 minutes":
+        "Fresh groceries at your doorstep in 30 minutes",
+      "Curated produce, pantry staples, and everyday essentials from trusted local vendors.":
+        "Curated produce, pantry staples, and everyday essentials from trusted local vendors."
     }
   },
-  es: {
+  ko: {
     translation: {
-      HOT: "HEISS",
-      "Free Express Shipping": "Gratis Expresverzending"
+      HOT: "HOT",
+      "Free Express Shipping": "무료 빠른 배송",
+      "Your Cart": "장바구니",
+      "Review your items and proceed to checkout when ready.":
+        "상품을 확인한 후 준비되면 결제를 진행하세요.",
+      "Clear Cart": "장바구니 비우기",
+      "Order Summary": "주문 요약",
+      "Total:": "합계:",
+      "Additional Comments": "추가 요청사항",
+      Note: "메모",
+      Voucher: "할인코드",
+      Apply: "적용",
+      "Shipping Estimates": "배송비 예상",
+      Country: "국가",
+      "Select Country": "국가 선택",
+      State: "지역",
+      "Select State": "지역 선택",
+      "Zip Code": "우편번호",
+      "Calculate Shipping": "배송비 계산",
+      "Checkout Now": "지금 결제",
+      "Shipping Address": "배송지 정보",
+      "Full Name": "이름",
+      "Phone Number": "전화번호",
+      "Email Address": "이메일",
+      Company: "회사",
+      "Address 1": "주소 1",
+      "Address 2": "주소 2",
+      "Billing Address": "청구지 정보",
+      "Same as shipping address": "배송지와 동일",
+      "Back to Cart": "장바구니로",
+      "Proceed to Payment": "결제로 진행",
+      Subtotal: "상품금액",
+      Shipping: "배송비",
+      Tax: "세금",
+      Discount: "할인",
+      Total: "총액",
+      "Demo Payment": "데모 결제",
+      "Payment is simplified for this demo. Click Place Order to create the order record.":
+        "데모용 간편 결제입니다. 주문하기를 눌러 주문을 생성하세요.",
+      "Back to checkout": "체크아웃으로",
+      "Place Order": "주문하기",
+      "Fresh groceries at your doorstep in 30 minutes":
+        "30분 안에 신선한 식료품을 문 앞까지 배송해드립니다",
+      "Curated produce, pantry staples, and everyday essentials from trusted local vendors.":
+        "믿을 수 있는 지역 판매자가 엄선한 신선식품, 팬트리 식재료, 일상 필수품을 만나보세요."
     }
   }
 };

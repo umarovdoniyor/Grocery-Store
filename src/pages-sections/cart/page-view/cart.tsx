@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 // GLOBAL CUSTOM HOOK
 import useCart from "hooks/useCart";
 // CUSTOM COMPONENTS
@@ -15,6 +16,7 @@ import EmptyCart from "../empty-cart";
 const CheckoutForm = dynamic(() => import("../checkout-form"));
 
 export default function CartPageView() {
+  const { t } = useTranslation();
   const { state, dispatch } = useCart();
 
   if (state.cart.length === 0) {
@@ -34,10 +36,10 @@ export default function CartPageView() {
           }}
         >
           <Typography variant="h5" sx={{ color: "#2F4022", fontWeight: 700 }}>
-            Your Cart
+            {t("Your Cart")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#5E6F4D", mt: 0.5 }}>
-            Review your items and proceed to checkout when ready.
+            {t("Review your items and proceed to checkout when ready.")}
           </Typography>
         </Box>
       </Grid>
@@ -63,7 +65,7 @@ export default function CartPageView() {
             }}
             onClick={() => dispatch({ type: "CLEAR_CART" })}
           >
-            Clear Cart
+            {t("Clear Cart")}
           </Button>
         </Box>
       </Grid>

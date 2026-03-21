@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 // MUI
 import Card from "@mui/material/Card";
@@ -6,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 // GLOBAL CUSTOM HOOK
 import useCart from "hooks/useCart";
 // GLOBAL CUSTOM COMPONENTS
@@ -21,6 +24,7 @@ const STATE_LIST = [
 ];
 
 export default function CheckoutForm() {
+  const { t } = useTranslation();
   const { state } = useCart();
 
   const getTotalPrice = () => state.cart.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -46,12 +50,12 @@ export default function CheckoutForm() {
       }}
     >
       <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
-        Order Summary
+        {t("Order Summary")}
       </Typography>
 
       <FlexBetween mb={2}>
         <Typography variant="body1" fontSize={16} fontWeight={600}>
-          Total:
+          {t("Total:")}
         </Typography>
 
         <Typography variant="body1" fontSize={18} fontWeight={600} lineHeight={1}>
@@ -63,7 +67,7 @@ export default function CheckoutForm() {
 
       <FlexBox alignItems="center" columnGap={1} mb={2}>
         <Typography variant="body1" fontWeight={500}>
-          Additional Comments
+          {t("Additional Comments")}
         </Typography>
 
         <Typography
@@ -76,7 +80,7 @@ export default function CheckoutForm() {
             bgcolor: "grey.200"
           }}
         >
-          Note
+          {t("Note")}
         </Typography>
       </FlexBox>
 
@@ -103,7 +107,7 @@ export default function CheckoutForm() {
           size="small"
           label="Voucher"
           variant="outlined"
-          placeholder="Voucher"
+          placeholder={t("Voucher")}
           sx={{
             "& .MuiOutlinedInput-root": {
               backgroundColor: "#F7F4EA",
@@ -125,14 +129,14 @@ export default function CheckoutForm() {
             }
           }}
         >
-          Apply
+          {t("Apply")}
         </Button>
       </FlexBox>
 
       <Divider sx={{ mb: 2 }} />
 
       <Typography variant="body1" fontWeight={500} sx={{ mb: 2 }}>
-        Shipping Estimates
+        {t("Shipping Estimates")}
       </Typography>
 
       {/* COUNTRY TEXT FIELD */}
@@ -142,7 +146,7 @@ export default function CheckoutForm() {
         size="small"
         label="Country"
         variant="outlined"
-        placeholder="Select Country"
+        placeholder={t("Select Country")}
         defaultValue="US"
         sx={{
           mb: 2,
@@ -168,7 +172,7 @@ export default function CheckoutForm() {
         size="small"
         label="State"
         variant="outlined"
-        placeholder="Select State"
+        placeholder={t("Select State")}
         defaultValue="new-york"
         sx={{
           "& .MuiOutlinedInput-root": {
@@ -217,7 +221,7 @@ export default function CheckoutForm() {
           }
         }}
       >
-        Calculate Shipping
+        {t("Calculate Shipping")}
       </Button>
 
       <Button
@@ -232,7 +236,7 @@ export default function CheckoutForm() {
           }
         }}
       >
-        Checkout Now
+        {t("Checkout Now")}
       </Button>
     </Card>
   );

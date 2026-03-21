@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Button from "@mui/material/Button";
+import TranslatedHeroCopy from "./translated-hero-copy";
 // STYLED COMPONENT
 import { SectionContainer } from "./styles";
 
@@ -13,10 +14,10 @@ export default function Section1() {
 
   return (
     <SectionContainer>
-      <h1>Fresh groceries at your doorstep in 30 minutes</h1>
-      <p className="heroSubTitle">
-        Curated produce, pantry staples, and everyday essentials from trusted local vendors.
-      </p>
+      <TranslatedHeroCopy
+        title="Fresh groceries at your doorstep in 30 minutes"
+        subtitle="Curated produce, pantry staples, and everyday essentials from trusted local vendors."
+      />
 
       <div className="heroActions">
         <Link href="/products">

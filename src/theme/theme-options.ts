@@ -13,27 +13,18 @@ const breakpoints = {
   }
 };
 
-let oldMapping: ThemeMapping;
-
 const themeMappings = [
   { paths: ["/grocery-1", "/"], color: COLORS.RED },
   { paths: ["/admin", "/vendor"], color: COLORS.HEALTH }
 ];
 
 export default function themeOptions(pathname: string) {
-  let selectedMapping = themeMappings.find((mapping) =>
+  const selectedMapping = themeMappings.find((mapping) =>
     mapping.paths.some((path) => pathname.startsWith(path))
   );
 
-  if (["/mini-cart", "/login"].includes(pathname)) {
-    selectedMapping = oldMapping;
-  }
-
   // GET THE COLOR PALETTE BASED ON THE SELECTED MAPPING
   const selectedPalette = getPalette(selectedMapping?.color || COLORS.DARK);
-
-  // STORE THE SELECTED MAPPING IN OLD MAPPING FOR MODAL ROUTES -> LOGIN, MINI-CART
-  oldMapping = selectedMapping!;
 
   const themeOption: ThemeOptions = {
     typography,
