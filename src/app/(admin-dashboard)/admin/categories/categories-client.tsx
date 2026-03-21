@@ -1,15 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
-import { CategoriesPageView } from "pages-sections/vendor-dashboard/categories/page-view";
 import {
   AdminCategoryRow,
   fetchAdminCategoriesForUiByQuery,
   removeAdminCategoryForUi,
   updateAdminCategoryStatusForUi
 } from "utils/services/admin-categories";
+
+const CategoriesPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/categories/page-view/categories"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 export default function CategoriesClient() {
   const searchParams = useSearchParams();

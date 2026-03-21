@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Card from "@mui/material/Card";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -30,9 +30,9 @@ import {
   getReviewsByAdmin,
   type ProductReview,
   updateReviewStatusByAdmin
-} from "../../../../../libs/review";
-import { getProductById } from "../../../../../libs/product";
-import { toPublicImageUrl } from "../../../../../libs/upload";
+} from "../../../../../libs/review/admin";
+import { getProductById } from "../../../../../libs/product/details";
+import { toPublicImageUrl } from "../../../../../libs/upload/product";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -107,6 +107,8 @@ type ModerationTarget = {
   status: "PUBLISHED" | "HIDDEN" | "REJECTED";
 };
 
+const productInfoCache = new Map<string, { title: string; thumbnail: string }>();
+
 export default function ProductReviewsPageView({
   uiMode = "vendor"
 }: Props & { uiMode?: "vendor" | "admin" }) {
@@ -122,8 +124,10 @@ export default function ProductReviewsPageView({
   const [reviews, setReviews] = useState<AdminReviewRow[]>([]);
   const [moderationTarget, setModerationTarget] = useState<ModerationTarget | null>(null);
   const [moderationReason, setModerationReason] = useState("");
+  const requestIdRef = useRef(0);
 
   const loadReviews = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
     setIsLoading(true);
     setError(null);
 
@@ -133,6 +137,9 @@ export default function ProductReviewsPageView({
       search: "",
       status: statusFilter === "ALL" ? undefined : statusFilter
     });
+
+    if (requestId !== requestIdRef.current) return;
+
     if (!response.success) {
       setError(response.error || "Failed to load reviews.");
       setIsLoading(false);
@@ -140,29 +147,13 @@ export default function ProductReviewsPageView({
     }
 
     const list = response.list || [];
-    const productIds = Array.from(new Set(list.map((item) => item.productId).filter(Boolean)));
-    const productMap = new Map<string, { title: string; thumbnail: string }>();
-
-    const productResults = await Promise.allSettled(productIds.map((id) => getProductById(id)));
-    productResults.forEach((result, index) => {
-      if (result.status !== "fulfilled") return;
-      if (!result.value.success || !result.value.product) return;
-
-      const product = result.value.product;
-      const productId = productIds[index];
-      productMap.set(productId, {
-        title: product.title || `Product #${productId.slice(-6)}`,
-        thumbnail: resolveProductImage(product.thumbnail)
-      });
-    });
-
-    const mapped = list.map((item: ProductReview) => {
+    const mapped = list.map((item: ProductReview): AdminReviewRow => {
       const customer =
         `${item.member?.memberFirstName || ""} ${item.member?.memberLastName || ""}`.trim() ||
         item.member?.memberNickname ||
         item.memberId;
 
-      const productInfo = productMap.get(item.productId);
+      const productInfo = productInfoCache.get(item.productId);
 
       return {
         id: item._id,
@@ -178,6 +169,42 @@ export default function ProductReviewsPageView({
 
     setReviews(mapped);
     setIsLoading(false);
+
+    const missingProductIds = Array.from(
+      new Set(list.map((item) => item.productId).filter(Boolean))
+    ).filter((productId) => !productInfoCache.has(productId));
+
+    if (!missingProductIds.length) return;
+
+    const productResults = await Promise.allSettled(missingProductIds.map((id) => getProductById(id)));
+
+    productResults.forEach((result, index) => {
+      if (result.status !== "fulfilled") return;
+      if (!result.value.success || !result.value.product) return;
+
+      const productId = missingProductIds[index];
+      const product = result.value.product;
+
+      productInfoCache.set(productId, {
+        title: product.title || `Product #${productId.slice(-6)}`,
+        thumbnail: resolveProductImage(product.thumbnail)
+      });
+    });
+
+    if (requestId !== requestIdRef.current) return;
+
+    setReviews((previous) =>
+      previous.map((item) => {
+        const productInfo = productInfoCache.get(item.productId);
+        if (!productInfo) return item;
+
+        return {
+          ...item,
+          product: productInfo.title,
+          productImage: productInfo.thumbnail
+        };
+      })
+    );
   }, [statusFilter]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import MuiCard from "@mui/material/Card";
@@ -8,13 +9,19 @@ import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-import Card1 from "pages-sections/vendor-dashboard/dashboard/card-1";
-import DataListTable from "pages-sections/vendor-dashboard/dashboard/table";
 import { getAdminDashboardCards, getAdminStockOutProducts } from "utils/services/admin-dashboard";
 import type {
   Card as DashboardCard,
   StockOut
 } from "pages-sections/vendor-dashboard/dashboard/types";
+
+const Card1 = dynamic(() => import("pages-sections/vendor-dashboard/dashboard/card-1"), {
+  ssr: false
+});
+
+const DataListTable = dynamic(() => import("pages-sections/vendor-dashboard/dashboard/table"), {
+  ssr: false
+});
 
 const tableHeading = [
   { id: "product", label: "Product", alignRight: false },

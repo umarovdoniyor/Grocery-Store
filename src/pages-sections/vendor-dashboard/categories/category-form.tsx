@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -12,18 +13,19 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
-import Dialog from "@mui/material/Dialog";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { TextField as MuiTextField } from "@mui/material";
 import { FormProvider, TextField } from "components/form-hook";
 import {
   createCategory,
   getCategoriesByAdmin,
   updateCategory,
   type Category
-} from "../../../../libs/admin";
-import { CATEGORY_ICON_OPTIONS, CATEGORY_IMAGE_OPTIONS } from "data/category-visual-options";
+} from "../../../../libs/admin/categories";
+
+const CategoryVisualPicker = dynamic(() => import("./category-visual-picker"), {
+  loading: () => null,
+  ssr: false
+});
 
 // FORM FIELDS VALIDATION
 const validationSchema = yup.object().shape({
@@ -79,103 +81,6 @@ type Props = {
   uiMode?: "vendor" | "admin";
 };
 
-const GROUP_ORDER = [
-  "Fruits",
-  "Vegetables",
-  "Dairy & Eggs",
-  "Meat & Seafood",
-  "Bakery",
-  "Beverages",
-  "Pantry",
-  "Frozen Foods",
-  "Snacks",
-  "Organic",
-  "Other"
-] as const;
-
-function getOptionGroup(input: { label: string; tags: string[] }): string {
-  const text = `${input.label} ${input.tags.join(" ")}`.toLowerCase();
-
-  if (text.includes("fruit")) return "Fruits";
-  if (text.includes("vegetable") || text.includes("tomato") || text.includes("pepper")) {
-    return "Vegetables";
-  }
-  if (
-    text.includes("dairy") ||
-    text.includes("milk") ||
-    text.includes("cheese") ||
-    text.includes("egg")
-  ) {
-    return "Dairy & Eggs";
-  }
-  if (
-    text.includes("meat") ||
-    text.includes("seafood") ||
-    text.includes("beef") ||
-    text.includes("chicken") ||
-    text.includes("pork") ||
-    text.includes("fish") ||
-    text.includes("shellfish")
-  ) {
-    return "Meat & Seafood";
-  }
-  if (
-    text.includes("bakery") ||
-    text.includes("bread") ||
-    text.includes("cake") ||
-    text.includes("pastr") ||
-    text.includes("cookie")
-  ) {
-    return "Bakery";
-  }
-  if (
-    text.includes("beverage") ||
-    text.includes("water") ||
-    text.includes("juice") ||
-    text.includes("soda") ||
-    text.includes("coffee") ||
-    text.includes("tea")
-  ) {
-    return "Beverages";
-  }
-  if (
-    text.includes("pantry") ||
-    text.includes("grain") ||
-    text.includes("rice") ||
-    text.includes("pasta") ||
-    text.includes("noodle") ||
-    text.includes("canned") ||
-    text.includes("sauce") ||
-    text.includes("oil")
-  ) {
-    return "Pantry";
-  }
-  if (text.includes("frozen") || text.includes("ice cream") || text.includes("frozen meals")) {
-    return "Frozen Foods";
-  }
-  if (
-    text.includes("snack") ||
-    text.includes("chip") ||
-    text.includes("nut") ||
-    text.includes("chocolate") ||
-    text.includes("candy")
-  ) {
-    return "Snacks";
-  }
-  if (text.includes("organic") || text.includes("vegan") || text.includes("gluten")) {
-    return "Organic";
-  }
-
-  return "Other";
-}
-
-function groupOptions<T extends { label: string; tags: string[] }>(items: T[]) {
-  return GROUP_ORDER.map((group) => ({
-    group,
-    items: items.filter((item) => getOptionGroup(item) === group)
-  })).filter((bucket) => bucket.items.length > 0);
-}
-
 function getDefaultValues(category?: Category | null): CreateCategoryFormInput {
   return {
     name: category?.name || "",
@@ -204,7 +109,6 @@ export default function CategoryForm({
   const [loadingParents, setLoadingParents] = useState(true);
   const [pickerMode, setPickerMode] = useState<PickerMode>("icon");
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [pickerQuery, setPickerQuery] = useState("");
 
   const methods = useForm<CreateCategoryFormInput, unknown, CreateCategoryFormValues>({
     defaultValues: getDefaultValues(category),
@@ -228,31 +132,9 @@ export default function CategoryForm({
     reset(getDefaultValues(category));
   }, [category, reset]);
 
-  const normalizedQuery = pickerQuery.trim().toLowerCase();
-
-  const filteredIconOptions = CATEGORY_ICON_OPTIONS.filter((item) => {
-    if (!normalizedQuery) return true;
-    return (
-      item.label.toLowerCase().includes(normalizedQuery) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
-    );
-  });
-
-  const filteredImageOptions = CATEGORY_IMAGE_OPTIONS.filter((item) => {
-    if (!normalizedQuery) return true;
-    return (
-      item.label.toLowerCase().includes(normalizedQuery) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
-    );
-  });
-
-  const groupedIconOptions = groupOptions(filteredIconOptions);
-  const groupedImageOptions = groupOptions(filteredImageOptions);
-
   const openPicker = (mode: PickerMode) => {
     setPickerMode(mode);
     setPickerOpen(true);
-    setPickerQuery("");
   };
 
   const handlePickValue = (value: string) => {
@@ -566,160 +448,17 @@ export default function CategoryForm({
         </Box>
       </FormProvider>
 
-      <Dialog
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        maxWidth="md"
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "10px",
-              border: "1px solid #D1D5DB"
-            }
-          }
-        }}
-      >
-        <Box p={3}>
-          <Typography variant="h6" mb={2}>
-            {pickerMode === "icon" ? "Choose Icon" : "Choose Image"}
-          </Typography>
-
-          <MuiTextField
-            fullWidth
-            size="small"
-            placeholder="Search options..."
-            value={pickerQuery}
-            onChange={(event) => setPickerQuery(event.target.value)}
-          />
-
-          <Box sx={{ maxHeight: 460, overflowY: "auto", pr: 0.5, mt: 2 }}>
-            {pickerMode === "icon" ? (
-              <Stack spacing={2}>
-                {groupedIconOptions.map((bucket) => (
-                  <Box key={bucket.group}>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      mb={1}
-                      sx={{
-                        position: "sticky",
-                        top: 0,
-                        py: 0.5,
-                        zIndex: 1,
-                        backgroundColor: "background.paper"
-                      }}
-                    >
-                      {bucket.group}
-                    </Typography>
-                    <Grid container spacing={1.5}>
-                      {bucket.items.map((option) => (
-                        <Grid
-                          key={`${bucket.group}-${option.value}-${option.label}`}
-                          size={{ xs: 6, sm: 4, md: 3 }}
-                        >
-                          <Button
-                            fullWidth
-                            variant="outlined"
-                            sx={{
-                              justifyContent: "flex-start",
-                              py: 1.25,
-                              color: accentDark,
-                              borderColor: accentColor,
-                              "&:hover": {
-                                borderColor: accentDark,
-                                backgroundColor: accentSoft
-                              }
-                            }}
-                            onClick={() => handlePickValue(option.value)}
-                          >
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              <Typography fontSize={20}>{option.value}</Typography>
-                              <Typography variant="body2">{option.label}</Typography>
-                            </Stack>
-                          </Button>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </Box>
-                ))}
-              </Stack>
-            ) : (
-              <Stack spacing={2}>
-                {groupedImageOptions.map((bucket) => (
-                  <Box key={bucket.group}>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      mb={1}
-                      sx={{
-                        position: "sticky",
-                        top: 0,
-                        py: 0.5,
-                        zIndex: 1,
-                        backgroundColor: "background.paper"
-                      }}
-                    >
-                      {bucket.group}
-                    </Typography>
-                    <Grid container spacing={1.5}>
-                      {bucket.items.map((option) => (
-                        <Grid
-                          key={`${bucket.group}-${option.value}-${option.label}`}
-                          size={{ xs: 6, sm: 4 }}
-                        >
-                          <Button
-                            fullWidth
-                            variant="outlined"
-                            sx={{
-                              justifyContent: "flex-start",
-                              py: 1.25,
-                              color: accentDark,
-                              borderColor: accentColor,
-                              "&:hover": {
-                                borderColor: accentDark,
-                                backgroundColor: accentSoft
-                              }
-                            }}
-                            onClick={() => handlePickValue(option.value)}
-                          >
-                            <Stack direction="row" spacing={1.25} alignItems="center">
-                              <Box
-                                sx={{ width: 36, height: 36, borderRadius: 1, overflow: "hidden" }}
-                              >
-                                <Box
-                                  component="img"
-                                  src={option.value}
-                                  alt={option.label}
-                                  sx={{ width: 36, height: 36, objectFit: "cover" }}
-                                />
-                              </Box>
-                              <Typography variant="body2">{option.label}</Typography>
-                            </Stack>
-                          </Button>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </Box>
-
-          {(pickerMode === "icon" ? filteredIconOptions.length : filteredImageOptions.length) ===
-            0 && (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              No options matched your search.
-            </Alert>
-          )}
-
-          <Stack direction="row" justifyContent="flex-end" mt={2}>
-            <Button variant="text" onClick={() => setPickerOpen(false)}>
-              Close
-            </Button>
-          </Stack>
-        </Box>
-      </Dialog>
+      {pickerOpen && (
+        <CategoryVisualPicker
+          open={pickerOpen}
+          mode={pickerMode}
+          accentColor={accentColor}
+          accentDark={accentDark}
+          accentSoft={accentSoft}
+          onClose={() => setPickerOpen(false)}
+          onPick={handlePickValue}
+        />
+      )}
     </Card>
   );
 }

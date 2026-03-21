@@ -1,11 +1,11 @@
 import {
-  getMembersByAdmin,
   getVendorApplicationsByAdmin,
   reviewVendorApplication,
   VendorApplicationByAdmin
-} from "../../../libs/admin";
-import { toPublicImageUrl } from "../../../libs/upload";
-import { getVendors } from "../../../libs/vendor";
+} from "../../../libs/admin/vendor-applications";
+import { getMembersByAdmin } from "../../../libs/admin/members";
+import { toPublicImageUrl } from "../../../libs/upload/url";
+import { getVendors } from "../../../libs/vendor/list";
 
 export interface AdminSellerRow {
   id: string;

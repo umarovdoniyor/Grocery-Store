@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import CategoriesClient from "./categories-client";
+import CategoriesPageClient from "./categories-page-client";
 
 export const metadata: Metadata = {
   title: "Categories - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Categories() {
-  return <CategoriesClient />;
+  return <CategoriesPageClient />;
 }

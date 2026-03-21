@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import OrderDetailsClient from "./order-details-client";
+import OrderDetailsPageClient from "./order-details-page-client";
 // CUSTOM DATA MODEL
 import { IdParams } from "models/Common";
 
@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 export default async function OrderDetails({ params }: IdParams) {
   const { id } = await params;
 
-  return <OrderDetailsClient id={id} />;
+  return <OrderDetailsPageClient id={id} />;
 }

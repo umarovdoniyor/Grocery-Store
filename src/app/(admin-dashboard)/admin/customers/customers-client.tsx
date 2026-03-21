@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
-import { CustomersPageView } from "pages-sections/vendor-dashboard/customers/page-view";
 import {
   AdminCustomerRow,
   fetchAdminCustomersForUiByQuery,
   updateAdminMemberStatusForUi
 } from "utils/services/admin-members";
+
+const CustomersPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/customers/page-view/customers"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 export default function CustomersClient() {
   const searchParams = useSearchParams();

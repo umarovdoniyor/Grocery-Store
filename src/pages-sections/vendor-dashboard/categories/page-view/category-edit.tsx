@@ -7,7 +7,7 @@ import AsyncState from "components/AsyncState";
 import CategoryForm from "../category-form";
 import PageWrapper from "../../page-wrapper";
 import { fetchAdminCategoryForEditById } from "utils/services/admin-categories";
-import type { Category as AdminCategory } from "../../../../../libs/admin";
+import type { Category as AdminCategory } from "../../../../../libs/admin/categories";
 
 export default function EditCategoryPageView() {
   const params = useParams<{ slug: string }>(); // route param is named [slug] but now holds an ID

@@ -6,7 +6,7 @@ import {
   setProductFeaturedByAdmin,
   updateProductStatusByAdmin,
   ProductByAdmin
-} from "../../../libs/admin";
+} from "../../../libs/admin/products";
 
 export interface AdminProductRow {
   id: string;

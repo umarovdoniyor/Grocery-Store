@@ -18,19 +18,19 @@ import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import { FormProvider, TextField } from "components/form-hook";
-import { getCategories } from "../../../../libs/category";
+import { getCategories } from "../../../../libs/category/list";
 import {
   toPublicImageUrl,
   uploadProductGallery,
   uploadProductThumbnail
-} from "../../../../libs/upload";
+} from "../../../../libs/upload/product";
 import {
   createProduct,
-  getProductById,
   ProductStatus,
   ProductUnit,
   updateProduct
-} from "../../../../libs/product";
+} from "../../../../libs/product/manage";
+import { getProductById } from "../../../../libs/product/details";
 
 const mongoIdRegex = /^[a-f\d]{24}$/i;
 

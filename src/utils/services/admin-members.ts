@@ -1,5 +1,9 @@
-import { getMembersByAdmin, MemberByAdmin, updateMemberStatusByAdmin } from "../../../libs/admin";
-import { toPublicImageUrl } from "../../../libs/upload";
+import {
+  getMembersByAdmin,
+  MemberByAdmin,
+  updateMemberStatusByAdmin
+} from "../../../libs/admin/members";
+import { toPublicImageUrl } from "../../../libs/upload/url";
 
 export interface AdminCustomerRow {
   id: string;

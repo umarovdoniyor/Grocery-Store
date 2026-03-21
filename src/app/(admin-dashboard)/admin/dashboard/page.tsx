@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import AdminDashboardPageView from "pages-sections/admin-dashboard/dashboard/page-view/dashboard";
+import AdminDashboardClient from "./admin-dashboard-client";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - Bazaar Next.js E-commerce Template",
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  return <AdminDashboardPageView />;
+  return <AdminDashboardClient />;
 }

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CreateCategoryPageView } from "pages-sections/vendor-dashboard/categories/page-view";
+import CreateCategoryPageClient from "./create-category-page-client";
 
 export const metadata: Metadata = {
   title: "Create Category - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function CreateCategory() {
-  return <CreateCategoryPageView />;
+  return <CreateCategoryPageClient />;
 }

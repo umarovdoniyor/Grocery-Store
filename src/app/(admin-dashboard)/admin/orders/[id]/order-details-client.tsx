@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import AsyncState from "components/AsyncState";
-import { OrderDetailsPageView } from "pages-sections/vendor-dashboard/orders/page-view";
 import type Order from "models/Order.model";
 import { useSnackbar } from "notistack";
 import {
   fetchAdminOrderByIdForUi,
   markAdminOrderDeliveredForUi
 } from "utils/services/admin-orders";
+
+const OrderDetailsPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/orders/page-view/order-details"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 type Props = { id: string };
 

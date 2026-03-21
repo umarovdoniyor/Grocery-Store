@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { AccountSettingsPageView } from "pages-sections/vendor-dashboard/account-settings/page-view";
+import AdminAccountSettingsPageClient from "./account-settings-page-client";
 
 export const metadata: Metadata = {
   title: "Admin Account Settings - Bazaar Next.js E-commerce Template",
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminAccountSettingsPage() {
-  return <AccountSettingsPageView uiMode="admin" />;
+  return <AdminAccountSettingsPageClient />;
 }

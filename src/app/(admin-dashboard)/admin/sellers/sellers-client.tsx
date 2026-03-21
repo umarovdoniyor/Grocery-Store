@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
-import { SellersPageView } from "pages-sections/vendor-dashboard/sellers/page-view";
 import {
   AdminSellerRow,
   fetchAdminVendorApplicationsForUiByQuery,
   updateAdminVendorApplicationForUi
 } from "utils/services/admin-vendor-applications";
+
+const SellersPageView = dynamic(
+  () => import("pages-sections/vendor-dashboard/sellers/page-view/sellers"),
+  {
+    loading: () => <AsyncState loading />,
+    ssr: false
+  }
+);
 
 export default function SellersClient() {
   const searchParams = useSearchParams();

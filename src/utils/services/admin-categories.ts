@@ -3,8 +3,8 @@ import {
   removeCategory,
   updateCategory,
   type Category as AdminCategory
-} from "../../../libs/admin";
-import { getCategoryById, getCategoryBySlug } from "../../../libs/category";
+} from "../../../libs/admin/categories";
+import { getCategoryById, getCategoryBySlug } from "../../../libs/category/details";
 
 export interface AdminCategoryRow {
   id: string;

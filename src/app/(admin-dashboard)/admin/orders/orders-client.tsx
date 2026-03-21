@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AsyncState from "components/AsyncState";
-import { OrdersPageView } from "pages-sections/vendor-dashboard/orders/page-view";
+import OrdersPageView from "pages-sections/vendor-dashboard/orders/page-view/orders";
 import type Order from "models/Order.model";
 import { useSnackbar } from "notistack";
 import {

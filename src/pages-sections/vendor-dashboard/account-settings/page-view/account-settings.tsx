@@ -2,50 +2,20 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import { useForm, type Resolver } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 // MUI
 import Alert from "@mui/material/Alert";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-// GLOBAL CUSTOM COMPONENTS
-import { Autocomplete, FormProvider, TextField } from "components/form-hook";
-// DATA
-import countryList from "data/countryList";
 // LOCAL CUSTOM COMPONENT
 import PageWrapper from "../../page-wrapper";
 import { useAuth } from "contexts/AuthContext";
-import {
-  toPublicImageUrl,
-  uploadMemberAvatar,
-  uploadVendorImage
-} from "../../../../../libs/upload";
-import { updateMyVendorProfile } from "../../../../../libs/vendor";
+import { toPublicImageUrl } from "../../../../../libs/upload/url";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
 
 const CoverPicSection = dynamic(() => import("../cover-pic-section"), { ssr: false });
-
-const validationSchema = yup.object().shape({
-  city: yup.string().notRequired(),
-  country: yup.mixed().notRequired(),
-  contact: yup.string().required("Contact is required"),
-  last_name: yup.string().required("Last name is required"),
-  first_name: yup.string().required("First name is required"),
-  email: yup.string().email("Invalid Email").required("Email is required")
+const AccountSettingsFormSection = dynamic(() => import("./account-settings-form-section"), {
+  loading: () => null,
+  ssr: false
 });
-
-type CountryOption = { label: string; value: string };
-
-type AccountSettingsFormValues = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  contact: string;
-  city: string;
-  country: CountryOption | null;
-};
 
 const DEFAULT_COVER = "/assets/images/banners/banner-10.png";
 
@@ -99,33 +69,6 @@ export default function AccountSettingsPageView({
     [user?.id]
   );
 
-  const initialValues = useMemo<AccountSettingsFormValues>(
-    () => ({
-      city: "",
-      email: user?.email || "",
-      contact: user?.phone || "",
-      last_name: user?.name?.lastName || "",
-      first_name: user?.name?.firstName || "",
-      country: { label: "", value: "" }
-    }),
-    [user]
-  );
-
-  const methods = useForm<AccountSettingsFormValues>({
-    defaultValues: initialValues,
-    resolver: yupResolver(validationSchema) as Resolver<AccountSettingsFormValues>
-  });
-
-  const {
-    handleSubmit,
-    reset,
-    formState: { isSubmitting }
-  } = methods;
-
-  useEffect(() => {
-    reset(initialValues);
-  }, [initialValues, reset]);
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     const storedCover = localStorage.getItem(storageKey) || "";
@@ -135,6 +78,7 @@ export default function AccountSettingsPageView({
   const handleAvatarUpload = async (file: File) => {
     setUploadingAvatar(true);
     try {
+      const { uploadMemberAvatar } = await import("../../../../../libs/upload/member-vendor");
       const uploadResult = await uploadMemberAvatar(file);
 
       if (!uploadResult.success || !uploadResult.path) {
@@ -161,6 +105,8 @@ export default function AccountSettingsPageView({
     setShopImageNotice(null);
 
     try {
+      const { uploadVendorImage } = await import("../../../../../libs/upload/member-vendor");
+      const { updateMyVendorProfile } = await import("../../../../../libs/vendor/profile");
       const uploadResult = await uploadVendorImage(file);
 
       if (!uploadResult.success || !uploadResult.path) {
@@ -191,26 +137,6 @@ export default function AccountSettingsPageView({
       setUploadingCover(false);
     }
   };
-
-  // FORM SUBMIT HANDLER
-  const handleSubmitForm = handleSubmit(async (values) => {
-    const addressParts = [values.city, values.country?.label].filter(Boolean).join(", ");
-
-    const response = await updateMemberProfile({
-      firstName: values.first_name,
-      lastName: values.last_name,
-      email: values.email.trim().toLowerCase(),
-      phone: values.contact,
-      address: addressParts || undefined
-    });
-
-    if (!response.success) {
-      await sweetMixinErrorAlert(response.error || "Failed to update profile");
-      return;
-    }
-
-    await sweetTopSmallSuccessAlert("Profile details updated successfully");
-  });
 
   const coverSrc = toImageSrc(coverImagePath) || DEFAULT_COVER;
   const avatarSrc = user?.avatar || "/assets/images/faces/propic(9).png";
@@ -251,87 +177,7 @@ export default function AccountSettingsPageView({
         )}
 
         {/* FORM SECTION */}
-        <FormProvider methods={methods} onSubmit={handleSubmitForm}>
-          <Grid
-            container
-            spacing={3}
-            sx={{
-              "& .MuiInputLabel-root": {
-                zIndex: 1,
-                color: "#6B7280"
-              },
-              "& .MuiInputLabel-shrink": {
-                px: 0.5,
-                bgcolor: "#F8FAFC"
-              },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                backgroundColor: "#F8FAFC",
-                "& fieldset": {
-                  borderColor: "#D1D5DB"
-                },
-                "&:hover fieldset": {
-                  borderColor: accentMain
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: accentMain
-                }
-              },
-              "& .MuiInputBase-input": {
-                color: "#1F2937"
-              }
-            }}
-          >
-            <Grid size={{ md: 6, xs: 12 }}>
-              <TextField fullWidth size="medium" name="first_name" label="First Name" />
-            </Grid>
-
-            <Grid size={{ md: 6, xs: 12 }}>
-              <TextField fullWidth size="medium" name="last_name" label="Last Name" />
-            </Grid>
-
-            <Grid size={{ md: 6, xs: 12 }}>
-              <TextField fullWidth name="email" type="email" label="Email" size="medium" />
-            </Grid>
-
-            <Grid size={{ md: 6, xs: 12 }}>
-              <TextField fullWidth type="tel" size="medium" label="Phone" name="contact" />
-            </Grid>
-
-            <Grid size={{ md: 6, xs: 12 }}>
-              <Autocomplete
-                disablePortal
-                size="medium"
-                name="country"
-                label="Country"
-                placeholder="Select Country"
-                options={countryList}
-                getOptionLabel={(option) => (typeof option === "string" ? option : option.label)}
-              />
-            </Grid>
-
-            <Grid size={{ md: 6, xs: 12 }}>
-              <TextField fullWidth name="city" label="City" color="info" size="medium" />
-            </Grid>
-
-            <Grid size={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{
-                  backgroundColor: accentMain,
-                  color: "#F8FAFC",
-                  "&:hover": {
-                    backgroundColor: accentDark
-                  }
-                }}
-              >
-                Save Changes
-              </Button>
-            </Grid>
-          </Grid>
-        </FormProvider>
+        <AccountSettingsFormSection accentMain={accentMain} accentDark={accentDark} />
       </Card>
     </PageWrapper>
   );

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ProductReviewsPageView } from "pages-sections/vendor-dashboard/products/page-view";
+import ProductReviewsPageClient from "./product-reviews-page-client";
 
 export const metadata: Metadata = {
   title: "Product Reviews - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductReviews() {
-  return <ProductReviewsPageView uiMode="admin" />;
+  return <ProductReviewsPageClient />;
 }

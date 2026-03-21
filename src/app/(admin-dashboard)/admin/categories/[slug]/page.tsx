@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { EditCategoryPageView } from "pages-sections/vendor-dashboard/categories/page-view";
+import EditCategoryPageClient from "./edit-category-page-client";
 
 export const metadata: Metadata = {
   title: "Edit Category - Bazaar Next.js E-commerce Template",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function EditCategory() {
-  return <EditCategoryPageView />;
+  return <EditCategoryPageClient />;
 }
