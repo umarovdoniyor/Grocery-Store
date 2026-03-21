@@ -100,7 +100,7 @@ export default function CheckoutForm() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmitForm}>
       <CardRoot elevation={0}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ mb: 2, color: "#2F4022", fontWeight: 700 }}>
           Shipping Address
         </Typography>
 
@@ -131,7 +131,9 @@ export default function CheckoutForm() {
       </CardRoot>
 
       <CardRoot elevation={0}>
-        <Typography variant="h5">Billing Address</Typography>
+        <Typography variant="h5" sx={{ color: "#2F4022", fontWeight: 700 }}>
+          Billing Address
+        </Typography>
 
         <Checkbox
           size="small"
@@ -180,9 +182,16 @@ export default function CheckoutForm() {
           size="large"
           fullWidth
           href="/cart"
-          color="primary"
           variant="outlined"
           LinkComponent={Link}
+          sx={{
+            borderColor: "rgba(79,109,47,0.35)",
+            color: "#446127",
+            "&:hover": {
+              borderColor: "#446127",
+              backgroundColor: "rgba(79,109,47,0.08)"
+            }
+          }}
         >
           Back to Cart
         </Button>
@@ -191,9 +200,14 @@ export default function CheckoutForm() {
           size="large"
           fullWidth
           type="submit"
-          color="primary"
           variant="contained"
           loading={isSubmitting}
+          sx={{
+            backgroundColor: "#5A7A30",
+            "&:hover": {
+              backgroundColor: "#446127"
+            }
+          }}
         >
           Proceed to Payment
         </Button>

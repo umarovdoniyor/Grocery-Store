@@ -64,12 +64,40 @@ export default function CheckoutSummary() {
   return (
     <Card
       elevation={0}
-      sx={(theme) => ({
+      sx={() => ({
         p: 3,
-        backgroundColor: theme.palette.grey[50],
-        border: `1px solid ${theme.palette.divider}`
+        backgroundColor: "#FEFDF9",
+        border: "1px solid rgba(79,109,47,0.22)",
+        borderRadius: 2,
+        boxShadow: "0 8px 18px rgba(33,49,26,0.08)",
+        "& .MuiInputLabel-root": {
+          zIndex: 1,
+          color: "#5E6F4D"
+        },
+        "& .MuiInputLabel-shrink": {
+          px: 0.5,
+          borderRadius: 0.5,
+          bgcolor: "#FEFDF9"
+        },
+        "& .MuiOutlinedInput-root": {
+          borderRadius: 8,
+          backgroundColor: "#F7F4EA",
+          "& fieldset": {
+            borderColor: "rgba(79,109,47,0.2)"
+          },
+          "&:hover fieldset": {
+            borderColor: "rgba(79,109,47,0.35)"
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#5A7A30"
+          }
+        }
       })}
     >
+      <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
+        Order Summary
+      </Typography>
+
       <ListItem title="Subtotal" value={totals.subtotal} />
       <ListItem title="Shipping" value={totals.shipping} />
       <ListItem title="Tax" value={totals.tax} />
@@ -77,7 +105,9 @@ export default function CheckoutSummary() {
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h2">{currency(totals.total)}</Typography>
+      <Typography variant="h2" sx={{ color: "#2F4022" }}>
+        {currency(totals.total)}
+      </Typography>
 
       {snapshot && !snapshot.isValid && snapshot.issues.length > 0 && (
         <Alert severity="warning" sx={{ mt: 2 }}>
@@ -88,7 +118,18 @@ export default function CheckoutSummary() {
       <Stack direction="row" spacing={2} mt={3}>
         <TextField size="medium" placeholder="Voucher" variant="outlined" fullWidth />
 
-        <Button size="large" variant="outlined" color="primary">
+        <Button
+          size="large"
+          variant="outlined"
+          sx={{
+            borderColor: "rgba(79,109,47,0.35)",
+            color: "#446127",
+            "&:hover": {
+              borderColor: "#446127",
+              backgroundColor: "rgba(79,109,47,0.08)"
+            }
+          }}
+        >
           Apply
         </Button>
       </Stack>

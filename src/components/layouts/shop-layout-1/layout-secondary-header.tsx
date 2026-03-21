@@ -20,6 +20,9 @@ export default function LayoutSecondaryHeader({ header }: Props) {
   const hideOnOrders = pathname.startsWith("/orders");
   const hideOnWishlist = pathname.startsWith("/wish-list");
   const hideOnOrderConfirmation = pathname.startsWith("/order-confirmation");
+  const hideOnCart = pathname.startsWith("/cart");
+  const hideOnCheckout = pathname.startsWith("/checkout");
+  const hideOnPayment = pathname.startsWith("/payment");
 
   if (
     hideOnProductDetails ||
@@ -28,7 +31,10 @@ export default function LayoutSecondaryHeader({ header }: Props) {
     hideOnAddress ||
     hideOnOrders ||
     hideOnWishlist ||
-    hideOnOrderConfirmation
+    hideOnOrderConfirmation ||
+    hideOnCart ||
+    hideOnCheckout ||
+    hideOnPayment
   )
     return null;
 

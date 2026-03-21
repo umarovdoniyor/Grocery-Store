@@ -163,7 +163,10 @@ export default function CategoryVisualPicker({
     [normalizedQuery]
   );
 
-  const groupedIconOptions = useMemo(() => groupOptions(filteredIconOptions), [filteredIconOptions]);
+  const groupedIconOptions = useMemo(
+    () => groupOptions(filteredIconOptions),
+    [filteredIconOptions]
+  );
   const groupedImageOptions = useMemo(
     () => groupOptions(filteredImageOptions),
     [filteredImageOptions]
@@ -280,7 +283,10 @@ export default function CategoryVisualPicker({
                   </Typography>
                   <Grid container spacing={1.5}>
                     {bucket.items.map((option) => (
-                      <Grid key={`${bucket.group}-${option.value}-${option.label}`} size={{ xs: 6, sm: 4 }}>
+                      <Grid
+                        key={`${bucket.group}-${option.value}-${option.label}`}
+                        size={{ xs: 6, sm: 4 }}
+                      >
                         <Button
                           fullWidth
                           variant="outlined"
@@ -297,7 +303,9 @@ export default function CategoryVisualPicker({
                           onClick={() => handlePick(option.value)}
                         >
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Box sx={{ width: 36, height: 36, borderRadius: 1, overflow: "hidden" }}>
+                            <Box
+                              sx={{ width: 36, height: 36, borderRadius: 1, overflow: "hidden" }}
+                            >
                               <Box
                                 component="img"
                                 src={option.value}

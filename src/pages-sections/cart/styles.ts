@@ -9,8 +9,9 @@ export const Wrapper = styled(Card)(({ theme }) => ({
   position: "relative",
   borderRadius: 12,
   marginBottom: "1.5rem",
-  backgroundColor: theme.palette.grey[50],
-  border: `1px solid ${theme.palette.divider}`
+  backgroundColor: "#FEFDF9",
+  border: "1px solid rgba(79,109,47,0.2)",
+  boxShadow: "0 6px 14px rgba(33,49,26,0.08)"
 }));
 
 export const QuantityButton = styled(ButtonBase)(({ theme }) => ({
@@ -20,15 +21,15 @@ export const QuantityButton = styled(ButtonBase)(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 6,
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: "rgba(79,109,47,0.1)",
   transition: theme.transitions.create(["background-color"], {
     duration: theme.transitions.duration.short
   }),
   "&:hover": {
-    backgroundColor: theme.palette.grey[200]
+    backgroundColor: "rgba(79,109,47,0.2)"
   },
   "&:disabled": {
-    backgroundColor: theme.palette.grey[50],
+    backgroundColor: "rgba(79,109,47,0.06)",
     cursor: "not-allowed",
     color: theme.palette.text.disabled
   },
@@ -41,7 +42,8 @@ export const ImageWrapper = styled("div")(({ theme }) => ({
   width: 100,
   height: 100,
   position: "relative",
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: "#F7F4EA",
+  borderInlineEnd: "1px solid rgba(79,109,47,0.12)",
   img: {
     objectFit: "contain",
     objectPosition: "center"
@@ -57,6 +59,7 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   gap: "0.5rem",
   ".remove-item": {
     width: "fit-content",
+    color: "#C2410C",
     marginInlineStart: "auto"
   },
   ".quantity-buttons-wrapper": {

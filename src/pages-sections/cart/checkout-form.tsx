@@ -30,11 +30,25 @@ export default function CheckoutForm() {
       elevation={0}
       sx={{
         padding: 3,
-        border: "1px solid",
-        borderColor: "divider",
-        backgroundColor: "grey.50"
+        border: "1px solid rgba(79,109,47,0.22)",
+        borderRadius: 2,
+        backgroundColor: "#FEFDF9",
+        boxShadow: "0 8px 18px rgba(33,49,26,0.08)",
+        "& .MuiInputLabel-root": {
+          zIndex: 1,
+          color: "#5E6F4D"
+        },
+        "& .MuiInputLabel-shrink": {
+          px: 0.5,
+          borderRadius: 0.5,
+          bgcolor: "#FEFDF9"
+        }
       }}
     >
+      <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
+        Order Summary
+      </Typography>
+
       <FlexBetween mb={2}>
         <Typography variant="body1" fontSize={16} fontWeight={600}>
           Total:
@@ -67,7 +81,20 @@ export default function CheckoutForm() {
       </FlexBox>
 
       {/* COMMENTS TEXT FIELD */}
-      <TextField variant="outlined" rows={3} fullWidth multiline />
+      <TextField
+        variant="outlined"
+        rows={3}
+        fullWidth
+        multiline
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#F7F4EA",
+            "& fieldset": { borderColor: "rgba(79,109,47,0.2)" },
+            "&:hover fieldset": { borderColor: "rgba(79,109,47,0.35)" },
+            "&.Mui-focused fieldset": { borderColor: "#5A7A30" }
+          }
+        }}
+      />
 
       {/* APPLY VOUCHER TEXT FIELD */}
       <FlexBox alignItems="center" gap={1} my={2}>
@@ -77,9 +104,27 @@ export default function CheckoutForm() {
           label="Voucher"
           variant="outlined"
           placeholder="Voucher"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "#F7F4EA",
+              "& fieldset": { borderColor: "rgba(79,109,47,0.2)" },
+              "&:hover fieldset": { borderColor: "rgba(79,109,47,0.35)" },
+              "&.Mui-focused fieldset": { borderColor: "#5A7A30" }
+            }
+          }}
         />
 
-        <Button variant="outlined" color="primary">
+        <Button
+          variant="outlined"
+          sx={{
+            borderColor: "rgba(79,109,47,0.35)",
+            color: "#446127",
+            "&:hover": {
+              borderColor: "#446127",
+              backgroundColor: "rgba(79,109,47,0.08)"
+            }
+          }}
+        >
           Apply
         </Button>
       </FlexBox>
@@ -99,7 +144,15 @@ export default function CheckoutForm() {
         variant="outlined"
         placeholder="Select Country"
         defaultValue="US"
-        sx={{ mb: 2 }}
+        sx={{
+          mb: 2,
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#F7F4EA",
+            "& fieldset": { borderColor: "rgba(79,109,47,0.2)" },
+            "&:hover fieldset": { borderColor: "rgba(79,109,47,0.35)" },
+            "&.Mui-focused fieldset": { borderColor: "#5A7A30" }
+          }
+        }}
       >
         {countryList.map(({ label, value }) => (
           <MenuItem key={value} value={value}>
@@ -117,6 +170,14 @@ export default function CheckoutForm() {
         variant="outlined"
         placeholder="Select State"
         defaultValue="new-york"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#F7F4EA",
+            "& fieldset": { borderColor: "rgba(79,109,47,0.2)" },
+            "&:hover fieldset": { borderColor: "rgba(79,109,47,0.35)" },
+            "&.Mui-focused fieldset": { borderColor: "#5A7A30" }
+          }
+        }}
       >
         {STATE_LIST.map(({ label, value }) => (
           <MenuItem value={value} key={label}>
@@ -132,14 +193,45 @@ export default function CheckoutForm() {
         label="Zip Code"
         placeholder="3100"
         variant="outlined"
-        sx={{ mt: 2 }}
+        sx={{
+          mt: 2,
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#F7F4EA",
+            "& fieldset": { borderColor: "rgba(79,109,47,0.2)" },
+            "&:hover fieldset": { borderColor: "rgba(79,109,47,0.35)" },
+            "&.Mui-focused fieldset": { borderColor: "#5A7A30" }
+          }
+        }}
       />
 
-      <Button variant="outlined" color="primary" fullWidth sx={{ my: 2 }}>
+      <Button
+        variant="outlined"
+        fullWidth
+        sx={{
+          my: 2,
+          borderColor: "rgba(79,109,47,0.35)",
+          color: "#446127",
+          "&:hover": {
+            borderColor: "#446127",
+            backgroundColor: "rgba(79,109,47,0.08)"
+          }
+        }}
+      >
         Calculate Shipping
       </Button>
 
-      <Button fullWidth color="primary" href="/checkout" variant="contained" LinkComponent={Link}>
+      <Button
+        fullWidth
+        href="/checkout"
+        variant="contained"
+        LinkComponent={Link}
+        sx={{
+          backgroundColor: "#5A7A30",
+          "&:hover": {
+            backgroundColor: "#446127"
+          }
+        }}
+      >
         Checkout Now
       </Button>
     </Card>

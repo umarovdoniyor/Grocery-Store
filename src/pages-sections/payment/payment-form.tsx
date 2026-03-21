@@ -91,23 +91,35 @@ export default function PaymentForm() {
         elevation={0}
         sx={{
           mb: 4,
-          border: "1px solid",
-          borderColor: "divider",
-          backgroundColor: "grey.50",
-          padding: { sm: 3, xs: 2 }
+          border: "1px solid rgba(79,109,47,0.22)",
+          backgroundColor: "#FEFDF9",
+          borderRadius: 2,
+          boxShadow: "0 8px 18px rgba(33,49,26,0.08)",
+          padding: { sm: 3, xs: 2.5 }
         }}
       >
-        <Typography variant="h5" sx={{ mb: 1 }}>
+        <Typography variant="h5" sx={{ mb: 1, color: "#2F4022", fontWeight: 700 }}>
           Demo Payment
         </Typography>
 
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: "#5E6F4D", lineHeight: 1.7 }}>
           Payment is simplified for this demo. Click Place Order to create the order record.
         </Typography>
       </Card>
 
       {error && (
-        <Typography color="error.main" sx={{ mt: -2, mb: 2 }}>
+        <Typography
+          color="error.main"
+          sx={{
+            mt: -2,
+            mb: 2,
+            px: 1.5,
+            py: 1,
+            borderRadius: 1,
+            bgcolor: "rgba(211,47,47,0.06)",
+            border: "1px solid rgba(211,47,47,0.2)"
+          }}
+        >
           {error}
         </Typography>
       )}
@@ -122,6 +134,16 @@ export default function PaymentForm() {
           href="/checkout"
           variant="outlined"
           LinkComponent={Link}
+          sx={{
+            height: 48,
+            borderColor: "rgba(79,109,47,0.35)",
+            color: "#446127",
+            fontWeight: 600,
+            "&:hover": {
+              borderColor: "#446127",
+              backgroundColor: "rgba(79,109,47,0.08)"
+            }
+          }}
         >
           Back to checkout
         </Button>
@@ -134,6 +156,15 @@ export default function PaymentForm() {
           variant="contained"
           loading={isReviewing}
           onClick={handlePlaceOrder}
+          sx={{
+            height: 48,
+            fontWeight: 700,
+            backgroundColor: "#5A7A30",
+            boxShadow: "0 6px 14px rgba(79,109,47,0.25)",
+            "&:hover": {
+              backgroundColor: "#446127"
+            }
+          }}
         >
           Place Order
         </Button>

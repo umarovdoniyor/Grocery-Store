@@ -61,12 +61,17 @@ export default function PaymentSummary() {
     <Card
       elevation={0}
       sx={{
-        border: "1px solid",
-        borderColor: "divider",
-        backgroundColor: "grey.50",
-        padding: { sm: 3, xs: 2 }
+        border: "1px solid rgba(79,109,47,0.22)",
+        backgroundColor: "#FEFDF9",
+        borderRadius: 2,
+        boxShadow: "0 8px 18px rgba(33,49,26,0.08)",
+        padding: { sm: 3, xs: 2.5 }
       }}
     >
+      <Typography variant="h6" sx={{ color: "#2F4022", fontWeight: 700, mb: 2 }}>
+        Order Summary
+      </Typography>
+
       <PaymentItem title="Subtotal:" amount={totals.subtotal} />
       <PaymentItem title="Shipping:" amount={totals.shipping} />
       <PaymentItem title="Tax:" amount={totals.tax} />
@@ -74,7 +79,14 @@ export default function PaymentSummary() {
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h4" textAlign="right">
+      <Typography
+        variant="body2"
+        sx={{ color: "#5E6F4D", textTransform: "uppercase", letterSpacing: 0.6, mb: 0.5 }}
+      >
+        Total
+      </Typography>
+
+      <Typography variant="h3" textAlign="right" sx={{ color: "#2F4022", fontWeight: 700 }}>
         {currency(totals.total)}
       </Typography>
 

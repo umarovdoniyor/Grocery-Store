@@ -176,7 +176,9 @@ export default function ProductReviewsPageView({
 
     if (!missingProductIds.length) return;
 
-    const productResults = await Promise.allSettled(missingProductIds.map((id) => getProductById(id)));
+    const productResults = await Promise.allSettled(
+      missingProductIds.map((id) => getProductById(id))
+    );
 
     productResults.forEach((result, index) => {
       if (result.status !== "fulfilled") return;
