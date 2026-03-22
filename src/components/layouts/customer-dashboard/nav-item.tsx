@@ -9,6 +9,7 @@ import Packages from "icons/Packages";
 import Location from "icons/Location";
 import HeartLine from "icons/HeartLine";
 import CreditCard from "icons/CreditCard";
+import Chat from "icons/duotone/Chat";
 // STYLED COMPONENTS
 import { StyledLink } from "./styles";
 
@@ -18,7 +19,8 @@ const icons = {
   Headset,
   User3,
   Location,
-  CreditCard
+  CreditCard,
+  Chat
 };
 
 // ==============================================================

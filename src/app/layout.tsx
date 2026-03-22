@@ -25,9 +25,7 @@ import RTL from "components/rtl";
 import ProgressBar from "components/progress";
 import SnackbarProvider from "components/SnackbarProvider";
 import LanguageSync from "components/i18n/language-sync";
-
-// IMPORT i18n SUPPORT FILE
-import "i18n";
+import GlobalLiveChat from "components/chat/GlobalLiveChat";
 
 // ==============================================================
 interface RootLayoutProps {
@@ -50,6 +48,8 @@ export default function RootLayout({ children, modal }: RootLayoutProps) {
                     {modal}
                     {children}
                   </RTL>
+
+                  <GlobalLiveChat />
 
                   <ProgressBar />
                 </SnackbarProvider>
