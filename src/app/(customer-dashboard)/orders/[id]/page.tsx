@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import OrderDetailsClient from "pages-sections/customer-dashboard/orders/page-view/order-details-client";
-import { getCustomerOrderById } from "utils/services/customer-orders";
 // CUSTOM DATA MODEL
 import { IdParams } from "models/Common";
 
@@ -13,7 +12,5 @@ export const metadata: Metadata = {
 
 export default async function OrderDetails({ params }: IdParams) {
   const { id } = await params;
-  const result = await getCustomerOrderById(id);
-
-  return <OrderDetailsClient orderId={id} initialOrder={result.order || null} />;
+  return <OrderDetailsClient orderId={id} />;
 }

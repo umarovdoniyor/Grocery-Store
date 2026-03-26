@@ -284,7 +284,7 @@ export async function getProducts(input: CatalogProductsInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getProducts?.list || [];
@@ -331,7 +331,7 @@ export async function getFeaturedProducts(input: FeaturedProductsInquiryInput): 
     const { data } = await apolloClient.query({
       query: GET_FEATURED_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getFeaturedProducts || [];
@@ -354,7 +354,7 @@ export async function getPopularProducts(input: PopularProductsInquiryInput): Pr
     const { data } = await apolloClient.query({
       query: GET_POPULAR_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getPopularProducts || [];
@@ -377,7 +377,7 @@ export async function getTrendingProducts(input: TrendingProductsInquiryInput): 
     const { data } = await apolloClient.query({
       query: GET_TRENDING_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getTrendingProducts || [];
@@ -400,7 +400,7 @@ export async function getRelatedProducts(input: RelatedProductsInquiryInput): Pr
     const { data } = await apolloClient.query({
       query: GET_RELATED_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getRelatedProducts || [];
@@ -423,7 +423,7 @@ export async function searchSuggestions(input: SearchSuggestionsInput): Promise<
     const { data } = await apolloClient.query({
       query: SEARCH_SUGGESTIONS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.searchSuggestions || [];

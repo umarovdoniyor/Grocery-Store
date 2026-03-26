@@ -17,7 +17,7 @@ import { useAuth } from "contexts/AuthContext";
 import { getMyVendorProfile, updateMyVendorProfile } from "../../../../libs/vendor";
 import { toPublicImageUrl, uploadVendorImage } from "../../../../libs/upload";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../libs/sweetAlert";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 
 const validationSchema = yup.object().shape({
   shopName: yup.string().required("Shop Name is required!"),

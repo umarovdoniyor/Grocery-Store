@@ -19,8 +19,7 @@ const BASE_MENUS = [
     title: "DASHBOARD",
     list: [
       { icon: "Packages", href: "/orders", title: "Orders", countKey: "orders" },
-      { icon: "HeartLine", href: "/wish-list", title: "Wishlist", countKey: "wishlist" },
-      { icon: "Chat", href: "/chat", title: "Chat" }
+      { icon: "HeartLine", href: "/wish-list", title: "Wishlist", countKey: "wishlist" }
     ]
   },
   {

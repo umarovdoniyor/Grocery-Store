@@ -6,6 +6,7 @@ import ProductReviews from "../product-reviews";
 import AvailableShops from "../available-shops";
 import RelatedProducts from "../related-products";
 import ProductDescription from "../product-description";
+import ProductViewRecorder from "components/product-view-recorder";
 // CUSTOM DATA MODEL
 import Product from "models/Product.model";
 
@@ -24,6 +25,7 @@ export default function ProductDetailsPageView(props: Props) {
 
   return (
     <Container className="mt-2 mb-2">
+      <ProductViewRecorder productId={props.product.id} />
       {/* PRODUCT DETAILS INFO AREA */}
       <ProductIntro product={props.product} />
 

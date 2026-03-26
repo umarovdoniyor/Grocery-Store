@@ -12,7 +12,7 @@ import FlexBox from "components/flex-box/flex-box";
 import { useAuth } from "contexts/AuthContext";
 import { toPublicImageUrl, uploadMemberAvatar } from "../../../../libs/upload";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../libs/sweetAlert";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 
 const FALLBACK_AVATAR = "/assets/images/faces/propic(9).png";
 

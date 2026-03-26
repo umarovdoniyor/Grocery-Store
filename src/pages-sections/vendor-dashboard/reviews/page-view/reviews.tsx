@@ -14,7 +14,7 @@ import TableContainer from "@mui/material/TableContainer";
 import Typography from "@mui/material/Typography";
 import { getVendorProductReviews } from "../../../../../libs/review";
 import { toPublicImageUrl } from "../../../../../libs/upload";
-import { getApiBaseUrl } from "../../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 // GLOBAL CUSTOM COMPONENTS
 import OverlayScrollbar from "components/overlay-scrollbar";
 import { TableHeader, TablePagination } from "components/data-table";

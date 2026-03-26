@@ -13,7 +13,7 @@ import { FlexBetween, FlexBox } from "components/flex-box";
 import { currency } from "lib";
 import { toPublicImageUrl } from "../../../../libs/upload";
 import { initializeApollo } from "../../../../apollo/client";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 import { GET_MY_ORDERS } from "../../../../apollo/user/query";
 import { useAuth } from "contexts/AuthContext";
 // CUSTOM DATA MODEL

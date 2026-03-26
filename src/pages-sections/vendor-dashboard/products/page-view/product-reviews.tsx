@@ -33,7 +33,7 @@ import {
 } from "../../../../../libs/review/admin";
 import { getProductById } from "../../../../../libs/product/details";
 import { toPublicImageUrl } from "../../../../../libs/upload/product";
-import { getApiBaseUrl } from "../../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -260,6 +260,23 @@ export default function ProductReviewsPageView({
     setUpdatingId(null);
     setModerationTarget(null);
     setModerationReason("");
+
+    if (status === "PUBLISHED") {
+      triggerStorefrontRevalidate();
+    }
+  };
+
+  const triggerStorefrontRevalidate = async () => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+      if (!token) return;
+      await fetch("/api/revalidate-storefront", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch {
+      // non-critical
+    }
   };
 
   const handleQuickApprove = async (reviewId: string) => {
@@ -291,6 +308,7 @@ export default function ProductReviewsPageView({
     );
 
     setUpdatingId(null);
+    triggerStorefrontRevalidate();
   };
 
   const { order, orderBy, rowsPerPage, filteredList, handleChangePage, handleRequestSort } =

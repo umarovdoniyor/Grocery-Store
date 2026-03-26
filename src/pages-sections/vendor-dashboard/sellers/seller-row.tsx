@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { toPublicImageUrl } from "../../../../libs/upload";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 // STYLED COMPONENTS

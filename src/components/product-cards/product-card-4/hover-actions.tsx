@@ -96,7 +96,7 @@ export default function HoverActions({ product, onLikesChange }: Props) {
     event.preventDefault();
     event.stopPropagation();
 
-    if (!viewLoading && id) {
+    if (isAuthenticated && !viewLoading && id) {
       setViewLoading(true);
       await recordView({ viewGroup: "PRODUCT", viewRefId: id });
       setViewLoading(false);

@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { unstable_cache } from "next/cache";
 import type Product from "models/Product.model";
 import type Service from "models/Service.model";
 import type CategoryNavList from "models/CategoryNavList.model";
@@ -34,35 +33,6 @@ type TreeCategory = {
 };
 
 const getCategoryTreeCached = getSharedCategoryTree;
-
-const getPopularProductsResponseCached = unstable_cache(
-  async () => getPopularProductsApi({ limit: 12 }),
-  ["grocery-home-popular-products-v1"],
-  { revalidate: 120 }
-);
-
-const getFeaturedProductsResponseCached = unstable_cache(
-  async () => getFeaturedProductsApi({ limit: 12 }),
-  ["grocery-home-featured-products-v1"],
-  { revalidate: 120 }
-);
-
-const getTrendingProductsResponseCached = unstable_cache(
-  async () => getTrendingProductsApi({ limit: 12, windowDays: 7 }),
-  ["grocery-home-trending-products-v1"],
-  { revalidate: 120 }
-);
-
-const getNewestProductsResponseCached = unstable_cache(
-  async () =>
-    getProducts({
-      page: 1,
-      limit: PRODUCT_PAGE_LIMIT,
-      sortBy: "NEWEST"
-    }),
-  ["grocery-home-newest-products-v1"],
-  { revalidate: 60 }
-);
 
 const CHILD_CATEGORY_KEYWORDS: Record<string, string[]> = {
   "fruits-berries": ["berry", "berries", "strawberry", "strawberries", "blueberry", "blueberries"],
@@ -357,15 +327,6 @@ async function getCatalogProductsForHome(options?: {
   sortBy?: ProductSortBy;
   limit?: number;
 }): Promise<Product[]> {
-  if (
-    !options?.categoryIds?.length &&
-    (!options?.sortBy || options.sortBy === "NEWEST") &&
-    (!options?.limit || options.limit === PRODUCT_PAGE_LIMIT)
-  ) {
-    const cached = await getNewestProductsResponseCached();
-    return (cached.list || []).map(toProductModel);
-  }
-
   const response = await getProducts({
     page: 1,
     limit: options?.limit || PRODUCT_PAGE_LIMIT,
@@ -420,12 +381,12 @@ export const getGrocery1Navigation = cache(async () => {
 });
 
 export const getPopularProducts = cache(async (): Promise<Product[]> => {
-  const response = await getPopularProductsResponseCached();
+  const response = await getPopularProductsApi({ limit: 12 });
   return (response.list || []).map(toProductModel);
 });
 
 export const getFeaturedProducts = cache(async (): Promise<Product[]> => {
-  const response = await getFeaturedProductsResponseCached();
+  const response = await getFeaturedProductsApi({ limit: 12 });
 
   const sortedFeatured = [...(response.list || [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -435,7 +396,7 @@ export const getFeaturedProducts = cache(async (): Promise<Product[]> => {
 });
 
 export const getTrendingProducts = cache(async (): Promise<Product[]> => {
-  const response = await getTrendingProductsResponseCached();
+  const response = await getTrendingProductsApi({ limit: 12, windowDays: 7 });
   return (response.list || []).map(toProductModel);
 });
 
