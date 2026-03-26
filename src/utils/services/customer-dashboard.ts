@@ -7,6 +7,7 @@ import { getCategoryById } from "../../../libs/category";
 import { getProductById } from "../../../libs/product";
 import { getMyWishlist } from "../../../libs/wishlist";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 const PAYMENT_METHODS: Payment[] = [
   {
@@ -81,23 +82,6 @@ const buildAddressList = (user?: User | null): Address[] => {
       user
     }
   ];
-};
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
 };
 
 const resolveWishlistImage = (value?: string | null) => {

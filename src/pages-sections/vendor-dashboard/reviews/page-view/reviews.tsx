@@ -14,6 +14,7 @@ import TableContainer from "@mui/material/TableContainer";
 import Typography from "@mui/material/Typography";
 import { getVendorProductReviews } from "../../../../../libs/review";
 import { toPublicImageUrl } from "../../../../../libs/upload";
+import { getApiBaseUrl } from "../../../../../utils/getApiBaseUrl";
 // GLOBAL CUSTOM COMPONENTS
 import OverlayScrollbar from "components/overlay-scrollbar";
 import { TableHeader, TablePagination } from "components/data-table";
@@ -33,23 +34,6 @@ type Props = {
 // =============================================================================
 
 const DEFAULT_REVIEW_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const API_BASE = getApiBaseUrl();
 

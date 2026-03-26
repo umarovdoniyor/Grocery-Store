@@ -3,6 +3,7 @@ import { initializeApollo } from "../../../apollo/client";
 import { CANCEL_MY_ORDER } from "../../../apollo/user/mutation";
 import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 export const CUSTOMER_CANCELLABLE_ORDER_STATUSES = [
   "PENDING_PAYMENT",
@@ -44,23 +45,6 @@ const toDate = (value?: string | null) => {
 
 const DEFAULT_ORDER_ITEM_THUMBNAIL =
   "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const resolveOrderItemImage = (value?: string | null) => {
   const normalized = (value || "").replace(/\\/g, "/").trim();

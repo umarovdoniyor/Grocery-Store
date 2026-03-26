@@ -3,6 +3,7 @@ import { getMyProducts } from "../../../libs/product";
 import { getVendorProductReviews, type ProductReviewStatus } from "../../../libs/review";
 import { toPublicImageUrl } from "../../../libs/upload";
 import { getVendorDashboardSummary } from "../../../libs/vendor";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 interface VendorReviewRow {
   name: string;
@@ -24,17 +25,12 @@ interface VendorReviewSummary {
 
 const DEFAULT_REVIEW_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-  "http://localhost:3001";
-
 function resolveReviewProductImage(value?: string | null) {
   const normalized = value?.trim();
   if (!normalized) return DEFAULT_REVIEW_PRODUCT_IMAGE;
 
   try {
-    return toPublicImageUrl(normalized, API_BASE);
+    return toPublicImageUrl(normalized, getApiBaseUrl());
   } catch {
     return DEFAULT_REVIEW_PRODUCT_IMAGE;
   }

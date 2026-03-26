@@ -31,6 +31,7 @@ import {
   updateProduct
 } from "../../../../libs/product/manage";
 import { getProductById } from "../../../../libs/product/details";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 
 const mongoIdRegex = /^[a-f\d]{24}$/i;
 
@@ -166,23 +167,6 @@ export default function ProductForm({
 
   const thumbnailValue = watch("thumbnail");
   const imageUrlsValue = watch("images");
-
-  const getApiBaseUrl = () => {
-    const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-    if (explicitBase) return explicitBase;
-
-    const graphQlUrl =
-      process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-      process.env.REACT_APP_API_GRAPHQL_URL ||
-      "http://localhost:3007/graphql";
-
-    try {
-      const parsed = new URL(graphQlUrl);
-      return `${parsed.protocol}//${parsed.host}`;
-    } catch {
-      return graphQlUrl.replace(/\/graphql\/?$/, "");
-    }
-  };
 
   const toPreviewSrc = (value?: string) => {
     if (!value) return "";

@@ -10,6 +10,7 @@ import PageWrapper from "../../page-wrapper";
 import { useAuth } from "contexts/AuthContext";
 import { toPublicImageUrl } from "../../../../../libs/upload/url";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
+import { getApiBaseUrl } from "../../../../../utils/getApiBaseUrl";
 
 const CoverPicSection = dynamic(() => import("../cover-pic-section"), { ssr: false });
 const AccountSettingsFormSection = dynamic(() => import("./account-settings-form-section"), {
@@ -18,23 +19,6 @@ const AccountSettingsFormSection = dynamic(() => import("./account-settings-form
 });
 
 const DEFAULT_COVER = "/assets/images/banners/banner-10.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const toImageSrc = (value?: string | null) => {
   if (!value) return "";

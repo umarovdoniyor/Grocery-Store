@@ -8,25 +8,9 @@ import {
   updateOrderStatusByAdmin
 } from "../../../libs/admin";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 const DEFAULT_ORDER_ITEM_THUMBNAIL = "/assets/images/products/placeholder.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const resolveAdminOrderItemImage = (value?: string | null) => {
   const normalized = (value || "").replace(/\\/g, "/").trim();

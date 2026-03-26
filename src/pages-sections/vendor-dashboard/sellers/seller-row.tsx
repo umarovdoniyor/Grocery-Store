@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { toPublicImageUrl } from "../../../../libs/upload";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 // GLOBAL CUSTOM COMPONENTS
 import FlexBox from "components/flex-box/flex-box";
 // STYLED COMPONENTS
@@ -11,23 +12,6 @@ import { StatusWrapper, StyledTableCell, StyledTableRow } from "../styles";
 import { Seller } from "./types";
 
 const DEFAULT_SELLER_IMAGE = "/assets/images/faces/propic(1).png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const resolveSellerDisplayImage = (value?: string | null) => {
   const normalized = value?.replace(/\\/g, "/").trim();

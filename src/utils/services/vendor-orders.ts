@@ -5,6 +5,7 @@ import { updateMyVendorOrderItemStatus, type VendorOrderItemStatus } from "../..
 import { initializeApollo } from "../../../apollo/client";
 import { GET_MY_VENDOR_ORDER_BY_ID, GET_MY_VENDOR_ORDERS } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 interface MyOrderItem {
   _id: string;
@@ -92,23 +93,6 @@ const mapVendorOrdersError = (message?: string) => {
 };
 
 const DEFAULT_ORDER_ITEM_THUMBNAIL = "/assets/images/products/placeholder.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const resolveVendorOrderItemImage = (value?: string | null) => {
   const normalized = (value || "").replace(/\\/g, "/").trim();

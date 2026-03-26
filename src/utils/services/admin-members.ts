@@ -4,6 +4,7 @@ import {
   updateMemberStatusByAdmin
 } from "../../../libs/admin/members";
 import { toPublicImageUrl } from "../../../libs/upload/url";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 export interface AdminCustomerRow {
   id: string;
@@ -18,23 +19,6 @@ export interface AdminCustomerRow {
 }
 
 const DEFAULT_CUSTOMER_AVATAR = "/assets/images/faces/propic(1).png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 function resolveCustomerAvatar(value?: string | null): string {
   const normalized = value?.replace(/\\/g, "/").trim();

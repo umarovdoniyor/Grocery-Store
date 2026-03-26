@@ -2,6 +2,7 @@ import type Shop from "models/Shop.model";
 import type Product from "models/Product.model";
 import { getProductById, getProducts } from "../../../libs/product";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 import {
   getVendorBySlug,
   getVendorProducts as getVendorProductsApi,
@@ -29,23 +30,6 @@ const mapShopSort = (sort?: string): "NEWEST" | "OLDEST" | "NAME_ASC" | "NAME_DE
   if (sort === "za") return "NAME_DESC";
   if (sort === "popular") return "POPULAR";
   return "NEWEST";
-};
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
 };
 
 const addVersionQuery = (url: string, version?: string | null) => {

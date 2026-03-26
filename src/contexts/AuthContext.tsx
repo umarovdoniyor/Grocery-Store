@@ -14,6 +14,7 @@ import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apoll
 import { userVar } from "../../apollo/store";
 import { toPublicImageUrl } from "../../libs/upload";
 import { clearCartServer } from "utils/services/cart";
+import { getApiBaseUrl } from "../utils/getApiBaseUrl";
 import User, { UserRole } from "models/User.model";
 
 interface AuthContextType {
@@ -99,23 +100,6 @@ const mapMemberTypeToRole = (memberType?: string): UserRole => {
   if (memberType === "ADMIN") return "admin";
   if (memberType === "VENDOR") return "vendor";
   return "customer";
-};
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
 };
 
 const normalizeMemberAvatarPath = (value: string) => {

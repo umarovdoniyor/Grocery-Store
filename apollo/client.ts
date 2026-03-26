@@ -56,11 +56,16 @@ function createIsomorphicLink() {
   const httpUri =
     process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
     process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
+    "http://localhost:4001/graphql";
 
   // Server-side rendering cannot use browser-only ws/auth logic.
   if (typeof window === "undefined") {
-    const serverHttpLink = createUploadLink({ uri: httpUri }) as unknown as ApolloLink;
+    // Server-side (SSR): use internal Docker service URL if available,
+    // so the frontend container can reach the backend via Docker network.
+    const ssrUri = process.env.API_INTERNAL_URL
+      ? `${process.env.API_INTERNAL_URL}/graphql`
+      : httpUri;
+    const serverHttpLink = createUploadLink({ uri: ssrUri }) as unknown as ApolloLink;
     return from([serverHttpLink]);
   }
 

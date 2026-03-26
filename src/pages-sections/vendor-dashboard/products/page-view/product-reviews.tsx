@@ -33,6 +33,7 @@ import {
 } from "../../../../../libs/review/admin";
 import { getProductById } from "../../../../../libs/product/details";
 import { toPublicImageUrl } from "../../../../../libs/upload/product";
+import { getApiBaseUrl } from "../../../../../utils/getApiBaseUrl";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [
@@ -49,23 +50,6 @@ type Props = { reviews?: any[] };
 
 const PLACEHOLDER_PRODUCT_IMAGE = "/assets/images/products/placeholder.png";
 type ReviewFilter = "ALL" | "PENDING" | "PUBLISHED" | "HIDDEN" | "REJECTED";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const API_BASE_URL = getApiBaseUrl();
 

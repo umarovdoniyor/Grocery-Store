@@ -1,0 +1,18 @@
+node_modules
+.next
+.git
+.gitignore
+coverage
+
+# Env files — never bake secrets into images
+.env
+.env.*
+!.env.example
+
+# Docs and notes
+*.md
+*.note
+todos.note
+
+# OS artifacts
+.DS_Store

@@ -12,25 +12,9 @@ import FlexBox from "components/flex-box/flex-box";
 import { useAuth } from "contexts/AuthContext";
 import { toPublicImageUrl, uploadMemberAvatar } from "../../../../libs/upload";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../libs/sweetAlert";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 
 const FALLBACK_AVATAR = "/assets/images/faces/propic(9).png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const normalizeMemberAvatarPath = (value: string) => {
   const normalized = value.replace(/\\/g, "/").trim();

@@ -8,6 +8,7 @@ import {
 } from "../../../apollo/user/mutation";
 import { GET_MY_CART } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 export interface CartItemView {
   id: string;
@@ -28,23 +29,6 @@ const toSlug = (value: string) =>
     .replace(/\s+/g, "-");
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/Fashion/Clothes/1.SilverHighNeckSweater.png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 export const resolveCartThumbnail = (value?: string | null) => {
   const normalized = (value || "").replace(/\\/g, "/").trim();

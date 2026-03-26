@@ -15,6 +15,7 @@ import {
   type VendorProductSummary
 } from "../../../libs/vendor";
 import { toPublicImageUrl } from "../../../libs/upload";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 const DEFAULT_COLORS = ["#1C1C1C", "#FF7A7A", "#FFC672", "#84FFB5", "#70F6FF", "#6B7AFF"];
@@ -30,23 +31,6 @@ const mapSort = (sort?: string): ProductSortBy | undefined => {
   if (sort === "asc") return "PRICE_ASC";
   if (sort === "desc") return "PRICE_DESC";
   return undefined;
-};
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
 };
 
 const normalizeThumbnail = (thumbnail?: string | null): string => {

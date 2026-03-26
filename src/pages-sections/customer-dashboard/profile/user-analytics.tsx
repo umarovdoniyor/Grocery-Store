@@ -13,6 +13,7 @@ import { FlexBetween, FlexBox } from "components/flex-box";
 import { currency } from "lib";
 import { toPublicImageUrl } from "../../../../libs/upload";
 import { initializeApollo } from "../../../../apollo/client";
+import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 import { GET_MY_ORDERS } from "../../../../apollo/user/query";
 import { useAuth } from "contexts/AuthContext";
 // CUSTOM DATA MODEL
@@ -30,23 +31,6 @@ const DEFAULT_ORDER_SUMMARY = {
 };
 
 const FALLBACK_AVATAR = "/assets/images/faces/propic(9).png";
-
-const getApiBaseUrl = () => {
-  const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
-  if (explicitBase) return explicitBase;
-
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return graphQlUrl.replace(/\/graphql\/?$/, "");
-  }
-};
 
 const normalizeMemberAvatarPath = (value: string) => {
   const normalized = value.replace(/\\/g, "/").trim();

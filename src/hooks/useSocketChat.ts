@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getJwtToken } from "../../libs/auth";
+import { getApiBaseUrl } from "../utils/getApiBaseUrl";
 
 type MemberData = {
   sub?: string;
@@ -56,7 +57,7 @@ const getDisplayName = (memberData?: MemberData) => {
   return "Guest User";
 };
 
-const normalizeWsUrl = () => {
+const normalizeWsUrl = (): string => {
   const explicitUrl =
     process.env.NEXT_PUBLIC_SOCKET_CHAT_URL ||
     process.env.NEXT_PUBLIC_API_SOCKET_URL ||
@@ -64,18 +65,8 @@ const normalizeWsUrl = () => {
 
   if (explicitUrl) return explicitUrl;
 
-  const graphQlUrl =
-    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
-    process.env.REACT_APP_API_GRAPHQL_URL ||
-    "http://localhost:3007/graphql";
-
-  try {
-    const parsed = new URL(graphQlUrl);
-    const socketProtocol = parsed.protocol === "https:" ? "wss:" : "ws:";
-    return `${socketProtocol}//${parsed.host}`;
-  } catch {
-    return "ws://localhost:3007";
-  }
+  const base = getApiBaseUrl();
+  return base.replace(/^http:/, "ws:").replace(/^https:/, "wss:");
 };
 
 const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
