@@ -35,7 +35,7 @@ export async function getCategories(input?: CategoryInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORIES,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getCategories?.list || [];

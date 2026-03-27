@@ -67,7 +67,7 @@ export async function getReviewsByAdmin(input: ReviewsByAdminInquiryInput): Prom
     const { data } = await apolloClient.query({
       query: GET_REVIEWS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const payload = data?.getReviewsByAdmin;

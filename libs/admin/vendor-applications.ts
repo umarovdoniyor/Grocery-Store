@@ -78,7 +78,7 @@ export async function getVendorApplicationsByAdmin(input: VendorApplicationsInqu
     const { data } = await apolloClient.query({
       query: GET_VENDOR_APPLICATIONS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getVendorApplicationsByAdmin?.list || [];

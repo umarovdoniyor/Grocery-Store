@@ -72,7 +72,7 @@ export async function getProductsByAdmin(input?: AdminProductsInquiryInput): Pro
     const { data } = await apolloClient.query({
       query: GET_PRODUCTS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getProductsByAdmin?.list || [];
@@ -97,7 +97,7 @@ export async function getFeaturedProductsByAdmin(input?: AdminProductsInquiryInp
     const { data } = await apolloClient.query({
       query: GET_FEATURED_PRODUCTS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getFeaturedProductsByAdmin?.list || [];
@@ -121,7 +121,7 @@ export async function getProductByIdByAdmin(productId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_PRODUCT_BY_ID_BY_ADMIN,
       variables: { productId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const product = data?.getProductByIdByAdmin || null;

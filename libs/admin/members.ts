@@ -49,7 +49,7 @@ export async function getMembersByAdmin(input: MembersInquiryByAdminInput): Prom
     const { data } = await apolloClient.query({
       query: GET_MEMBERS_BY_ADMIN,
       variables: { input: variablesInput },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getMembersByAdmin?.list || [];

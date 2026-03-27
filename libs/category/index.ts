@@ -50,7 +50,7 @@ export async function getCategories(input?: CategoryInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORIES,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getCategories?.list || [];
@@ -74,7 +74,7 @@ export async function getCategoryById(categoryId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORY_BY_ID,
       variables: { categoryId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const category = data?.getCategoryById || null;
@@ -97,7 +97,7 @@ export async function getCategoryBySlug(slug: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORY_BY_SLUG,
       variables: { slug },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const category = data?.getCategoryBySlug || null;
@@ -119,7 +119,7 @@ export async function getCategoryTree(): Promise<{
 
     const { data } = await apolloClient.query({
       query: GET_CATEGORY_TREE,
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const tree = data?.getCategoryTree || [];

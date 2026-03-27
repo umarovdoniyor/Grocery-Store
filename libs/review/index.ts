@@ -134,7 +134,7 @@ export async function getProductReviews(input: ProductReviewsInquiryInput): Prom
     const { data } = await apolloClient.query({
       query: GET_PRODUCT_REVIEWS,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const payload = data?.getProductReviews;
@@ -170,7 +170,7 @@ export async function getMyProductReview(productId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_MY_PRODUCT_REVIEW,
       variables: { productId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     return {
@@ -196,7 +196,7 @@ export async function getReviewsByAdmin(input: ReviewsByAdminInquiryInput): Prom
     const { data } = await apolloClient.query({
       query: GET_REVIEWS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const payload = data?.getReviewsByAdmin;
@@ -234,7 +234,7 @@ export async function getVendorProductReviews(input: VendorProductReviewsInquiry
     const { data } = await apolloClient.query({
       query: GET_VENDOR_PRODUCT_REVIEWS,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const payload = data?.getVendorProductReviews;

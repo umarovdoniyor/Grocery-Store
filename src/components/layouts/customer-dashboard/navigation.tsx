@@ -58,12 +58,12 @@ export function Navigation() {
         apolloClient.query({
           query: GET_MY_ORDERS,
           variables: { input: { page: 1, limit: 1 } },
-          fetchPolicy: "network-only"
+          fetchPolicy: "cache-first"
         }),
         apolloClient.query({
           query: GET_MY_WISHLIST,
           variables: { input: { page: 1, limit: 1 } },
-          fetchPolicy: "network-only"
+          fetchPolicy: "cache-first"
         })
       ]);
 
@@ -96,7 +96,7 @@ export function Navigation() {
     return () => {
       active = false;
     };
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user?.id]);
 
   const menus = useMemo(
     () =>

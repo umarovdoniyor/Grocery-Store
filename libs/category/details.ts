@@ -13,7 +13,7 @@ export async function getCategoryById(categoryId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORY_BY_ID,
       variables: { categoryId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const category = data?.getCategoryById || null;
@@ -36,7 +36,7 @@ export async function getCategoryBySlug(slug: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_CATEGORY_BY_SLUG,
       variables: { slug },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const category = data?.getCategoryBySlug || null;

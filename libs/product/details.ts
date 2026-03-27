@@ -31,7 +31,7 @@ export async function getProductById(productId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_PRODUCT_BY_ID,
       variables: { productId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const product = data?.getProductById || null;

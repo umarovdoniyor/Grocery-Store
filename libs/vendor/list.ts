@@ -39,7 +39,7 @@ export async function getVendors(input: VendorsInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_VENDORS,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getVendors?.list || [];

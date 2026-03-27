@@ -139,7 +139,7 @@ export async function getVendors(input: VendorsInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_VENDORS,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getVendors?.list || [];
@@ -163,7 +163,7 @@ export async function getVendorBySlug(slug: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_VENDOR_BY_SLUG,
       variables: { slug },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const vendor = data?.getVendorBySlug || null;
@@ -193,7 +193,7 @@ export async function getVendorProducts(input: {
         vendorId: input.vendorId,
         input: input.inquiry
       },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getVendorProducts?.list || [];
@@ -216,7 +216,7 @@ export async function getMyVendorProfile(): Promise<{
 
     const { data } = await apolloClient.query({
       query: GET_MY_VENDOR_PROFILE,
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     return { success: true, profile: data?.getMyVendorProfile || null };
@@ -236,7 +236,7 @@ export async function getVendorDashboardSummary(): Promise<{
 
     const { data } = await apolloClient.query({
       query: GET_VENDOR_DASHBOARD_SUMMARY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const summary = data?.getVendorDashboardSummary;

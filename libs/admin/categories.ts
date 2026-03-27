@@ -115,7 +115,7 @@ export async function getCategoriesByAdmin(input: CategoryInquiryInput): Promise
     const { data } = await apolloClient.query({
       query: GET_CATEGORIES_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getCategoriesByAdmin?.list || [];

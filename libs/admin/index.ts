@@ -308,7 +308,7 @@ export async function getVendorApplicationsByAdmin(input: VendorApplicationsInqu
     const { data } = await apolloClient.query({
       query: GET_VENDOR_APPLICATIONS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getVendorApplicationsByAdmin?.list || [];
@@ -333,7 +333,7 @@ export async function getMembersByAdmin(input: MembersInquiryByAdminInput): Prom
     const { data } = await apolloClient.query({
       query: GET_MEMBERS_BY_ADMIN,
       variables: { input: variablesInput },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getMembersByAdmin?.list || [];
@@ -422,7 +422,7 @@ export async function getOrdersByAdmin(input: AdminOrdersInquiryInput): Promise<
     const { data } = await apolloClient.query({
       query: GET_ORDERS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getOrdersByAdmin?.list || [];
@@ -446,7 +446,7 @@ export async function getOrderByIdByAdmin(orderId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_ORDER_BY_ID_BY_ADMIN,
       variables: { orderId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const order = data?.getOrderByIdByAdmin || null;
@@ -586,7 +586,7 @@ export async function getCategoriesByAdmin(input: CategoryInquiryInput): Promise
     const { data } = await apolloClient.query({
       query: GET_CATEGORIES_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getCategoriesByAdmin?.list || [];
@@ -637,7 +637,7 @@ export async function getProductsByAdmin(input?: AdminProductsInquiryInput): Pro
     const { data } = await apolloClient.query({
       query: GET_PRODUCTS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getProductsByAdmin?.list || [];
@@ -662,7 +662,7 @@ export async function getFeaturedProductsByAdmin(input?: AdminProductsInquiryInp
     const { data } = await apolloClient.query({
       query: GET_FEATURED_PRODUCTS_BY_ADMIN,
       variables: { input },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const list = data?.getFeaturedProductsByAdmin?.list || [];
@@ -686,7 +686,7 @@ export async function getProductByIdByAdmin(productId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_PRODUCT_BY_ID_BY_ADMIN,
       variables: { productId },
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-first"
     });
 
     const product = data?.getProductByIdByAdmin || null;
