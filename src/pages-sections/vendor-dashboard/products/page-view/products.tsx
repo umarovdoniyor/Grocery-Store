@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
@@ -62,7 +63,12 @@ export default function ProductsPageView({
   const accentDark = uiMode === "admin" ? "#4338CA" : "#0F766E";
   const headTint = uiMode === "admin" ? "#EEF2FF" : "#F0FDFA";
 
-  const reshapedProducts = products;
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.toLowerCase().trim() || "";
+  const reshapedProducts = query
+    ? products.filter((p) => p.name.toLowerCase().includes(query))
+    : products;
+
   const tableHeading = showFeaturedToggle
     ? [
         { id: "name", label: "Name", align: "left" },
@@ -158,7 +164,7 @@ export default function ProductsPageView({
         >
           <TablePagination
             onChange={handleChangePage}
-            count={Math.ceil(products.length / rowsPerPage)}
+            count={Math.ceil(reshapedProducts.length / rowsPerPage)}
           />
         </Stack>
       </Card>
