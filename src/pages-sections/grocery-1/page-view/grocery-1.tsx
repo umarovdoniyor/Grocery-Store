@@ -1,4 +1,7 @@
 import { Fragment } from "react";
+import Link from "next/link";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 // GLOBAL CUSTOM COMPONENTS
 import Setting from "components/settings";
 import Newsletter from "components/newsletter";
@@ -61,7 +64,25 @@ export default async function GroceryOnePageView({ selected, layoutData }: Props
     .filter((item) => Boolean(item.Icon));
 
   // SIDE NAVBAR COMPONENT
-  const SideNav = <SideNavbar navList={grocery1NavList} />;
+  const SideNav = (
+    <Box>
+      {selected && (
+        <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+          <Link href="/#products">
+            <Button
+              fullWidth
+              variant="outlined"
+              size="small"
+              sx={{ borderRadius: "8px", textTransform: "none", fontWeight: 600 }}
+            >
+              ✕ Clear Category
+            </Button>
+          </Link>
+        </Box>
+      )}
+      <SideNavbar navList={grocery1NavList} />
+    </Box>
+  );
 
   return (
     <Fragment>
