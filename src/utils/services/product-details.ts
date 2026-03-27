@@ -3,7 +3,7 @@ import type Product from "models/Product.model";
 import type Review from "models/Review.model";
 import type Shop from "models/Shop.model";
 import { resolveMemberImageUrl } from "../../../libs/upload/url";
-import { getApiBaseUrl } from "./getApiBaseUrl";
+import { getApiBaseUrl } from "../getApiBaseUrl";
 import {
   getFeaturedProducts,
   getProductById,
