@@ -1,3 +1,4 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
@@ -62,6 +63,14 @@ export default function CoverPicSection({
           <Avatar
             alt="user"
             src={avatarSrc}
+            slotProps={{
+              img: {
+                onError: (e: React.SyntheticEvent<HTMLImageElement>) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/assets/images/faces/propic(9).png";
+                }
+              }
+            }}
             sx={{
               width: 80,
               height: 80,

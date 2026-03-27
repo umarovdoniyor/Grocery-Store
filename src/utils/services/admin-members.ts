@@ -3,7 +3,7 @@ import {
   MemberByAdmin,
   updateMemberStatusByAdmin
 } from "../../../libs/admin/members";
-import { toPublicImageUrl } from "../../../libs/upload/url";
+import { resolveMemberImageUrl } from "../../../libs/upload/url";
 import { getApiBaseUrl } from "../getApiBaseUrl";
 
 export interface AdminCustomerRow {
@@ -21,25 +21,7 @@ export interface AdminCustomerRow {
 const DEFAULT_CUSTOMER_AVATAR = "/assets/images/faces/propic(1).png";
 
 function resolveCustomerAvatar(value?: string | null): string {
-  const normalized = value?.replace(/\\/g, "/").trim();
-  if (!normalized) return DEFAULT_CUSTOMER_AVATAR;
-
-  if (normalized.startsWith("/assets/")) return normalized;
-
-  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
-    try {
-      const parsed = new URL(normalized);
-      return parsed.host ? normalized : DEFAULT_CUSTOMER_AVATAR;
-    } catch {
-      return DEFAULT_CUSTOMER_AVATAR;
-    }
-  }
-
-  try {
-    return toPublicImageUrl(normalized, getApiBaseUrl());
-  } catch {
-    return DEFAULT_CUSTOMER_AVATAR;
-  }
+  return resolveMemberImageUrl(value, getApiBaseUrl(), DEFAULT_CUSTOMER_AVATAR);
 }
 
 function toDisplayName(member: MemberByAdmin): string {

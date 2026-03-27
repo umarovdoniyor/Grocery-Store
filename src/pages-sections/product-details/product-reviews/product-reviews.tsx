@@ -14,6 +14,8 @@ import {
   type ProductReview as ProductReviewDto,
   type ProductReviewSortBy
 } from "../../../../libs/review";
+import { resolveMemberImageUrl } from "../../../../libs/upload/url";
+import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 // STYLED COMPONENTS
 import { ReviewRoot } from "./styles";
 import type Review from "models/Review.model";
@@ -33,7 +35,11 @@ const mapDtoToReview = (review: ProductReviewDto): Review => {
       id: review.member?._id || review.memberId,
       email: "",
       phone: "",
-      avatar: review.member?.memberAvatar || "/assets/images/faces/propic.png",
+      avatar: resolveMemberImageUrl(
+        review.member?.memberAvatar,
+        getApiBaseUrl(),
+        "/assets/images/faces/propic.png"
+      ),
       password: "",
       dateOfBirth: "",
       verified: true,

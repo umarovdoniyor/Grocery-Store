@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
 // MUI
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
@@ -49,7 +49,18 @@ export default function AccountPopover() {
         aria-expanded={open ? "true" : undefined}
         aria-controls={open ? "account-menu" : undefined}
       >
-        <Avatar alt={displayName} src={user?.avatar || "/assets/images/avatars/001-man.svg"} />
+        <Avatar
+          alt={displayName}
+          src={user?.avatar || "/assets/images/faces/propic(9).png"}
+          slotProps={{
+            img: {
+              onError: (e: React.SyntheticEvent<HTMLImageElement>) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/assets/images/faces/propic(9).png";
+              }
+            }
+          }}
+        />
       </IconButton>
 
       <Menu

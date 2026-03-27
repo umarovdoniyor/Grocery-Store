@@ -12,7 +12,7 @@ import { initializeApollo } from "../../apollo/client";
 import { GET_MEMBER_PROFILE, ME, GET_MY_VENDOR_APPLICATION } from "../../apollo/user/query";
 import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apollo/user/mutation";
 import { userVar } from "../../apollo/store";
-import { toPublicImageUrl } from "../../libs/upload";
+import { resolveMemberImageUrl } from "../../libs/upload/url";
 import { clearCartServer } from "utils/services/cart";
 import { getApiBaseUrl } from "../utils/getApiBaseUrl";
 import User, { UserRole } from "models/User.model";
@@ -102,30 +102,8 @@ const mapMemberTypeToRole = (memberType?: string): UserRole => {
   return "customer";
 };
 
-const normalizeMemberAvatarPath = (value: string) => {
-  const normalized = value.replace(/\\/g, "/").trim();
-  if (!normalized) return "";
-
-  // Backend can return only filename for member avatar in some environments.
-  if (!normalized.includes("/")) {
-    return `/uploads/member/${normalized}`;
-  }
-
-  return normalized;
-};
-
-const resolveMemberAvatarUrl = (value?: string) => {
-  if (!value) return "";
-  if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("blob:")) {
-    return value;
-  }
-
-  const apiBaseUrl = getApiBaseUrl();
-  const normalizedPath = normalizeMemberAvatarPath(value);
-  if (!apiBaseUrl) return value.startsWith("/") ? value : `/${value}`;
-
-  return toPublicImageUrl(normalizedPath, apiBaseUrl);
-};
+const resolveMemberAvatarUrl = (value?: string) =>
+  resolveMemberImageUrl(value, getApiBaseUrl());
 
 const mapMemberToUser = (member: any): User => ({
   id: member?._id || "",

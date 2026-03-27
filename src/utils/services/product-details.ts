@@ -2,6 +2,8 @@ import { cache } from "react";
 import type Product from "models/Product.model";
 import type Review from "models/Review.model";
 import type Shop from "models/Shop.model";
+import { resolveMemberImageUrl } from "../../../libs/upload/url";
+import { getApiBaseUrl } from "./getApiBaseUrl";
 import {
   getFeaturedProducts,
   getProductById,
@@ -46,7 +48,7 @@ const mapVendorToShop = (
       id: vendor._id,
       email: "",
       phone: "",
-      avatar: vendor.memberAvatar || "",
+      avatar: resolveMemberImageUrl(vendor.memberAvatar, getApiBaseUrl()),
       password: "",
       dateOfBirth: "",
       verified: false,
@@ -61,7 +63,7 @@ const mapVendorToShop = (
     address: "",
     verified: false,
     coverPicture: "",
-    profilePicture: vendor.memberAvatar || "",
+    profilePicture: resolveMemberImageUrl(vendor.memberAvatar, getApiBaseUrl()),
     socialLinks: {}
   };
 };
@@ -146,7 +148,11 @@ const mapReviewToUi = (review: ProductReviewDto): Review => {
       id: review.member?._id || review.memberId,
       email: "",
       phone: "",
-      avatar: review.member?.memberAvatar || "/assets/images/faces/propic.png",
+      avatar: resolveMemberImageUrl(
+        review.member?.memberAvatar,
+        getApiBaseUrl(),
+        "/assets/images/faces/propic.png"
+      ),
       password: "",
       dateOfBirth: "",
       verified: true,

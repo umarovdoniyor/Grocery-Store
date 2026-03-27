@@ -5,3 +5,43 @@ export function toPublicImageUrl(path: string, apiBaseUrl: string): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${base}${normalizedPath}`;
 }
+
+/**
+ * Resolves a member avatar/image path to a full URL, normalizing stale
+ * localhost URLs (e.g. http://localhost:3007/...) to the current API base.
+ */
+export function resolveMemberImageUrl(
+  value: string | null | undefined,
+  apiBaseUrl: string,
+  fallback = ""
+): string {
+  const normalized = value?.replace(/\\/g, "/").trim();
+  if (!normalized) return fallback;
+
+  if (normalized.startsWith("/assets/")) return normalized;
+
+  if (normalized.startsWith("blob:")) return normalized;
+
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    try {
+      const stored = new URL(normalized);
+      // Rewrite stale localhost URLs to the current API origin.
+      if (stored.hostname === "localhost" && apiBaseUrl) {
+        const api = new URL(apiBaseUrl);
+        if (stored.port !== api.port) {
+          return `${api.origin}${stored.pathname}`;
+        }
+      }
+    } catch {}
+    return normalized;
+  }
+
+  // Bare filename with no path separators — backend may return just the filename.
+  const withPath = normalized.includes("/") ? normalized : `/uploads/member/${normalized}`;
+
+  try {
+    return toPublicImageUrl(withPath, apiBaseUrl);
+  } catch {
+    return fallback;
+  }
+}

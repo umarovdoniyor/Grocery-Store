@@ -4,7 +4,7 @@ import {
   VendorApplicationByAdmin
 } from "../../../libs/admin/vendor-applications";
 import { getMembersByAdmin } from "../../../libs/admin/members";
-import { toPublicImageUrl } from "../../../libs/upload/url";
+import { resolveMemberImageUrl } from "../../../libs/upload/url";
 import { getVendors } from "../../../libs/vendor/list";
 import { getApiBaseUrl } from "../getApiBaseUrl";
 
@@ -23,27 +23,8 @@ export interface AdminSellerRow {
 
 const DEFAULT_SELLER_IMAGE = "/assets/images/faces/propic(1).png";
 
-const resolveSellerImage = (value?: string | null) => {
-  const normalized = value?.replace(/\\/g, "/").trim();
-  if (!normalized) return DEFAULT_SELLER_IMAGE;
-
-  if (normalized.startsWith("/assets/")) return normalized;
-
-  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
-    try {
-      const parsed = new URL(normalized);
-      return parsed.host ? normalized : DEFAULT_SELLER_IMAGE;
-    } catch {
-      return DEFAULT_SELLER_IMAGE;
-    }
-  }
-
-  try {
-    return toPublicImageUrl(normalized, getApiBaseUrl());
-  } catch {
-    return DEFAULT_SELLER_IMAGE;
-  }
-};
+const resolveSellerImage = (value?: string | null) =>
+  resolveMemberImageUrl(value, getApiBaseUrl(), DEFAULT_SELLER_IMAGE);
 
 async function getVendorAvatarMap(): Promise<Map<string, string>> {
   const response = await getMembersByAdmin({
