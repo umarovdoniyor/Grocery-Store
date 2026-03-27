@@ -70,7 +70,7 @@ export async function fetchVendorProductsForUi(): Promise<{
   error?: string;
 }> {
   const [response, categoryNameMap] = await Promise.all([
-    getMyProducts({ page: 1, limit: 100 }),
+    getMyProducts({ page: 1, limit: 50 }),
     getCategoryNameMap()
   ]);
 

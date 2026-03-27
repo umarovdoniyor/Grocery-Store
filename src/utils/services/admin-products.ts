@@ -65,7 +65,7 @@ export async function fetchAdminProductsForUi(): Promise<{
   error?: string;
 }> {
   const [response, categoryNameMap] = await Promise.all([
-    getProductsByAdmin({ page: 1, limit: 100 }),
+    getProductsByAdmin({ page: 1, limit: 50 }),
     getCategoryNameMap()
   ]);
 
@@ -94,7 +94,7 @@ export async function fetchAdminProductsForUiByQuery(input?: {
   const [response, categoryNameMap] = await Promise.all([
     getProductsByAdmin({
       page: input?.page || 1,
-      limit: input?.limit || 100,
+      limit: input?.limit || 50,
       search: input?.search || undefined,
       status: input?.status
     }),
@@ -126,7 +126,7 @@ export async function fetchAdminFeaturedProductsForUiByQuery(input?: {
   const [response, categoryNameMap] = await Promise.all([
     getFeaturedProductsByAdmin({
       page: input?.page || 1,
-      limit: input?.limit || 100,
+      limit: input?.limit || 50,
       search: input?.search || undefined,
       status: input?.status
     }),

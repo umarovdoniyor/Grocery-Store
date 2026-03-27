@@ -303,7 +303,7 @@ async function getChildCategoryFallbackProducts(
 ): Promise<Product[]> {
   const response = await getProducts({
     page: 1,
-    limit: 100,
+    limit: 50,
     categoryIds: [parentNode._id],
     sortBy: "NEWEST"
   });
