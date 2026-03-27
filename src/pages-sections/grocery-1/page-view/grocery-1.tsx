@@ -3,7 +3,6 @@ import Link from "next/link";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 // GLOBAL CUSTOM COMPONENTS
-import Setting from "components/settings";
 import Newsletter from "components/newsletter";
 import StickyWrapper from "components/sticky-wrapper";
 import SideNavbar from "components/page-sidenav/side-navbar";
@@ -124,8 +123,6 @@ export default async function GroceryOnePageView({ selected, layoutData }: Props
       {/* POPUP NEWSLETTER FORM */}
       <Newsletter image="/assets/images/newsletter/bg-2.png" />
 
-      {/* SETTINGS IS USED ONLY FOR DEMO, YOU CAN REMOVE THIS */}
-      <Setting />
 
       <MobileNavigationBar2 navigation={mobileNavigation}>{SideNav}</MobileNavigationBar2>
     </Fragment>
