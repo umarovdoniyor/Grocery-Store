@@ -1,0 +1,21 @@
+services:
+  grocery-store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.greenbazaar.cloud}
+        NEXT_PUBLIC_API_GRAPHQL_URL: ${NEXT_PUBLIC_API_GRAPHQL_URL:-https://api.greenbazaar.cloud/graphql}
+        NEXT_PUBLIC_API_WS: ${NEXT_PUBLIC_API_WS:-wss://api.greenbazaar.cloud}
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://api.greenbazaar.cloud}
+    container_name: grocery-store
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - greenbazaar-network
+
+networks:
+  greenbazaar-network:
+    external: true
+    name: greenbazaar-network
