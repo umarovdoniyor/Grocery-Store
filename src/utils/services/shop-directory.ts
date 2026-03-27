@@ -2,7 +2,7 @@ import type Shop from "models/Shop.model";
 import type Product from "models/Product.model";
 import { getProductById, getProducts } from "../../../libs/product";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 import {
   getVendorBySlug,
   getVendorProducts as getVendorProductsApi,

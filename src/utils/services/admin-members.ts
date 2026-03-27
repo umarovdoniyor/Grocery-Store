@@ -4,7 +4,7 @@ import {
   updateMemberStatusByAdmin
 } from "../../../libs/admin/members";
 import { resolveMemberImageUrl } from "../../../libs/upload/url";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl } from "../getApiBaseUrl";
 
 export interface AdminCustomerRow {
   id: string;
@@ -21,7 +21,7 @@ export interface AdminCustomerRow {
 const DEFAULT_CUSTOMER_AVATAR = "/assets/images/faces/propic(1).png";
 
 function resolveCustomerAvatar(value?: string | null): string {
-  return resolveMemberImageUrl(value, getApiBaseUrl(), DEFAULT_CUSTOMER_AVATAR);
+  return resolveMemberImageUrl(value, getPublicApiBaseUrl(), DEFAULT_CUSTOMER_AVATAR);
 }
 
 function toDisplayName(member: MemberByAdmin): string {

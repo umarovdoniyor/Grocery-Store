@@ -5,7 +5,7 @@ import { updateMyVendorOrderItemStatus, type VendorOrderItemStatus } from "../..
 import { initializeApollo } from "../../../apollo/client";
 import { GET_MY_VENDOR_ORDER_BY_ID, GET_MY_VENDOR_ORDERS } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 interface MyOrderItem {
   _id: string;

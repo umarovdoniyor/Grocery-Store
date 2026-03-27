@@ -7,7 +7,7 @@ import { getCategoryById } from "../../../libs/category";
 import { getProductById } from "../../../libs/product";
 import { getMyWishlist } from "../../../libs/wishlist";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 const PAYMENT_METHODS: Payment[] = [
   {

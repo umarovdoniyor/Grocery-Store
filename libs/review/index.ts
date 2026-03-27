@@ -170,7 +170,7 @@ export async function getMyProductReview(productId: string): Promise<{
     const { data } = await apolloClient.query({
       query: GET_MY_PRODUCT_REVIEW,
       variables: { productId },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     return {

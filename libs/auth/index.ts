@@ -1,6 +1,6 @@
 /** This file handles all authentication logic - login, signup, logout, and token management. */
 import { jwtDecode } from "jwt-decode";
-import { initializeApollo } from "../../apollo/client";
+import { initializeApollo, clearApolloCache } from "../../apollo/client";
 import { userVar } from "../../apollo/store";
 import { CustomJwtPayload } from "../types/customJwtPayload";
 import { sweetMixinErrorAlert } from "../sweetAlert";
@@ -249,6 +249,7 @@ export const updateUserInfo = (jwtToken: any, member?: any) => {
 export const logOut = () => {
   deleteStorage();
   deleteUserInfo();
+  clearApolloCache();
 };
 
 /** =============== deleteStorage ===============*/

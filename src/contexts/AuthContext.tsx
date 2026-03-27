@@ -14,7 +14,7 @@ import { UPDATE_MEMBER, CHANGE_MEMBER_PASSWORD, APPLY_VENDOR } from "../../apoll
 import { userVar } from "../../apollo/store";
 import { resolveMemberImageUrl } from "../../libs/upload/url";
 import { clearCartServer } from "utils/services/cart";
-import { getApiBaseUrl } from "../utils/getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../utils/getApiBaseUrl";
 import User, { UserRole } from "models/User.model";
 
 interface AuthContextType {

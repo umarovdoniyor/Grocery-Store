@@ -14,11 +14,13 @@ ARG NEXT_PUBLIC_API_URL=http://localhost:4001
 ARG NEXT_PUBLIC_API_GRAPHQL_URL=http://localhost:4001/graphql
 ARG NEXT_PUBLIC_API_WS=ws://localhost:4001
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:4001
+ARG NEXT_IMAGE_UNOPTIMIZED=false
 
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_GRAPHQL_URL=$NEXT_PUBLIC_API_GRAPHQL_URL
 ENV NEXT_PUBLIC_API_WS=$NEXT_PUBLIC_API_WS
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_IMAGE_UNOPTIMIZED=$NEXT_IMAGE_UNOPTIMIZED
 
 RUN npm run build
 
@@ -31,6 +33,9 @@ ENV NODE_ENV=production
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
+# Create cache dir and give node user write access
+RUN mkdir -p .next/cache && chown -R node:node /app
 
 USER node
 

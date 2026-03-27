@@ -7,7 +7,7 @@ export default function CartLoading() {
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <Skeleton variant="text" width={100} height={36} sx={{ mb: 3 }} />
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <Box key={i} sx={{ display: "flex", gap: 2, mb: 2 }}>
               <Skeleton variant="rounded" width={80} height={80} />
@@ -19,7 +19,7 @@ export default function CartLoading() {
             </Box>
           ))}
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Skeleton variant="rounded" width="100%" height={240} />
         </Grid>
       </Grid>

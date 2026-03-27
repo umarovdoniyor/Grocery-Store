@@ -3,7 +3,7 @@ import { getMyProducts } from "../../../libs/product";
 import { getVendorProductReviews, type ProductReviewStatus } from "../../../libs/review";
 import { toPublicImageUrl } from "../../../libs/upload";
 import { getVendorDashboardSummary } from "../../../libs/vendor";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 interface VendorReviewRow {
   name: string;

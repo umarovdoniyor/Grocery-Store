@@ -179,6 +179,12 @@ export function useApollo(initialState: any) {
   return useMemo(() => initializeApollo(initialState), [initialState]);
 }
 
+export function clearApolloCache() {
+  if (apolloClient) {
+    apolloClient.clearStore();
+  }
+}
+
 /**
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 

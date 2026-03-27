@@ -233,7 +233,7 @@ export async function getMyProducts(input?: MyProductsInquiryInput): Promise<{
     const { data } = await apolloClient.query({
       query: GET_MY_PRODUCTS,
       variables: { input },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const list = data?.getMyProducts?.list || [];

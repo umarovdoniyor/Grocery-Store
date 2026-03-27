@@ -15,7 +15,7 @@ import {
   type ProductReviewSortBy
 } from "../../../../libs/review";
 import { resolveMemberImageUrl } from "../../../../libs/upload/url";
-import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 // STYLED COMPONENTS
 import { ReviewRoot } from "./styles";
 import type Review from "models/Review.model";

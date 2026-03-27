@@ -8,7 +8,7 @@ import {
   updateOrderStatusByAdmin
 } from "../../../libs/admin";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 const DEFAULT_ORDER_ITEM_THUMBNAIL = "/assets/images/products/placeholder.png";
 

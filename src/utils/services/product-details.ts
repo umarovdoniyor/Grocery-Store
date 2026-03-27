@@ -3,7 +3,7 @@ import type Product from "models/Product.model";
 import type Review from "models/Review.model";
 import type Shop from "models/Shop.model";
 import { resolveMemberImageUrl } from "../../../libs/upload/url";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl } from "../getApiBaseUrl";
 import {
   getFeaturedProducts,
   getProductById,
@@ -29,6 +29,20 @@ const normalizeThumbnail = (thumbnail?: string | null): string => {
   const value = (thumbnail || "").trim();
   if (!value) return DEFAULT_THUMBNAIL;
   if (value.includes("example.com")) return DEFAULT_THUMBNAIL;
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    try {
+      const parsed = new URL(value);
+      if (parsed.pathname.startsWith("/uploads/")) {
+        const apiBase = getPublicApiBaseUrl();
+        try {
+          const api = new URL(apiBase);
+          if (parsed.origin !== api.origin) {
+            return `${api.origin}${parsed.pathname}`;
+          }
+        } catch {}
+      }
+    } catch {}
+  }
   return value;
 };
 
@@ -48,7 +62,7 @@ const mapVendorToShop = (
       id: vendor._id,
       email: "",
       phone: "",
-      avatar: resolveMemberImageUrl(vendor.memberAvatar, getApiBaseUrl()),
+      avatar: resolveMemberImageUrl(vendor.memberAvatar, getPublicApiBaseUrl()),
       password: "",
       dateOfBirth: "",
       verified: false,
@@ -63,7 +77,7 @@ const mapVendorToShop = (
     address: "",
     verified: false,
     coverPicture: "",
-    profilePicture: resolveMemberImageUrl(vendor.memberAvatar, getApiBaseUrl()),
+    profilePicture: resolveMemberImageUrl(vendor.memberAvatar, getPublicApiBaseUrl()),
     socialLinks: {}
   };
 };
@@ -150,7 +164,7 @@ const mapReviewToUi = (review: ProductReviewDto): Review => {
       phone: "",
       avatar: resolveMemberImageUrl(
         review.member?.memberAvatar,
-        getApiBaseUrl(),
+        getPublicApiBaseUrl(),
         "/assets/images/faces/propic.png"
       ),
       password: "",

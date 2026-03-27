@@ -25,7 +25,7 @@ export default function ProductGridSkeleton({ count = 12, columns = 4 }: Props) 
   return (
     <Grid container spacing={2}>
       {Array.from({ length: count }).map((_, i) => (
-        <Grid key={i} item xs={6} sm={4} md={12 / columns}>
+        <Grid key={i} size={{ xs: 6, sm: 4, md: 12 / columns }}>
           <ProductCardSkeleton />
         </Grid>
       ))}

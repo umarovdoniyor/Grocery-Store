@@ -3,7 +3,7 @@ import { initializeApollo } from "../../../apollo/client";
 import { CANCEL_MY_ORDER } from "../../../apollo/user/mutation";
 import { GET_MY_ORDER_BY_ID, GET_MY_ORDERS } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 export const CUSTOMER_CANCELLABLE_ORDER_STATUSES = [
   "PENDING_PAYMENT",

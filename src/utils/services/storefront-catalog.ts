@@ -15,7 +15,7 @@ import {
   type VendorProductSummary
 } from "../../../libs/vendor";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 const DEFAULT_THUMBNAIL = "/assets/images/products/placeholder.png";
 const DEFAULT_COLORS = ["#1C1C1C", "#FF7A7A", "#FFC672", "#84FFB5", "#70F6FF", "#6B7AFF"];
@@ -46,7 +46,17 @@ const normalizeThumbnail = (thumbnail?: string | null): string => {
   if (value.startsWith("http://") || value.startsWith("https://")) {
     try {
       const parsed = new URL(value);
-      return parsed.host ? value : DEFAULT_THUMBNAIL;
+      if (!parsed.host) return DEFAULT_THUMBNAIL;
+      if (parsed.pathname.startsWith("/uploads/")) {
+        const apiBase = getApiBaseUrl();
+        try {
+          const api = new URL(apiBase);
+          if (parsed.origin !== api.origin) {
+            return `${api.origin}${parsed.pathname}`;
+          }
+        } catch {}
+      }
+      return value;
     } catch {
       return DEFAULT_THUMBNAIL;
     }

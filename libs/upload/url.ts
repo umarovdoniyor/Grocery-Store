@@ -25,10 +25,10 @@ export function resolveMemberImageUrl(
   if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
     try {
       const stored = new URL(normalized);
-      // Rewrite stale localhost URLs to the current API origin.
-      if (stored.hostname === "localhost" && apiBaseUrl) {
+      // Rewrite any backend uploads URL (internal or stale) to the current API origin.
+      if (apiBaseUrl && stored.pathname.startsWith("/uploads/")) {
         const api = new URL(apiBaseUrl);
-        if (stored.port !== api.port) {
+        if (stored.origin !== api.origin) {
           return `${api.origin}${stored.pathname}`;
         }
       }

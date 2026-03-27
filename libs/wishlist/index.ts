@@ -45,7 +45,7 @@ export async function getMyWishlist(
     const { data } = await apolloClient.query({
       query: GET_MY_WISHLIST,
       variables: { input: { page, limit } },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     const payload = data?.getMyWishlist;
@@ -138,7 +138,7 @@ export async function getWishlistStatus(productIds: string[]): Promise<{
     const { data } = await apolloClient.query({
       query: GET_WISHLIST_STATUS,
       variables: { input: { productIds } },
-      fetchPolicy: "cache-first"
+      fetchPolicy: "network-only"
     });
 
     return {

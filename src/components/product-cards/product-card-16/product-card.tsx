@@ -188,7 +188,7 @@ export default function ProductCard16({ product }: Props) {
 
           <PriceText>
             {calculateDiscount(price, discount)}
-            {discount && <span className="base-price">{currency(price)}</span>}
+            {discount > 0 && <span className="base-price">{currency(price)}</span>}
           </PriceText>
         </div>
 

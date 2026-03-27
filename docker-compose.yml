@@ -8,10 +8,14 @@ services:
         NEXT_PUBLIC_API_GRAPHQL_URL: ${NEXT_PUBLIC_API_GRAPHQL_URL:-https://api.greenbazaar.cloud/graphql}
         NEXT_PUBLIC_API_WS: ${NEXT_PUBLIC_API_WS:-wss://api.greenbazaar.cloud}
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://api.greenbazaar.cloud}
+        NEXT_IMAGE_UNOPTIMIZED: ${NEXT_IMAGE_UNOPTIMIZED:-false}
     container_name: grocery-store
     restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      # Server-side requests go directly to the backend container via Docker network
+      - API_INTERNAL_URL=${API_INTERNAL_URL:-http://kiwi:3007}
     networks:
       - greenbazaar-network
 

@@ -6,7 +6,7 @@ import {
 import { getMembersByAdmin } from "../../../libs/admin/members";
 import { resolveMemberImageUrl } from "../../../libs/upload/url";
 import { getVendors } from "../../../libs/vendor/list";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl } from "../getApiBaseUrl";
 
 export interface AdminSellerRow {
   id: string;
@@ -24,7 +24,7 @@ export interface AdminSellerRow {
 const DEFAULT_SELLER_IMAGE = "/assets/images/faces/propic(1).png";
 
 const resolveSellerImage = (value?: string | null) =>
-  resolveMemberImageUrl(value, getApiBaseUrl(), DEFAULT_SELLER_IMAGE);
+  resolveMemberImageUrl(value, getPublicApiBaseUrl(), DEFAULT_SELLER_IMAGE);
 
 async function getVendorAvatarMap(): Promise<Map<string, string>> {
   const response = await getMembersByAdmin({

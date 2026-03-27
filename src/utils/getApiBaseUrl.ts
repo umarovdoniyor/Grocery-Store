@@ -29,3 +29,26 @@ export function getApiBaseUrl(): string {
     return graphQlUrl.replace(/\/graphql\/?$/, "");
   }
 }
+
+/**
+ * Always returns the public-facing API URL (NEXT_PUBLIC_API_BASE_URL).
+ * Use this when constructing image src URLs that will be rendered into HTML
+ * and fetched by the browser — never the internal Docker service URL.
+ */
+export function getPublicApiBaseUrl(): string {
+  const explicitBase =
+    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  if (explicitBase) return explicitBase;
+
+  const graphQlUrl =
+    process.env.NEXT_PUBLIC_API_GRAPHQL_URL ||
+    process.env.REACT_APP_API_GRAPHQL_URL ||
+    "http://localhost:4001/graphql";
+
+  try {
+    const parsed = new URL(graphQlUrl);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return graphQlUrl.replace(/\/graphql\/?$/, "");
+  }
+}

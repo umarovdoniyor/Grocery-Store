@@ -33,7 +33,7 @@ import {
 } from "../../../../../libs/review/admin";
 import { getProductById } from "../../../../../libs/product/details";
 import { toPublicImageUrl } from "../../../../../libs/upload/product";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 
 // TABLE HEADING DATA LIST
 const tableHeading = [

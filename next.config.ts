@@ -27,6 +27,13 @@ const nextConfig: NextConfig = {
     ]
   },
   images: {
+    // When running in local Docker, the Next.js image optimizer is inside
+    // the container and cannot reach localhost:4001 (the host's backend port).
+    // Setting unoptimized=true makes the browser fetch images directly, which
+    // works because the host browser CAN reach localhost:4001.
+    // Set NEXT_IMAGE_UNOPTIMIZED=true as a build arg in docker-compose for local runs.
+    // Leave it unset for production (real domain images optimize fine server-side).
+    unoptimized: process.env.NEXT_IMAGE_UNOPTIMIZED === "true",
     // Needed for local API media URLs during development.
     dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [

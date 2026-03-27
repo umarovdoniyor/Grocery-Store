@@ -8,7 +8,7 @@ import {
 } from "../../../apollo/user/mutation";
 import { GET_MY_CART } from "../../../apollo/user/query";
 import { toPublicImageUrl } from "../../../libs/upload";
-import { getApiBaseUrl } from "../getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../getApiBaseUrl";
 
 export interface CartItemView {
   id: string;

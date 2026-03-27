@@ -10,7 +10,7 @@ import PageWrapper from "../../page-wrapper";
 import { useAuth } from "contexts/AuthContext";
 import { toPublicImageUrl } from "../../../../../libs/upload/url";
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from "../../../../../libs/sweetAlert";
-import { getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../../../../utils/getApiBaseUrl";
 
 const CoverPicSection = dynamic(() => import("../cover-pic-section"), { ssr: false });
 const AccountSettingsFormSection = dynamic(() => import("./account-settings-form-section"), {

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   keywords: ["e-commerce", "e-commerce template", "next.js", "react"]
 };
 
-export const revalidate = 10;
+export const dynamic = "force-dynamic";
 
 export default function GroceryOne() {
   return <GroceryOnePageView />;

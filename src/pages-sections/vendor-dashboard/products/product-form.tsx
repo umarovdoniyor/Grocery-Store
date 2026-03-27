@@ -31,7 +31,7 @@ import {
   updateProduct
 } from "../../../../libs/product/manage";
 import { getProductById } from "../../../../libs/product/details";
-import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
+import { getPublicApiBaseUrl as getApiBaseUrl } from "../../../utils/getApiBaseUrl";
 import { initializeApollo } from "../../../../apollo/client";
 
 const mongoIdRegex = /^[a-f\d]{24}$/i;
