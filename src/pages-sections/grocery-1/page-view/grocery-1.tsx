@@ -6,6 +6,7 @@ import StickyWrapper from "components/sticky-wrapper";
 import SideNavbar from "components/page-sidenav/side-navbar";
 import { MobileNavigationBar2 } from "components/mobile-navigation";
 import { Footer2 } from "components/footer";
+import HashScroller from "components/hash-scroller";
 // LOCAL CUSTOM COMPONENTS
 import Section1 from "../section-1";
 import Section2 from "../section-2";
@@ -64,6 +65,8 @@ export default async function GroceryOnePageView({ selected, layoutData }: Props
 
   return (
     <Fragment>
+      <HashScroller />
+
       {/* TOP HERO AREA */}
       <Section1 />
 
