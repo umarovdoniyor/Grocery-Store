@@ -32,6 +32,7 @@ import {
 } from "../../../../libs/product/manage";
 import { getProductById } from "../../../../libs/product/details";
 import { getApiBaseUrl } from "../../../utils/getApiBaseUrl";
+import { initializeApollo } from "../../../../apollo/client";
 
 const mongoIdRegex = /^[a-f\d]{24}$/i;
 
@@ -362,6 +363,15 @@ export default function ProductForm({
       return;
     }
 
+    // Evict stale product list entries from Apollo cache so the
+    // products page fetches fresh data instead of the cached list.
+    const apolloClient = await initializeApollo();
+    apolloClient.cache.evict({ fieldName: "getMyProducts" });
+    apolloClient.cache.evict({ fieldName: "getProductsByAdmin" });
+    apolloClient.cache.gc();
+
+    // Invalidate Next.js router cache so ProductsClient remounts fresh.
+    router.refresh();
     router.push(basePath);
   });
 
